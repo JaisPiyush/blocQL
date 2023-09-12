@@ -1,4 +1,6 @@
 {
+  "packageManager": "pnpm@8.6.10",
+  "name": "blocQL",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -7,11 +9,14 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@metaplex-foundation/js": "^0.19.4",
+    "@project-serum/anchor": "^0.26.0",
+    "@solana/web3.js": "^1.78.5",
+    "@thirdweb-dev/sdk": "^3.10.59",
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
+    "ts-node": "^10.9.1",
     "tsconfig": "workspace:*",
     "turbo": "latest"
-  },
-  "packageManager": "pnpm@8.6.10",
-  "name": "blocQL"
+  }
 }
