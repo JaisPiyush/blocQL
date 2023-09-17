@@ -1,1 +1,1 @@
-declare module 'event-emitter';
+// declare module 'event-emitter';

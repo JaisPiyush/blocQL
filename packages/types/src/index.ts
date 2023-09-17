@@ -11,11 +11,11 @@ export * from './ticket_throttler'
 
 
 
-export interface Providers<P, C> {
-    serviceProvider: ServiceProvider<P>;
+export interface Providers {
+    serviceProvider: () =>  ServiceProvider;
     dataBroadcasterProvider: DataBroadcasterProvider;
     logProvider: LogProvider;
     settingsServiceProvider: SettingsServiceProvider;
-    eventBusProvider: () => EventBusProvider;
+    eventBusProvider: EventBusProvider;
 
 }

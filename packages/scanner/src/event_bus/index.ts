@@ -1,9 +1,12 @@
-import * as EventEmitter from 'event-emitter';
+import { EventEmitter } from 'node:events';
 import { EventBusInterface, RemovableListener } from 'types';
 
 export class EventBus implements EventBusInterface {
-    private eventEmitter = new EventEmitter()
+    private eventEmitter = new EventEmitter();
 
+    constructor() {
+      this.eventEmitter.setMaxListeners(100);
+    }
 
     addRemovableListener = <T>(eventName: string, listener: (data: T) => void): RemovableListener  => {
       this.eventEmitter.on(eventName, listener);
