@@ -1,0 +1,16 @@
+import { DataBroadcasterProvider } from "./providers/data_broadcaster_provider"
+import { EventBusProvider } from "./providers/event_bus_provider";
+import { LogProvider } from "./providers/log_provider"
+import { ServiceProvider } from "./providers/service_provider"
+import { SettingsServiceProvider } from "./providers/settings_provider"
+
+
+
+export interface Providers<P, C> {
+    serviceProvider: ServiceProvider<P>;
+    dataBroadcasterProvider: DataBroadcasterProvider;
+    logProvider: LogProvider;
+    settingsServiceProvider: SettingsServiceProvider;
+    eventBusProvider: () => EventBusProvider;
+
+}
