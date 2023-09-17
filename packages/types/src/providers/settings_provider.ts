@@ -1,3 +1,3 @@
-import { SettingsServiceInterface } from '../settings/settings_service';
+import { SettingsServiceInterface } from '../settings_service';
 
 export type SettingsServiceProvider = () => Promise<SettingsServiceInterface>

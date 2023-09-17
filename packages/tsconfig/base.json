@@ -16,8 +16,7 @@
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "ES2018",
-    "outDir": "dist"
+    "target": "ES2018"
   },
   "exclude": ["node_modules"]
 }
