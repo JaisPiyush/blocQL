@@ -12,5 +12,9 @@
   "devDependencies": {
     "tsconfig": "workspace:*",
     "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1459.0",
+    "types": "workspace:*"
   }
 }
