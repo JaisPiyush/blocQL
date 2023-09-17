@@ -1,3 +1,3 @@
-import { EventBus } from "../event-bus/event-bus";
+import { EventBusInterface } from "../event-bus/event-bus";
 
-export type EventBusProvider = () => EventBus
+export type EventBusProvider = () => EventBusInterface

@@ -1,3 +1,3 @@
-import { TicketThrottler } from "../ticket_throttler";
+import { TicketThrottlerInterface } from "../ticket_throttler";
 
-export type RateLimiterProvider = () => TicketThrottler;
+export type RateLimiterProvider = () => TicketThrottlerInterface;

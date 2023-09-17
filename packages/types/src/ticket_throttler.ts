@@ -1,4 +1,4 @@
-export interface TicketThrottler {
+export interface TicketThrottlerInterface {
     getMaxTickets(): number;
     getDecayPerSecond(): number;
     setDecayPerSecond(decayPerSecond: number): void;

@@ -3,7 +3,7 @@ export interface RemovableListener {
 }
   
 
-export interface EventBus {
+export interface EventBusInterface {
     addRemovableListener: <T> (eventName: string, listener: (data: T) => void) => RemovableListener;
     emit: <T> (eventName: string, data: T) => void;
 

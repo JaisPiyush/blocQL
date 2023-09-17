@@ -1,5 +1,5 @@
 export type DataBroadcast<T=any> = {
-    blockHeight: number,
+    id: string,
     data: T
 }
 
