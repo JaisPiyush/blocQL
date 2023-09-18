@@ -2,7 +2,7 @@
   "name": "scanner",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
     "test": "mocha"
   },
@@ -11,9 +11,11 @@
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^4.3.6",
+    "@types/lodash": "^4.14.198",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.6.2",
     "chai": "^4.3.8",
+    "lodash": "^4.17.21",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "tsconfig": "workspace:*",
