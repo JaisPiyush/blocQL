@@ -1,3 +1,4 @@
-export type ConfigProvider<T> = () => Promise<T & {
+export type ConfigProvider<T> = () => T & {
     maxRequestPerSecond: number;
-}>;
+    defaultStartBlockHeight?: number
+};

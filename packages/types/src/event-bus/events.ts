@@ -1,6 +1,6 @@
 export enum EventType {
     LatestBlockHeightUpdated = 'LatestBlockHeightUpdated',
-    ProcessedBlockHeighUpdated = 'ProcessedBlockHeighUpdated'
+    ProcessedBlockHeightUpdated = 'ProcessedBlockHeightUpdated'
 }
 
 
@@ -9,7 +9,7 @@ export namespace EventPayloads {
         blockHeight: number
     }
 
-    export type ProcessedBlockHeighUpdated<T=any> = {
+    export type ProcessedBlockHeightUpdated<T=any> = {
         blockHeight: number,
         data: T
     }

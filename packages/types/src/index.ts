@@ -1,3 +1,4 @@
+import { ConfigProvider } from "./providers/config_provider";
 import { DataBroadcasterProvider } from "./providers/data_broadcaster_provider"
 import { EventBusProvider } from "./providers/event_bus_provider";
 import { LogProvider } from "./providers/log_provider"
@@ -10,12 +11,12 @@ export * from './settings_service'
 export * from './ticket_throttler'
 
 
-
 export interface Providers {
     serviceProvider: () =>  ServiceProvider;
     dataBroadcasterProvider: DataBroadcasterProvider;
     logProvider: LogProvider;
     settingsServiceProvider: SettingsServiceProvider;
     eventBusProvider: EventBusProvider;
+    configProvider: ConfigProvider<any>;
 
 }

@@ -1,17 +1,17 @@
 import {EventPayloads, EventType, Providers} from 'types'
 
-type BlockHeightScannerProvider<T,C> = Pick<Providers, 
+type BlockHeightScannerProvider = Pick<Providers, 
     "serviceProvider" | "eventBusProvider" | "logProvider">;
 
 
 const PROCESS_INTERVAL_MS = 1000 // how often to fetch the latest block height (in ms)
 
-export class BlockHeightScanner<T, C> {
+export class BlockHeightScanner {
     private fetchTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
     private running = false;
     private currentBlockHeight: number | undefined = undefined;
 
-    constructor(private readonly providers: BlockHeightScannerProvider<T,C>) {
+    constructor(private readonly providers: BlockHeightScannerProvider) {
 
     }
 

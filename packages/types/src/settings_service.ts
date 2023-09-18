@@ -1,5 +1,5 @@
 export interface SettingsServiceInterface {
-    getProcessedBlockHeight (): Promise<number | undefined>
+    getProcessedBlockHeight (): Promise<number>
   
     setProcessedBlockHeight (blockHeight: number): Promise<void>
   
