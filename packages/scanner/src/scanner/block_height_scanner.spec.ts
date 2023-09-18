@@ -16,7 +16,7 @@ describe('Test block height scanner', () => {
         const blockHeightScanner = new BlockHeightScanner({
             eventBusProvider: () => eventBus,
             logProvider: nullLogProvider,
-            serviceProvider: () => mockClient,
+            serviceProvider: async () => mockClient,
 
         });
 

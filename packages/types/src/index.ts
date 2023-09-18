@@ -12,7 +12,7 @@ export * from './ticket_throttler'
 
 
 export interface Providers {
-    serviceProvider: () =>  ServiceProvider;
+    serviceProvider: () =>  Promise<ServiceProvider>;
     dataBroadcasterProvider: DataBroadcasterProvider;
     logProvider: LogProvider;
     settingsServiceProvider: SettingsServiceProvider;

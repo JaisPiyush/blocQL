@@ -11,9 +11,6 @@ export class ServiceProvider {
         throw new Error('Not implemented');
     }
 
-    async getBlock(blockHeight: number): Promise<BaseBlock> {
-        throw new Error('Not implemented');
-    }
 }
 export interface ServiceProviderOptions<T,C> {
     clientProvider: ClientProvider<T, C>;

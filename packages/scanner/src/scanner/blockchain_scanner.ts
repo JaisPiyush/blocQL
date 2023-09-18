@@ -1,25 +1,27 @@
 import { EventPayloads, EventType, Providers, RemovableListener } from "types";
 import { Scanner } from "./scanner";
 
-const PROCESS_INTERVAL_MS = 50 // how often to run processing loop
+export type BlockchainScannerProviders = Pick<Providers, 'eventBusProvider' | "logProvider" | "serviceProvider">
 
-type BlockScannerProviders = Pick<Providers, "serviceProvider" | "eventBusProvider" | "logProvider">;
-
-type Options = {
+export type Options = {
     latestBlockHeight: number | undefined
     processedBlockHeight: number
 }
 
 export class BlockchainScanner {
-    private processTimeout: NodeJS.Timeout | undefined = undefined
-    private running = false
-    private latestBlockHeight: number | undefined
-    private processedBlockHeight: number
-    private fetchedBlockHeight: number | undefined
-    private listeners: RemovableListener[] = []
-    private scanner: InstanceType<typeof Scanner> | undefined;
+    protected processTimeout: NodeJS.Timeout | undefined = undefined
+    protected running = false
+    protected latestBlockHeight: number | undefined
+    protected processedBlockHeight: number
+    protected fetchedBlockHeight: number | undefined
+    protected listeners: RemovableListener[] = []
+    protected scanner: InstanceType<typeof Scanner> | undefined;
+    
+    readonly PROCESS_INTERVAL_MS = 50 // how often to run processing loop
 
-    constructor (options: Options, private readonly providers: Providers) {
+    constructor (options: Options, 
+        protected readonly providers: BlockchainScannerProviders
+        ) {
         this.latestBlockHeight = options.latestBlockHeight
         this.processedBlockHeight = options.processedBlockHeight
         this.fetchedBlockHeight = options.processedBlockHeight
@@ -29,6 +31,11 @@ export class BlockchainScanner {
 
     setScanner = (scanner: InstanceType<typeof Scanner>) => {
         this.scanner = scanner;
+        this.attachListeners();
+    }
+
+    private attachListeners() {
+        throw new Error('Not implemented');
     }
 
     start = async () => {
@@ -75,5 +82,9 @@ export class BlockchainScanner {
         throw new Error('Not implemented');
 
     }
+
+    public async processFetchedData() {
+        throw new Error('Not implemented');
+     }
 
 }

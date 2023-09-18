@@ -4,6 +4,7 @@ import { nullLogProvider } from "../providers/log_provider";
 import { onlyDefined } from "../helpers/js-helpers";
 import {eventBusProvider} from '../providers/event_bus_provider'
 import { BlockchainScanner } from "./blockchain_scanner";
+import { FetchedDataProcessor } from "./fetched_data_processor";
 
 type ProvidersOptions = {
     settingsProvider: Providers["settingsServiceProvider"];
@@ -16,14 +17,17 @@ type ProvidersOptions = {
 }
 
 export class Scanner {
-    private processTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
-    private blockHeightScanner: BlockHeightScanner | undefined = undefined;
-    private listeners: RemovableListener[] = []
-    private running = false
-    private processedBlockHeight: number = 0
-    private readonly providers: Providers;
+    public processTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
+    public blockHeightScanner: BlockHeightScanner | undefined = undefined;
+    public listeners: RemovableListener[] = []
+    public running = false
+    public processedBlockHeight: number = 0
+    public readonly providers: Providers;
 
-    constructor(private readonly blockChainScanner: InstanceType<typeof BlockchainScanner> ,  providers: ProvidersOptions) {
+    constructor(
+        public readonly blockChainScanner: InstanceType<typeof BlockchainScanner>,
+        private readonly fetchedDataProcessor: FetchedDataProcessor,  
+        providers: ProvidersOptions) {
         this.providers = {
             logProvider: nullLogProvider,
             configProvider: providers.configProvider,
@@ -102,13 +106,12 @@ export class Scanner {
 
 
     private async process() {
-        const logger = this.providers.logProvider()
 
         if (this.processTimeout) {
             clearTimeout(this.processTimeout)
             this.processTimeout = undefined
         }
-        await this.blockChainScanner.process();
+        await this.fetchedDataProcessor.process();
     }
 
 
