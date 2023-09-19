@@ -1,4 +1,7 @@
 {
     "prettier.withNodeModules": true,
-    "sqltools.format": {}
+    "sqltools.format": {},
+    "cSpell.words": [
+        "Solana"
+    ]
 }

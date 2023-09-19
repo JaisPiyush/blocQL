@@ -12,7 +12,7 @@ export class ServiceProvider {
     }
 
 }
-export interface ServiceProviderOptions<T,C> {
-    clientProvider: ClientProvider<T, C>;
-    rateLimitedProvider: RateLimiterProvider
+export interface ServiceProviderOptions<T> {
+    client: T;
+    rateLimitedProvider?: RateLimiterProvider
 }
