@@ -1,0 +1,17 @@
+{
+  "name": "consumer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "echo 'Add dev script here'",
+    "build": "echo 'Add build script here'",
+    "test": "echo 'Add test script here'",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.414.0",
+    "sqs-consumer": "^7.3.0"
+  }
+}
