@@ -1,3 +1,5 @@
+import { TicketThrottlerInterface } from "types"
+
 export class WaitForTicketTimeout extends Error {
     code = 'TICKET_TIMEOUT'
   
@@ -6,7 +8,7 @@ export class WaitForTicketTimeout extends Error {
     }
 }
 
-export class TicketThrottler {
+export class TicketThrottler implements TicketThrottlerInterface {
     private issuedTickets = 0
     private lastDecayTime: number
   
