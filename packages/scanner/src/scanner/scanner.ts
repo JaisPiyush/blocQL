@@ -6,7 +6,7 @@ import {eventBusProvider} from '../providers/event_bus_provider'
 import { BlockchainScanner } from "./blockchain_scanner";
 import { FetchedDataProcessor } from "./fetched_data_processor";
 
-type ProvidersOptions<T extends ServiceProvider> = {
+export type ProvidersOptions<T extends ServiceProvider> = {
     settingsProvider: Providers<T>["settingsServiceProvider"];
     dataBroadcasterProvider: Providers["dataBroadcasterProvider"];
     eventBusProvider: Providers["eventBusProvider"];
@@ -118,7 +118,7 @@ export class Scanner<T extends ServiceProvider = ServiceProvider,
             clearTimeout(this.processTimeout)
             this.processTimeout = undefined
         }
-        await this.fetchedDataProcessor.process();
+        await this.fetchedDataProcessor.process(this);
     }
 
 

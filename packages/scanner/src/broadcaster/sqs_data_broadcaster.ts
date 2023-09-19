@@ -3,6 +3,11 @@ import { SQS } from "aws-sdk";
 import { LogProvider } from "types";
 import {delay} from "../helpers/delay";
 
+export interface SQSMessage {
+    MessageId?: string;
+    ReceiptHandle?: string;
+    Body?: string;
+}
 
 export class SQSDataBroadcaster implements DataBroadcasterInterface {
     constructor(
