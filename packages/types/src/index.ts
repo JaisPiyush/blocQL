@@ -11,8 +11,8 @@ export * from './settings_service'
 export * from './ticket_throttler'
 
 
-export interface Providers {
-    serviceProvider: () =>  Promise<ServiceProvider>;
+export interface Providers<T extends ServiceProvider = ServiceProvider> {
+    serviceProvider: () =>  Promise<T>;
     dataBroadcasterProvider: DataBroadcasterProvider;
     logProvider: LogProvider;
     settingsServiceProvider: SettingsServiceProvider;

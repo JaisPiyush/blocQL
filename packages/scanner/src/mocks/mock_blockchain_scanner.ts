@@ -1,5 +1,5 @@
 
-import { Providers } from "types";
+import { Providers, ServiceProvider } from "types";
 import { delay } from "../helpers/delay";
 import { BlockchainScanner, BlockchainScannerProviders, Options } from "../scanner/blockchain_scanner";
 import { MockClient, MockEvent, MockEventPayloads, MockEventType } from "./mock_client";
@@ -8,8 +8,10 @@ import  * as _ from 'lodash';
 export class MockBlockchainScanner extends BlockchainScanner {
     private maxFetchSize = 50
     private maxBlocksAhead = 100
+    processedBlockHeight: number = 0
 
-    constructor (private eventType: string,options: Options, protected readonly providers: BlockchainScannerProviders) {
+    constructor (private eventType: string,options: Options, 
+      protected readonly providers: BlockchainScannerProviders<ServiceProvider>) {
         super(options, providers);
     }
 

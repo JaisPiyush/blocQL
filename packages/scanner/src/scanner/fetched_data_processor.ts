@@ -1,7 +1,10 @@
+import { ServiceProvider } from "types";
+import { BlockchainScanner } from "./blockchain_scanner";
 import { Scanner } from "./scanner";
 
-export class FetchedDataProcessor {
-    constructor(private readonly scanner: InstanceType<typeof Scanner>) {
+export class FetchedDataProcessor<B extends BlockchainScanner,
+    T extends Scanner<ServiceProvider, B> = Scanner<ServiceProvider, B>> {
+    constructor(protected readonly scanner: T) {
         
     }
 

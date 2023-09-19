@@ -1,4 +1,4 @@
-import { Providers, RemovableListener } from "types";
+import { Providers, RemovableListener, ServiceProvider } from "types";
 import { BlockHeightScanner } from "./block_height_scanner";
 import { nullLogProvider } from "../providers/log_provider";
 import { onlyDefined } from "../helpers/js-helpers";
@@ -6,8 +6,8 @@ import {eventBusProvider} from '../providers/event_bus_provider'
 import { BlockchainScanner } from "./blockchain_scanner";
 import { FetchedDataProcessor } from "./fetched_data_processor";
 
-type ProvidersOptions = {
-    settingsProvider: Providers["settingsServiceProvider"];
+type ProvidersOptions<T extends ServiceProvider> = {
+    settingsProvider: Providers<T>["settingsServiceProvider"];
     dataBroadcasterProvider: Providers["dataBroadcasterProvider"];
     eventBusProvider: Providers["eventBusProvider"];
     logProvider?: Providers["logProvider"];
@@ -16,18 +16,18 @@ type ProvidersOptions = {
     
 }
 
-export class Scanner {
+export class Scanner<T extends ServiceProvider = ServiceProvider, 
+    B extends BlockchainScanner = BlockchainScanner> {
     public processTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
     public blockHeightScanner: BlockHeightScanner | undefined = undefined;
     public listeners: RemovableListener[] = []
     public running = false
-    public processedBlockHeight: number = 0
     public readonly providers: Providers;
 
     constructor(
-        public readonly blockChainScanner: InstanceType<typeof BlockchainScanner>,
-        private readonly fetchedDataProcessor: FetchedDataProcessor,  
-        providers: ProvidersOptions) {
+        public readonly blockChainScanner: B,
+        private readonly fetchedDataProcessor: FetchedDataProcessor<B>,  
+        providers: ProvidersOptions<T>) {
         this.providers = {
             logProvider: nullLogProvider,
             configProvider: providers.configProvider,
@@ -41,6 +41,14 @@ export class Scanner {
         this.blockChainScanner.setScanner(this);
     }
 
+    public get processedBlockHeight() {
+        return this.blockChainScanner.processedBlockHeight;
+    }
+
+    public set processedBlockHeight(height: number) {
+        this.blockChainScanner.processedBlockHeight = height;
+    }
+
     public async start() {
         if (this.running) {
             return
@@ -49,13 +57,12 @@ export class Scanner {
         this.running = true;
 
         const logger = this.providers.logProvider();
-        const eventBus = this.providers.eventBusProvider();
         const settings = await this.providers.settingsServiceProvider();
         const config = this.providers.configProvider();
 
         logger.info('Starting scanner');
         this.blockHeightScanner = new BlockHeightScanner(this.providers);
-        this.processedBlockHeight = await settings.getProcessedBlockHeight();
+        this.processedBlockHeight = (await settings.getProcessedBlockHeight()) || 0;
 
         if (this.processedBlockHeight === 0) {
             if (config.defaultStartBlockHeight) {

@@ -11,6 +11,5 @@ export namespace EventPayloads {
 
     export type ProcessedBlockHeightUpdated<T=any> = {
         blockHeight: number,
-        data: T
     }
 }

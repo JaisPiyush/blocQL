@@ -1,26 +1,27 @@
-import { EventPayloads, EventType, Providers, RemovableListener } from "types";
+import { EventPayloads, EventType, Providers, RemovableListener, ServiceProvider } from "types";
 import { Scanner } from "./scanner";
 
-export type BlockchainScannerProviders = Pick<Providers, 'eventBusProvider' | "logProvider" | "serviceProvider">
+export type BlockchainScannerProviders<T extends ServiceProvider> = 
+    Pick<Providers<T>, 'eventBusProvider' | "logProvider" | "serviceProvider">;
 
 export type Options = {
     latestBlockHeight: number | undefined
     processedBlockHeight: number
 }
 
-export class BlockchainScanner {
+export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
     protected processTimeout: NodeJS.Timeout | undefined = undefined
     protected running = false
     protected latestBlockHeight: number | undefined
-    protected processedBlockHeight: number
+    public processedBlockHeight: number
     protected fetchedBlockHeight: number | undefined
     protected listeners: RemovableListener[] = []
-    protected scanner: InstanceType<typeof Scanner> | undefined;
+    protected scanner: Scanner | undefined;
     
     readonly PROCESS_INTERVAL_MS = 50 // how often to run processing loop
 
     constructor (options: Options, 
-        protected readonly providers: BlockchainScannerProviders
+        protected readonly providers: BlockchainScannerProviders<T>
         ) {
         this.latestBlockHeight = options.latestBlockHeight
         this.processedBlockHeight = options.processedBlockHeight
@@ -29,12 +30,12 @@ export class BlockchainScanner {
 
 
 
-    setScanner = (scanner: InstanceType<typeof Scanner>) => {
+    setScanner = (scanner: Scanner) => {
         this.scanner = scanner;
         this.attachListeners();
     }
 
-    private attachListeners() {
+    protected attachListeners() {
         throw new Error('Not implemented');
     }
 
@@ -82,9 +83,5 @@ export class BlockchainScanner {
         throw new Error('Not implemented');
 
     }
-
-    public async processFetchedData() {
-        throw new Error('Not implemented');
-     }
 
 }
