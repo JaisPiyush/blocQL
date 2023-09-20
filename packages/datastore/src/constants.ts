@@ -1,6 +1,6 @@
 export enum TableNames {
     ProcessedBlock = "processed_block",
-    SolanaBlock = "solana_block",
+    SolanaBlocks = "solana_blocks",
     SolanaTransactions = "solana_transactions",
     SolanaVoteTransactions = "solana_vote_transactions",
     SolanaAccountActivity = "solana_account_activity",
