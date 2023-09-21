@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     await knex.schema.createTable(TableNames.SolanaRewards, (table) => {
         table.bigint('slot').notNullable();
         table.timestamp('block_time').notNullable();
-        table.bigint('commission').notNullable();
+        table.bigint('commission');
         table.bigint('lamports').notNullable();
         table.bigint('post_balance').notNullable();
         table.string('reward_type').notNullable();

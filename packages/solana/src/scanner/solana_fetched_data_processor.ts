@@ -1,6 +1,7 @@
 import { FetchedDataProcessor, Scanner } from "scanner";
 import { SolanaBlockchainScanner } from "./solana_blockchain_scanner";
 import { EventPayloads, EventType, ServiceProvider } from "types";
+import { SolanaDatBroadcastType } from "../types";
 
 export class SolanaFetchedDataProcessor extends FetchedDataProcessor<SolanaBlockchainScanner> {
 
@@ -20,7 +21,13 @@ export class SolanaFetchedDataProcessor extends FetchedDataProcessor<SolanaBlock
                     blockPayload.data.transactions = [];
                     await eventBroadcaster.broadcast({
                         id: blockPayload.blockSlot.toString(),
-                        data: blockPayload.data
+                        data: {
+                            target: SolanaDatBroadcastType.BlockBroadcast,
+                            payload: {
+                                slot: blockPayload.blockSlot,
+                                ...blockPayload.data
+                            }
+                        }
                     });
                     await settingsService.setProcessedBlockHeight(scanner.processedBlockHeight);
                     eventBus.emit<EventPayloads.ProcessedBlockHeightUpdated>(EventType.ProcessedBlockHeightUpdated, 
