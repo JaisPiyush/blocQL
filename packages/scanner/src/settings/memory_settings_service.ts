@@ -1,19 +1,17 @@
-import { SettingsServiceInterface } from 'types'
+import { SettingsServiceInterface } from 'types';
 
 export class MemorySettingsService implements SettingsServiceInterface {
-  private processedBlockHeight: number | undefined = undefined
+    private processedBlockHeight: number | undefined = undefined;
 
-  constructor () {
-  }
+    constructor() {}
 
-  getProcessedBlockHeight = async () => {
-    return this.processedBlockHeight
-  }
+    getProcessedBlockHeight = async () => {
+        return this.processedBlockHeight;
+    };
 
-  setProcessedBlockHeight = async (blockHeight: number) => {
-    this.processedBlockHeight = blockHeight
-  }
+    setProcessedBlockHeight = async (blockHeight: number) => {
+        this.processedBlockHeight = blockHeight;
+    };
 
-  destroy = async () => {
-  }
+    destroy = async () => {};
 }

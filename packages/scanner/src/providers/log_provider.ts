@@ -1,14 +1,10 @@
-import { LogProvider } from "types"
+import { LogProvider } from 'types';
 
 export const nullLogProvider: LogProvider = () => {
     return {
-      debug: () => {
-      },
-      info: () => {
-      },
-      warn: () => {
-      },
-      error: () => {
-      },
-    }
-  }
+        debug: () => {},
+        info: () => {},
+        warn: () => {},
+        error: () => {},
+    };
+};

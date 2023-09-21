@@ -1,19 +1,18 @@
-import { ServiceProvider, ServiceProviderOptions } from "types";
-import { RateLimiterProvider } from "types";
-import { SolanaClient } from "../../client/solana_client";
-import { PublicKey } from "@solana/web3.js";
-import { ConfigProvider } from "types/src/providers/config_provider";
-import { SolanaConfig } from "./config_provider";
-import { solanaClientProvider } from "./solana_client_provider";
-import { rateLimiterProvider } from "scanner";
+import { ServiceProvider, ServiceProviderOptions } from 'types';
+import { RateLimiterProvider } from 'types';
+import { SolanaClient } from '../../client/solana_client';
+import { PublicKey } from '@solana/web3.js';
+import { ConfigProvider } from 'types/src/providers/config_provider';
+import { SolanaConfig } from './config_provider';
+import { solanaClientProvider } from './solana_client_provider';
+import { rateLimiterProvider } from 'scanner';
 
 export type SolanaServiceProviderOptions = ServiceProviderOptions<SolanaClient>;
 
 export class SolanaServiceProvider extends ServiceProvider {
-
     private readonly client: SolanaClient;
     private readonly rateLimitedProvider?: RateLimiterProvider;
-    private readonly  TICKET_WAIT_COUNT = 1;
+    private readonly TICKET_WAIT_COUNT = 1;
 
     constructor(options: SolanaServiceProviderOptions) {
         super();
@@ -23,7 +22,9 @@ export class SolanaServiceProvider extends ServiceProvider {
 
     private async __waitAndExecute<R>(fn: () => Promise<R>): Promise<R> {
         if (this.rateLimitedProvider) {
-            await this.rateLimitedProvider().waitForTickets(this.TICKET_WAIT_COUNT);
+            await this.rateLimitedProvider().waitForTickets(
+                this.TICKET_WAIT_COUNT
+            );
         }
         return fn();
     }
@@ -51,15 +52,13 @@ export class SolanaServiceProvider extends ServiceProvider {
             return await this.client.getAccountInfo(publicKey);
         });
     }
-
-
 }
 
-
-export const solanaServiceProvider = (configProvider: ConfigProvider<SolanaConfig>) => async () => {
-    const _solanaClientProvider = solanaClientProvider(configProvider);
-    return new SolanaServiceProvider({
-        client: await _solanaClientProvider(),
-        rateLimitedProvider: rateLimiterProvider(configProvider)
-    });
-}
+export const solanaServiceProvider =
+    (configProvider: ConfigProvider<SolanaConfig>) => async () => {
+        const _solanaClientProvider = solanaClientProvider(configProvider);
+        return new SolanaServiceProvider({
+            client: await _solanaClientProvider(),
+            rateLimitedProvider: rateLimiterProvider(configProvider),
+        });
+    };

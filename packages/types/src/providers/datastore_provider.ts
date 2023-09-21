@@ -6,4 +6,6 @@ export interface DatastoreInterface {
     batchInsert<T>(data: T[]): Promise<void>;
 }
 
-export type DatastoreProvider = (storeName: string) => Promise<DatastoreInterface>;
+export type DatastoreProvider = (
+    storeName: string
+) => Promise<DatastoreInterface>;

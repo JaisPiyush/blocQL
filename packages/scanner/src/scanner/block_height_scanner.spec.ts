@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { expect } from 'chai';
 import { EventBus } from '../event_bus';
 import { MockClient } from '../mocks/mock_client';
 import { BlockHeightScanner } from './block_height_scanner';
@@ -8,7 +8,6 @@ import { EventPayloads, EventType } from 'types';
 const latestBlockHeight = 100;
 
 describe('Test block height scanner', () => {
-
     it('Checking that event is emitted on new block height', async () => {
         const eventBus = new EventBus();
         const mockClient = new MockClient(latestBlockHeight);
@@ -17,17 +16,17 @@ describe('Test block height scanner', () => {
             eventBusProvider: () => eventBus,
             logProvider: nullLogProvider,
             serviceProvider: async () => mockClient,
-
         });
 
-        let currentBlockHeight: number | undefined = undefined
+        let currentBlockHeight: number | undefined = undefined;
 
-        eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(EventType.LatestBlockHeightUpdated, ev => currentBlockHeight = ev.blockHeight)
+        eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(
+            EventType.LatestBlockHeightUpdated,
+            (ev) => (currentBlockHeight = ev.blockHeight)
+        );
 
-        expect(currentBlockHeight).undefined
-        await blockHeightScanner.__process()
+        expect(currentBlockHeight).undefined;
+        await blockHeightScanner.__process();
         expect(currentBlockHeight).equals(100);
-
-
     });
 });

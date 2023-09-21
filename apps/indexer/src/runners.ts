@@ -1,9 +1,12 @@
-import { logger } from "./logger";
+import { logger } from './logger';
 
-export const runScanner = async (start: () => Promise<void>, stop: () => Promise<void>) => {
+export const runScanner = async (
+    start: () => Promise<void>,
+    stop: () => Promise<void>
+) => {
     await start();
 
-    const _logger = logger()
+    const _logger = logger();
 
     await new Promise<void>((resolve) => {
         process.on('SIGTERM', () => {
@@ -26,7 +29,7 @@ export const runScanner = async (start: () => Promise<void>, stop: () => Promise
             resolve();
         });
     });
-    _logger.info('Stopping scanner')
+    _logger.info('Stopping scanner');
     await stop();
     process.exit(0);
-}
+};

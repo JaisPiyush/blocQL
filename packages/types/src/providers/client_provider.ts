@@ -1,3 +1,3 @@
-import { ConfigProvider } from "./config_provider";
+import { ConfigProvider } from './config_provider';
 
-export type ClientProvider<T>  = () => Promise<T>;
+export type ClientProvider<T> = () => Promise<T>;

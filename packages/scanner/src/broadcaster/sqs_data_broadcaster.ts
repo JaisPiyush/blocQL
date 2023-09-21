@@ -1,7 +1,7 @@
-import { DataBroadcast, DataBroadcasterInterface } from "types";
-import { SQS } from "aws-sdk";
-import { LogProvider } from "types";
-import {delay} from "../helpers/delay";
+import { DataBroadcast, DataBroadcasterInterface } from 'types';
+import { SQS } from 'aws-sdk';
+import { LogProvider } from 'types';
+import { delay } from '../helpers/delay';
 
 export interface SQSMessage {
     MessageId?: string;
@@ -15,7 +15,7 @@ export class SQSDataBroadcaster implements DataBroadcasterInterface {
         private readonly messageGroupId: string,
         private readonly logProvider: LogProvider,
         private readonly sqs: SQS
-    ){}
+    ) {}
 
     broadcast = async <T>(data: DataBroadcast<T>) => {
         const logger = this.logProvider();
@@ -27,7 +27,7 @@ export class SQSDataBroadcaster implements DataBroadcasterInterface {
                 MessageBody: JSON.stringify(data),
                 QueueUrl: this.queueUrl,
                 MessageGroupId: this.messageGroupId,
-                MessageDeduplicationId: data.id
+                MessageDeduplicationId: data.id,
             };
 
             logger.info(`Sending message to SQS: ${JSON.stringify(params)}`);
@@ -44,5 +44,5 @@ export class SQSDataBroadcaster implements DataBroadcasterInterface {
             await delay(Math.floor(4 * 500 + Math.random() * 500));
         }
         logger.debug(`Sent ${data} events in SQS messages`);
-    }
+    };
 }

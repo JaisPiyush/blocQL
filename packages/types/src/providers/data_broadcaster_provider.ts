@@ -1,10 +1,10 @@
-export type DataBroadcast<T=any> = {
-    id: string,
-    data: T
-}
+export type DataBroadcast<T = any> = {
+    id: string;
+    data: T;
+};
 
 export interface DataBroadcasterInterface {
-    broadcast: <T=any>(data: DataBroadcast<T>) => Promise<void>;
+    broadcast: <T = any>(data: DataBroadcast<T>) => Promise<void>;
     destroy?: () => Promise<void>;
 }
 

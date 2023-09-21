@@ -1,5 +1,5 @@
-import { LogProvider } from "types";
-import { Logger } from "./logger";
+import { LogProvider } from 'types';
+import { Logger } from './logger';
 
 export const logger: LogProvider = () => {
     return {
@@ -14,6 +14,6 @@ export const logger: LogProvider = () => {
         },
         error(...args) {
             Logger.error(args);
-        }
+        },
     };
-}
+};

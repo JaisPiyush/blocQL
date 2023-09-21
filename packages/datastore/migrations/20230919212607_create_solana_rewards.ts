@@ -1,6 +1,5 @@
-import { Knex } from "knex";
-import { TableNames } from "../src/constants";
-
+import { Knex } from 'knex';
+import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
     await knex.schema.createTable(TableNames.SolanaRewards, (table) => {
@@ -17,19 +16,15 @@ export async function up(knex: Knex): Promise<void> {
 
         table.primary(['slot', 'recipient']);
         table.index('slot', 'idx_solana_rewards_slot', {
-            storageEngineIndexType: 'btree'
+            storageEngineIndexType: 'btree',
         });
 
         table.index('recipient', 'idx_solana_rewards_recipient', {
-            storageEngineIndexType: 'hash'
+            storageEngineIndexType: 'hash',
         });
-
-
-    })
+    });
 }
-
 
 export async function down(knex: Knex): Promise<void> {
     await knex.schema.dropTable(TableNames.SolanaRewards);
 }
-
