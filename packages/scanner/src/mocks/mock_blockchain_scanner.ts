@@ -11,7 +11,7 @@ export class MockBlockchainScanner extends BlockchainScanner {
     processedBlockHeight: number = 0
 
     constructor (private eventType: string,options: Options, 
-      protected readonly providers: BlockchainScannerProviders<ServiceProvider>) {
+      providers: BlockchainScannerProviders<ServiceProvider>) {
         super(options, providers);
     }
 

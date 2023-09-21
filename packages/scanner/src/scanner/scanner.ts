@@ -6,18 +6,18 @@ import {eventBusProvider} from '../providers/event_bus_provider'
 import { BlockchainScanner } from "./blockchain_scanner";
 import { FetchedDataProcessor } from "./fetched_data_processor";
 
-export type ProvidersOptions<T extends ServiceProvider> = {
-    settingsProvider: Providers<T>["settingsServiceProvider"];
+export type ProvidersOptions<T extends ServiceProvider, C = any> = {
+    settingsServiceProvider: Providers["settingsServiceProvider"];
     dataBroadcasterProvider: Providers["dataBroadcasterProvider"];
-    eventBusProvider: Providers["eventBusProvider"];
+    eventBusProvider?: Providers["eventBusProvider"];
     logProvider?: Providers["logProvider"];
-    serviceProvider: Providers["serviceProvider"];
-    configProvider: Providers["configProvider"];
+    serviceProvider: Providers<T, C>["serviceProvider"];
+    configProvider: Providers<T, C>["configProvider"];
     
 }
 
 export class Scanner<T extends ServiceProvider = ServiceProvider, 
-    B extends BlockchainScanner = BlockchainScanner> {
+    B extends BlockchainScanner = BlockchainScanner, C = any> {
     public processTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
     public blockHeightScanner: BlockHeightScanner | undefined = undefined;
     public listeners: RemovableListener[] = []
@@ -27,7 +27,7 @@ export class Scanner<T extends ServiceProvider = ServiceProvider,
     constructor(
         public readonly blockChainScanner: B,
         private readonly fetchedDataProcessor: FetchedDataProcessor<B>,  
-        providers: ProvidersOptions<T>) {
+        providers: ProvidersOptions<T, C>) {
         this.providers = {
             logProvider: nullLogProvider,
             configProvider: providers.configProvider,

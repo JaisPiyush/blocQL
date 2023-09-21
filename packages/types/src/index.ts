@@ -10,13 +10,13 @@ export * from './providers'
 export * from './settings_service'
 export * from './ticket_throttler'
 
-
-export interface Providers<T extends ServiceProvider = ServiceProvider> {
+ 
+export interface Providers<T extends ServiceProvider = ServiceProvider, C = any> {
     serviceProvider: () =>  Promise<T>;
     dataBroadcasterProvider: DataBroadcasterProvider;
     logProvider: LogProvider;
     settingsServiceProvider: SettingsServiceProvider;
     eventBusProvider: EventBusProvider;
-    configProvider: ConfigProvider<any>;
+    configProvider: ConfigProvider<C>;
 
 }

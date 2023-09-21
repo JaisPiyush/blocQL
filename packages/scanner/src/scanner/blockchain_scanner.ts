@@ -1,12 +1,17 @@
 import { EventPayloads, EventType, Providers, RemovableListener, ServiceProvider } from "types";
 import { Scanner } from "./scanner";
+import { nullLogProvider } from "../providers";
+import { EventBus } from "../event_bus";
 
-export type BlockchainScannerProviders<T extends ServiceProvider> = 
-    Pick<Providers<T>, 'eventBusProvider' | "logProvider" | "serviceProvider">;
+export type BlockchainScannerProviders<T extends ServiceProvider> = {
+    eventBusProvider?: Providers<T>["eventBusProvider"]
+    logProvider?: Providers<T>["logProvider"]
+    serviceProvider: Providers<T>["serviceProvider"]
+}
 
 export type Options = {
-    latestBlockHeight: number | undefined
-    processedBlockHeight: number
+    latestBlockHeight?: number | undefined
+    processedBlockHeight?: number
 }
 
 export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
@@ -17,15 +22,21 @@ export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
     protected fetchedBlockHeight: number | undefined
     protected listeners: RemovableListener[] = []
     protected scanner: Scanner | undefined;
+    protected readonly providers: Required<BlockchainScannerProviders<T>>
     
     readonly PROCESS_INTERVAL_MS = 50 // how often to run processing loop
 
     constructor (options: Options, 
-        protected readonly providers: BlockchainScannerProviders<T>
+        _providers: BlockchainScannerProviders<T>
         ) {
         this.latestBlockHeight = options.latestBlockHeight
-        this.processedBlockHeight = options.processedBlockHeight
+        this.processedBlockHeight = options.processedBlockHeight || 0;
         this.fetchedBlockHeight = options.processedBlockHeight
+        this.providers = {
+            ..._providers,
+            logProvider: _providers.logProvider || nullLogProvider,
+            eventBusProvider: _providers.eventBusProvider || (() => new EventBus()),
+        }
     }
 
 

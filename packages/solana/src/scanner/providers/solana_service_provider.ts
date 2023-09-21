@@ -2,6 +2,10 @@ import { ServiceProvider, ServiceProviderOptions } from "types";
 import { RateLimiterProvider } from "types";
 import { SolanaClient } from "../../client/solana_client";
 import { PublicKey } from "@solana/web3.js";
+import { ConfigProvider } from "types/src/providers/config_provider";
+import { SolanaConfig } from "./config_provider";
+import { solanaClientProvider } from "./solana_client_provider";
+import { rateLimiterProvider } from "scanner";
 
 export type SolanaServiceProviderOptions = ServiceProviderOptions<SolanaClient>;
 
@@ -49,4 +53,13 @@ export class SolanaServiceProvider extends ServiceProvider {
     }
 
 
+}
+
+
+export const solanaServiceProvider = (configProvider: ConfigProvider<SolanaConfig>) => async () => {
+    const _solanaClientProvider = solanaClientProvider(configProvider);
+    return new SolanaServiceProvider({
+        client: await _solanaClientProvider(),
+        rateLimitedProvider: rateLimiterProvider(configProvider)
+    });
 }
