@@ -22,7 +22,7 @@ export async function up(knex: Knex): Promise<void> {
         table.specificType('instructions', 'text[]').defaultTo([]);
         table.specificType('signatures', 'text[]').defaultTo([]);
         table.string('error_program_id').defaultTo(null);
-        table.integer('instruction_index').defaultTo(null);
+        table.integer('error_instruction_index').defaultTo(null);
         table.integer('error_code').defaultTo(null);
         table.string('error').defaultTo(null);
         table.string('block_hash').notNullable();

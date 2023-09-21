@@ -1,0 +1,29 @@
+{
+  "name": "indexer",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'Add dev script here'",
+    "build": "echo 'Add build script here'",
+    "test": "echo 'Add test script here'",
+    "lint": "echo 'Add lint script here'"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "clear": "^0.1.0",
+    "commander": "^11.0.0",
+    "figlet": "^1.6.0",
+    "path": "^0.12.7",
+    "scanner": "workspace:*",
+    "solana": "workspace:*",
+    "types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.3",
+    "eslint-config-custom": "workspace:*",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "tsconfig": "workspace:*",
+    "typescript": "4.5.2"
+  }
+}
