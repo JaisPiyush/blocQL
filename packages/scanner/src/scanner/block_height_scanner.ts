@@ -24,7 +24,7 @@ export class BlockHeightScanner {
     }
 
     public async process() {
-        
+
         const logger = this.providers.logProvider()
 
         if (this.fetchTimeout) {
@@ -39,7 +39,7 @@ export class BlockHeightScanner {
             try {
                 // const startRequestTime = new Date().getTime();
                 const latestBlockHeight = await serviceProvider.getLatestBlockHeight();
-                
+
                 // const endRequestTime = new Date().getTime();
 
                 if ((this.currentBlockHeight ?? 0) < latestBlockHeight) {

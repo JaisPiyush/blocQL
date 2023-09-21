@@ -23,6 +23,7 @@ export class Scanner<T extends ServiceProvider = ServiceProvider,
     public listeners: RemovableListener[] = []
     public running = false
     public readonly providers: Providers;
+    protected readonly PROCESS_INTERVAL_MS = 50 // how often to run processing loop
 
     constructor(
         public readonly blockChainScanner: B,
@@ -62,7 +63,8 @@ export class Scanner<T extends ServiceProvider = ServiceProvider,
 
         logger.info('Starting scanner');
         this.blockHeightScanner = new BlockHeightScanner(this.providers);
-        this.processedBlockHeight = (await settings.getProcessedBlockHeight()) || 0;
+        this.createBlockchainScanner();
+        this.processedBlockHeight = (await settings.getProcessedBlockHeight()) ?? 0;
 
         if (this.processedBlockHeight === 0) {
             if (config.defaultStartBlockHeight) {
@@ -73,17 +75,15 @@ export class Scanner<T extends ServiceProvider = ServiceProvider,
               this.processedBlockHeight = latestBlockHeight - 1
             }
         }
-
-        this.createBlockchainScanner();
-        await this.blockChainScanner.start();
         await this.blockHeightScanner.start()
+        await this.blockChainScanner.start(); 
         this.process().then()
     }
 
     public async stop() {
         const logger = this.providers.logProvider()
     
-        logger.info('Stopping FlowScanner')
+        logger.info('Stopping Scanner')
     
         for (const listener of this.listeners) {
           listener.remove()
@@ -118,7 +118,11 @@ export class Scanner<T extends ServiceProvider = ServiceProvider,
             clearTimeout(this.processTimeout)
             this.processTimeout = undefined
         }
+        const startTime = new Date().getTime();
         await this.fetchedDataProcessor.process(this);
+        if (this.running) {
+            this.processTimeout = setTimeout(() => this.process(), Math.max(0, this.PROCESS_INTERVAL_MS - (new Date().getTime() - startTime)))
+        }
     }
 
 

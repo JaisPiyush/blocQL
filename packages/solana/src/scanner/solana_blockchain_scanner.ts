@@ -22,7 +22,7 @@ export class SolanaBlockchainScanner extends BlockchainScanner<SolanaServiceProv
         )
     }
 
-    public async process(): Promise<void> {
+    protected async _process(): Promise<void> {
         const logger = this.providers.logProvider();
         if (this.processTimeout) {
             clearTimeout(this.processTimeout)
@@ -30,7 +30,7 @@ export class SolanaBlockchainScanner extends BlockchainScanner<SolanaServiceProv
           }
       
         try {
-            if (this.latestBlockHeight) {
+            if (this.latestBlockHeight !== undefined) {
                 let startSlot = (this.fetchedBlockHeight ?? this.processedBlockHeight) + 1; // find out where we should start this fetch
                 let endSlot = this.latestBlockHeight;
                 if (startSlot <= endSlot) {
@@ -40,7 +40,6 @@ export class SolanaBlockchainScanner extends BlockchainScanner<SolanaServiceProv
                     logger.debug(`Fetching block: ${startSlot}`);
 
                     const block = await service.getBlock(startSlot);
-
                     eventBus.emit<SolanaEventPayload.SolanaBlockFetched>(
                         SolanaEventType.SolanaBlockFetched,
                         {

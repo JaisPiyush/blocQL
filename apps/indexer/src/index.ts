@@ -18,9 +18,11 @@ program
   .requiredOption("-n, --name <name>", "name of the indexer")
   .requiredOption("-b, --branch <branch>", "branch of the indexer ('main' | 'test')");
 
+program.parse(process.argv);
 const options = program.opts();
+
 if (!options.name || !options.branch) {
-    console.error('Missing required options');
+    console.error('Missing required options "name" or "branch"');
     process.exit(1);
 }
 

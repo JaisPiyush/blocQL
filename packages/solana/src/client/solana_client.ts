@@ -22,7 +22,7 @@ export class SolanaClient {
      */
     async getBlock(slot: number) {
         return await this.connection.getParsedBlock(slot, {
-            transactionDetails: 'signatures',
+            transactionDetails: 'accounts',
             maxSupportedTransactionVersion: 0,
             rewards: true
         });

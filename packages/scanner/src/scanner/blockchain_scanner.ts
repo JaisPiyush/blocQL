@@ -1,7 +1,6 @@
 import { EventPayloads, EventType, Providers, RemovableListener, ServiceProvider } from "types";
 import { Scanner } from "./scanner";
-import { nullLogProvider } from "../providers";
-import { EventBus } from "../event_bus";
+import { eventBusProvider, nullLogProvider } from "../providers";
 
 export type BlockchainScannerProviders<T extends ServiceProvider> = {
     eventBusProvider?: Providers<T>["eventBusProvider"]
@@ -24,7 +23,7 @@ export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
     protected scanner: Scanner | undefined;
     protected readonly providers: Required<BlockchainScannerProviders<T>>
     
-    readonly PROCESS_INTERVAL_MS = 50 // how often to run processing loop
+    protected readonly PROCESS_INTERVAL_MS = 50 // how often to run processing loop
 
     constructor (options: Options, 
         _providers: BlockchainScannerProviders<T>
@@ -35,7 +34,7 @@ export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
         this.providers = {
             ..._providers,
             logProvider: _providers.logProvider || nullLogProvider,
-            eventBusProvider: _providers.eventBusProvider || (() => new EventBus()),
+            eventBusProvider: _providers.eventBusProvider || eventBusProvider,
         }
     }
 
@@ -54,13 +53,15 @@ export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
         if (!this.scanner) {
             throw new Error('Scanner not set');
         }
+        const logger = this.providers.logProvider();
         const eventBus = this.providers.eventBusProvider()
     
         this.listeners = [
           eventBus.addRemovableListener<EventPayloads.LatestBlockHeightUpdated>(EventType.LatestBlockHeightUpdated, this.onLatestBlockHeightUpdated),
           eventBus.addRemovableListener<EventPayloads.ProcessedBlockHeightUpdated>(EventType.ProcessedBlockHeightUpdated, this.onProcessedBlockHeightUpdated),
         ]
-        this.running = true
+        this.running = true;
+        logger.info('Starting blockchain scanner');
         this.process().then()
     }
 
@@ -82,7 +83,7 @@ export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
         this.latestBlockHeight = ev.blockHeight
     }
     
-    private onProcessedBlockHeightUpdated = (ev: EventPayloads.ProcessedBlockHeightUpdated) => {
+    protected onProcessedBlockHeightUpdated = (ev: EventPayloads.ProcessedBlockHeightUpdated) => {
         this.processedBlockHeight = ev.blockHeight
     }
 
@@ -90,9 +91,16 @@ export class BlockchainScanner<T extends ServiceProvider = ServiceProvider> {
     __setProcessedBlockHeight = (blockHeight: number) => this.processedBlockHeight = blockHeight;
 
     public async process() {
-        
-        throw new Error('Not implemented');
+        const startTime = new Date().getTime();
+        await this._process();
+        if (this.running) {
+            setTimeout(() => this.process().then(), Math.max(this.PROCESS_INTERVAL_MS - (new Date().getTime() - startTime), 0))
+        }
 
+    }
+
+    protected async _process() {
+        throw new Error('Not implemented');
     }
 
 }

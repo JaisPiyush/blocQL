@@ -6,7 +6,8 @@
     "dev": "echo 'Add dev script here'",
     "build": "echo 'Add build script here'",
     "test": "echo 'Add test script here'",
-    "lint": "echo 'Add lint script here'"
+    "lint": "echo 'Add lint script here'",
+    "indexer": "ts-node src/index.ts"
   },
   "dependencies": {
     "commander": "^11.0.0",
