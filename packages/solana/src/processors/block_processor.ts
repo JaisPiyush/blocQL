@@ -24,7 +24,7 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
             slot: data.payload.slot,
             parent_slot: data.payload.parentSlot,
             block_hash: data.payload.blockhash,
-            block_time: data.payload.blockTime as number,
+            block_time: new Date(data.payload.blockTime as number),
             block_height: data.payload.blockHeight,
             block_date: new Date(data.payload.blockTime as number),
             tx_count: block.transactions.length,
@@ -45,13 +45,21 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
             await this.__processReward(data);
         }
 
-        for (const txn of block.transactions) {
+        for (
+            let txnIndex = 0;
+            txnIndex < block.transactions.length;
+            txnIndex++
+        ) {
+            const txn = block.transactions[txnIndex];
             const signature = txn.transaction.signatures[0];
             await dataBroadcasterProvider.broadcast({
                 id: signature,
                 data: {
                     target: SolanaDatBroadcastType.TransactionBroadcast,
-                    payload: signature,
+                    payload: {
+                        index: txnIndex,
+                        signature,
+                    },
                 },
             });
             logger.info(
@@ -87,7 +95,7 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
                     pre_balance: preBalance,
                     block_hash: data.payload.blockhash,
                     slot: data.payload.slot,
-                    block_time: data.payload.blockTime as number,
+                    block_time: new Date(data.payload.blockTime as number),
                 };
             }
         );

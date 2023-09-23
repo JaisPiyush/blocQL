@@ -1,8 +1,8 @@
 export interface SolanaBlockModel {
-    slot: number | string | bigint;
-    parent_slot: number | string | bigint | null;
+    slot: number | bigint;
+    parent_slot: number | bigint | null;
     block_hash: string;
-    block_time: number;
+    block_time: Date;
     block_height: number | null;
     block_date: Date;
     tx_count: number;

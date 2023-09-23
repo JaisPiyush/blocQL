@@ -11,12 +11,19 @@ export enum SolanaDatastoreName {
     TransactionDatastore = 'transactionDatastore',
     TokenDatastore = 'tokenDatastore',
     RewardDatastore = 'rewardDatastore',
+    AccountActivityDatastore = 'accountActivityDatastore',
+    VoteTransactionDatastore = 'voteTransactionDatastore',
 }
 
 export type SolanaBlockMessage = Omit<
     ParsedAccountsModeBlockResponse & { slot: number },
     'transactions'
 >;
+
+export type SolanaTransactionMessage = {
+    index: number;
+    signature: string;
+};
 
 export type BroadcastData<T> = {
     target: SolanaDatBroadcastType;

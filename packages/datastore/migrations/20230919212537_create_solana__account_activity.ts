@@ -10,13 +10,8 @@ export async function up(knex: Knex): Promise<void> {
         table.bigint('slot').notNullable();
         table.timestamp('block_time').notNullable();
         table.bigint('post_balance').notNullable();
-        table.decimal('post_token_balance', 38, 18);
-        table.decimal('pre_token_balance', 38, 18);
         table.bigint('pre_balance').notNullable();
         table.boolean('signed').notNullable().defaultTo(false);
-        table.decimal('token_balance_change', 38, 18);
-        table.string('token_balance_owner');
-        table.string('token_mint_address');
         table.string('tx_id').notNullable();
         table.integer('tx_index').notNullable();
         table.boolean('tx_success').defaultTo(true);

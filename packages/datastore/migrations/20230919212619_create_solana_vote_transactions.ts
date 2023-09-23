@@ -15,17 +15,15 @@ export async function up(knex: Knex): Promise<void> {
             table.bigint('fee').defaultTo(0);
             table.specificType('post_balances', 'bigint[]').defaultTo([]);
             table.specificType('pre_balances', 'bigint[]').defaultTo([]);
-            table.specificType('post_token_balances', 'text[]').defaultTo([]);
-            table.specificType('pre_token_balances', 'text[]').defaultTo([]);
             table.specificType('signatures', 'text[]').defaultTo([]);
             table.string('error').defaultTo(null);
             table.string('block_hash').notNullable();
             table.integer('required_signatures').defaultTo(0);
             table.string('recent_block_hash').notNullable();
-            table.string('vote_account').notNullable();
-            table.string('vote_authority').notNullable();
-            table.bigint('root_slot').notNullable();
-            table.timestamp('root_timestamp').notNullable();
+            table.string('vote_account').defaultTo(null);
+            table.string('vote_authority').defaultTo(null);
+            table.bigint('root_slot').defaultTo(null);
+            table.timestamp('root_timestamp');
 
             table.index('slot', 'idx_solana_vote_txn_slot', {
                 storageEngineIndexType: 'btree',

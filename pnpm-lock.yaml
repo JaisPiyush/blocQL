@@ -204,6 +204,9 @@ importers:
 
   packages/solana:
     dependencies:
+      '@coral-xyz/anchor':
+        specifier: 0.28.1-beta.2
+        version: 0.28.1-beta.2
       '@metaplex-foundation/js':
         specifier: ^0.19.4
         version: 0.19.4
@@ -219,6 +222,9 @@ importers:
       consumer:
         specifier: workspace:*
         version: link:../consumer
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
       scanner:
         specifier: workspace:*
         version: link:../scanner
@@ -226,6 +232,9 @@ importers:
         specifier: workspace:*
         version: link:../types
     devDependencies:
+      '@types/pako':
+        specifier: ^2.0.0
+        version: 2.0.0
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -968,6 +977,31 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@coral-xyz/anchor@0.28.1-beta.2:
+    resolution: {integrity: sha512-xreUcOFF8+IQKWOBUrDKJbIw2ftpRVybFlEPVrbSlOBCbreCWrQ5754Gt9cHIcuBDAzearCDiBqzsGQdNgPJiw==}
+    engines: {node: '>=11'}
+    dependencies:
+      '@coral-xyz/borsh': 0.28.0(@solana/web3.js@1.78.5)
+      '@noble/hashes': 1.3.2
+      '@solana/web3.js': 1.78.5
+      base64-js: 1.5.1
+      bn.js: 5.2.1
+      bs58: 4.0.1
+      buffer-layout: 1.2.2
+      camelcase: 6.3.0
+      cross-fetch: 3.1.8
+      crypto-hash: 1.3.0
+      eventemitter3: 4.0.7
+      pako: 2.1.0
+      snake-case: 3.0.4
+      superstruct: 0.15.5
+      toml: 3.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
+
   /@coral-xyz/borsh@0.26.0(@solana/web3.js@1.78.5):
     resolution: {integrity: sha512-uCZ0xus0CszQPHYfWAqKS5swS1UxvePu83oOF+TWpUkedsNlg6p2p4azxZNSSqwXb9uXMFgxhuMBX9r3Xoi0vQ==}
     engines: {node: '>=10'}
@@ -977,6 +1011,17 @@ packages:
       '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       buffer-layout: 1.2.2
+
+  /@coral-xyz/borsh@0.28.0(@solana/web3.js@1.78.5):
+    resolution: {integrity: sha512-/u1VTzw7XooK7rqeD7JLUSwOyRSesPUk0U37BV9zK0axJc1q0nRbKFGFLYCQ16OtdOJTTwGfGp11Lx9B45bRCQ==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@solana/web3.js': ^1.68.0
+    dependencies:
+      '@solana/web3.js': 1.78.5
+      bn.js: 5.2.1
+      buffer-layout: 1.2.2
+    dev: false
 
   /@cspotcode/source-map-support@0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -2518,6 +2563,10 @@ packages:
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
+    dev: true
+
+  /@types/pako@2.0.0:
+    resolution: {integrity: sha512-10+iaz93qR5WYxTo+PMifD5TSxiOtdRaxBf7INGGXMQgTCu8Z/7GYWYFUOS3q/G0nE5boj1r4FEB+WSy7s5gbA==}
     dev: true
 
   /@types/pino@7.0.5:

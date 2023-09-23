@@ -14,8 +14,6 @@ export async function up(knex: Knex): Promise<void> {
         table.bigint('compute_unit_consumed').defaultTo(0);
         table.specificType('post_balances', 'bigint[]').defaultTo([]);
         table.specificType('pre_balances', 'bigint[]').defaultTo([]);
-        table.specificType('post_token_balances', 'text[]').defaultTo([]);
-        table.specificType('pre_token_balances', 'text[]').defaultTo([]);
         table.specificType('account_keys', 'text[]').defaultTo([]);
         table.specificType('instructions', 'text[]').defaultTo([]);
         table.specificType('signatures', 'text[]').defaultTo([]);
