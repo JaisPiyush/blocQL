@@ -213,18 +213,12 @@ importers:
       '@project-serum/anchor':
         specifier: ^0.26.0
         version: 0.26.0
-      '@project-serum/borsh':
-        specifier: ^0.2.5
-        version: 0.2.5(@solana/web3.js@1.78.5)
       '@solana/web3.js':
         specifier: ^1.78.5
         version: 1.78.5
       consumer:
         specifier: workspace:*
         version: link:../consumer
-      pako:
-        specifier: ^2.1.0
-        version: 2.1.0
       scanner:
         specifier: workspace:*
         version: link:../scanner
@@ -232,9 +226,6 @@ importers:
         specifier: workspace:*
         version: link:../types
     devDependencies:
-      '@types/pako':
-        specifier: ^2.0.0
-        version: 2.0.0
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -1864,6 +1855,7 @@ packages:
       '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       buffer-layout: 1.2.2
+    dev: true
 
   /@randlabs/communication-bridge@1.0.1:
     resolution: {integrity: sha512-CzS0U8IFfXNK7QaJFE4pjbxDGfPjbXBEsEaCn9FN15F+ouSAEUQkva3Gl66hrkBZOGexKFEWMwUHIDKpZ2hfVg==}
@@ -2563,10 +2555,6 @@ packages:
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
-    dev: true
-
-  /@types/pako@2.0.0:
-    resolution: {integrity: sha512-10+iaz93qR5WYxTo+PMifD5TSxiOtdRaxBf7INGGXMQgTCu8Z/7GYWYFUOS3q/G0nE5boj1r4FEB+WSy7s5gbA==}
     dev: true
 
   /@types/pino@7.0.5:
