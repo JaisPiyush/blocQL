@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
 
-const PG_READ_ONLY_USER = process.env['POSTGRES_READ_USER'];
-const PG_READ_ONLY_PASSWORD = process.env['POSTGRES_READ_PASSWORD'];
-const POSTGRES_DB = process.env['POSTGRES_DATABASE'];
+const PG_READ_ONLY_USER = process.env['SOLANA_POSTGRES_READ_USER'];
+const PG_READ_ONLY_PASSWORD = process.env['SOLANA_POSTGRES_READ_PASSWORD'];
+const POSTGRES_DB = process.env['SOLANA_POSTGRES_DATABASE'];
 
 export async function up(knex: Knex): Promise<void> {
     if (!PG_READ_ONLY_USER && !PG_READ_ONLY_PASSWORD && !POSTGRES_DB) {
