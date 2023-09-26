@@ -1,7 +1,7 @@
 import { FetchedDataProcessor, Scanner } from 'scanner';
 import { SolanaBlockchainScanner } from './solana_blockchain_scanner';
 import { EventPayloads, EventType, ServiceProvider } from 'types';
-import { SolanaDatBroadcastType } from '../types';
+import { SolanaDataBroadcastType } from '../types';
 
 export class SolanaFetchedDataProcessor extends FetchedDataProcessor<SolanaBlockchainScanner> {
     public async process(
@@ -18,14 +18,14 @@ export class SolanaFetchedDataProcessor extends FetchedDataProcessor<SolanaBlock
                 await scanner.providers.settingsServiceProvider();
             if (scanner.blockChainScanner.fetchedBlockPayloads) {
                 const eventBroadcaster =
-                    await scanner.providers.dataBroadcasterProvider(SolanaDatBroadcastType.BlockBroadcast);
+                    await scanner.providers.dataBroadcasterProvider(SolanaDataBroadcastType.BlockBroadcast);
                 for (const blockPayload of scanner.blockChainScanner
                     .fetchedBlockPayloads) {
                     blockPayload.data.transactions = [];
                     await eventBroadcaster.broadcast({
                         id: blockPayload.blockSlot.toString(),
                         data: {
-                            target: SolanaDatBroadcastType.BlockBroadcast,
+                            target: SolanaDataBroadcastType.BlockBroadcast,
                             payload: {
                                 slot: blockPayload.blockSlot,
                                 ...blockPayload.data,

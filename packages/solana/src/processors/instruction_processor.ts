@@ -1,6 +1,6 @@
 import {
     BroadcastData,
-    SolanaDatBroadcastType,
+    SolanaDataBroadcastType,
     SolanaDatastoreName,
     SolanaInstructionDecoderFn,
     SolanaInstructionsMessage,
@@ -285,7 +285,7 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
             this.idlDecoders.clear();
 
             await this.tokenMetadataProcessor.__process({
-                target: SolanaDatBroadcastType.TokenBroadcast,
+                target: SolanaDataBroadcastType.TokenBroadcast,
                 payload: tokens,
             });
         } catch (err) {

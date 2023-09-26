@@ -6,7 +6,7 @@ import { SolanaInstructionProcessorDecodedData } from 'types';
 import { SolanaBlockModel } from 'types/src/models/solana/block';
 import { SolanaTransactionModel } from 'types/src/models/solana/transaction';
 
-export enum SolanaDatBroadcastType {
+export enum SolanaDataBroadcastType {
     BlockBroadcast = 'blockBroadCast',
     TokenBroadcast = 'tokenBroadcast',
     TransactionBroadcast = 'transactionBroadcast',
@@ -41,7 +41,7 @@ export type SolanaInstructionsMessage = {
 };
 
 export type BroadcastData<T> = {
-    target: SolanaDatBroadcastType;
+    target: SolanaDataBroadcastType;
     payload: T;
 };
 

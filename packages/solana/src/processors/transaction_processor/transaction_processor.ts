@@ -1,7 +1,7 @@
 import { ParsedInstruction, ParsedTransactionWithMeta } from '@solana/web3.js';
 import {
     BroadcastData,
-    SolanaDatBroadcastType,
+    SolanaDataBroadcastType,
     SolanaDatastoreName,
     SolanaTransactionMessage,
 } from '../../types';
@@ -117,7 +117,7 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
             `Inserted transaction ${txnModel.signature} into datastore`
         );
         await this.instructionProcessor.__process({
-            target: SolanaDatBroadcastType.InstructionBroadcast,
+            target: SolanaDataBroadcastType.InstructionBroadcast,
             payload: {
                 txnIndex,
                 block,

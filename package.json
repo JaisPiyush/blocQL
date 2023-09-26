@@ -9,7 +9,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "migrate:latest": "dotenv -- pnpm --filter datastore run migrate:latest",
     "migrate:rollback": "dotenv -- pnpm --filter datastore run migrate:rollback",
-    "indexer": "dotenv -- pnpm --filter indexer run indexer"
+    "indexer": "dotenv -- pnpm --filter indexer run indexer",
+    "consumer": "dotenv -- pnpm --filter consumer run consumer"
   },
   "devDependencies": {
     "@metaplex-foundation/js": "^0.19.4",

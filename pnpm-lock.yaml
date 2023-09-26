@@ -56,6 +56,9 @@ importers:
       commander:
         specifier: ^11.0.0
         version: 11.0.0
+      datastore:
+        specifier: workspace:*
+        version: link:../../packages/datastore
       pino:
         specifier: ^8.15.1
         version: 8.15.1

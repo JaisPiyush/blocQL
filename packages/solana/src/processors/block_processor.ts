@@ -1,7 +1,7 @@
 import {
     BroadcastData,
     SolanaBlockMessage,
-    SolanaDatBroadcastType,
+    SolanaDataBroadcastType,
     SolanaDatastoreName,
 } from '../types';
 import { SolanaProcessor } from './processor';
@@ -19,7 +19,7 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
                 SolanaDatastoreName.BlockDatastore
             );
             const dataBroadcasterProvider =
-                await this.providers.dataBroadcasterProvider(SolanaDatBroadcastType.TransactionBroadcast);
+                await this.providers.dataBroadcasterProvider(SolanaDataBroadcastType.TransactionBroadcast);
             const block = await serviceProvider.getBlock(data.payload.slot);
             const _block: SolanaBlockModel = {
                 slot: data.payload.slot,
@@ -56,7 +56,7 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
                 await dataBroadcasterProvider.broadcast({
                     id: signature,
                     data: {
-                        target: SolanaDatBroadcastType.TransactionBroadcast,
+                        target: SolanaDataBroadcastType.TransactionBroadcast,
                         payload: {
                             index: txnIndex,
                             signature,
