@@ -1,14 +1,23 @@
 import { ParsedInstruction, ParsedTransactionWithMeta } from '@solana/web3.js';
 import {
     BroadcastData,
+    SolanaDatBroadcastType,
     SolanaDatastoreName,
     SolanaTransactionMessage,
 } from '../../types';
 import { SolanaBlockModel } from 'types/src/models/solana/block';
 import { SolanaVoteTransactionModel } from 'types/src/models/solana/transaction';
 import { BaseSolanaTransactionProcessor } from './base';
+import { SolanaProcessorProvider } from '../processor';
+import { SolanaInstructionsProcessor } from '../instruction_processor';
 
 export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
+    private readonly instructionProcessor: SolanaInstructionsProcessor;
+    constructor(providers: SolanaProcessorProvider) {
+        super(providers);
+        this.instructionProcessor = new SolanaInstructionsProcessor(providers);
+    }
+
     protected async __process(
         data: BroadcastData<SolanaTransactionMessage>
     ): Promise<void> {
@@ -99,6 +108,15 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
         logger.info(
             `Inserted transaction ${txnModel.signature} into datastore`
         );
-        //TODO: Instruction processor
+        await this.instructionProcessor.__process({
+            target: SolanaDatBroadcastType.InstructionBroadcast,
+            payload: {
+                txnIndex,
+                block,
+                rawTxn: txn,
+                txn: txnModel
+            }
+        });
+        
     }
 }

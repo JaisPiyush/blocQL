@@ -89,7 +89,8 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
         innerInstructionIndex: number | null;
         txn: SolanaTransactionModel;
         mainProgramId?: string;
-    }): SolanaInstructionCallModel {
+    }): [SolanaInstructionCallModel, string[]] {
+        const tokens: string[] = [];
         const partialCallData: Omit<
             SolanaInstructionCallModel,
             'data' | 'program' | 'raw_data'
@@ -121,32 +122,38 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
 
         if ((data.instruction as ParsedInstruction).parsed) {
             const ins = data.instruction as ParsedInstruction;
-            return {
+            if (ins.parsed.info.mint) {
+                tokens.push(ins.parsed.info.mint);
+            }
+            return [{
                 ...partialCallData,
                 data: ins.parsed.info,
                 program: ins.program,
                 instruction_name: ins.parsed.type,
-            };
+            }, tokens];
         }
         const ins = data.instruction as PartiallyDecodedInstruction;
         const decoded = this.decode(ins.programId.toString(), ins.data);
         if (decoded) {
-            return {
+            if (decoded.args && decoded.args.mint) {
+                tokens.push(decoded.args.mint);
+            }
+            return [{
                 ...partialCallData,
                 data: decoded.args,
                 program: null,
                 raw_data: ins.data,
                 instruction_name: decoded.name,
                 accounts: ins.accounts.map((acc) => acc.toString()),
-            };
+            }, tokens];
         }
-        return {
+        return [{
             ...partialCallData,
             data: null,
             program: null,
             raw_data: ins.data,
             accounts: ins.accounts.map((acc) => acc.toString()),
-        };
+        }, tokens];
     }
 
     public async __preSetupIdlCoders(programIds: string[]) {
@@ -184,7 +191,7 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
         }
     }
 
-    protected async __process(
+    public async __process(
         data: BroadcastData<SolanaInstructionsMessage>
     ): Promise<void> {
         const logger = this.providers.logProvider();
@@ -199,14 +206,16 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
             data.payload.rawTxn.transaction.message.instructions.map((ins) =>
                 ins.programId.toString()
             );
+        logger.info(`Preparing Idl decoders for programs`)
         await this.__preSetupIdlCoders(programIds);
 
         const instructionCalls: SolanaInstructionCallModel[] = [];
+        let tokens: string[] = [];
         for (const [
             index,
             instruction,
         ] of data.payload.rawTxn.transaction.message.instructions.entries()) {
-            const instructionModel = this.getInstructionModel({
+            const [instructionModel, _tokens] = this.getInstructionModel({
                 instruction,
                 index,
                 isInner: false,
@@ -215,6 +224,7 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
                 mainProgramId: instruction.programId.toString(),
             });
             instructionCalls.push(instructionModel);
+            tokens = [...tokens, ..._tokens];
         }
         if (data.payload.rawTxn.meta!.innerInstructions) {
             for (const innerInstructions of data.payload.rawTxn.meta!
@@ -223,7 +233,7 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
                     index,
                     instruction,
                 ] of innerInstructions.instructions.entries()) {
-                    const instructionModel = this.getInstructionModel({
+                    const [instructionModel, _tokens] = this.getInstructionModel({
                         instruction,
                         index: innerInstructions.index,
                         isInner: true,
@@ -235,6 +245,7 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
                             ].programId.toString(),
                     });
                     instructionCalls.push(instructionModel);
+                    tokens = [...tokens, ..._tokens];
                 }
             }
         }
@@ -246,5 +257,9 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
         // Clear the decoders
         this.idlDecoders.clear();
         // TODO: Add the step to scrap token metadata
+    }
+
+    private async __processTokenMetadata(tokens: string[]) {
+        //TODO: Fetch and store token metadata
     }
 }

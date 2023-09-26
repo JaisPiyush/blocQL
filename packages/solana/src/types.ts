@@ -10,6 +10,7 @@ export enum SolanaDatBroadcastType {
     BlockBroadcast = 'blockBroadCast',
     TokenBroadcast = 'tokenBroadcast',
     TransactionBroadcast = 'transactionBroadcast',
+    InstructionBroadcast = 'instructionBroadcast',
 }
 
 export enum SolanaDatastoreName {
