@@ -5,7 +5,7 @@ import {
     SolanaInstructionsMessage,
 } from '../types';
 import { SolanaProcessor } from './processor';
-import { Provider, Program } from '@project-serum/anchor';
+import { Provider, Program, web3, BN } from '@project-serum/anchor';
 import { BorshCoder } from '@coral-xyz/anchor';
 import { SolanaTransactionModel } from 'types/src/models/solana/transaction';
 import {
@@ -15,9 +15,13 @@ import {
 import { SolanaInstructionCallModel } from 'types/src/models/solana/instruction_call';
 import { BaseIdlDecoder } from '../idl/base';
 import { SolanaInstructionProcessorDecodedData } from 'types';
+import { MplTokenMetadataIdlDecoder } from '../idl/mpl-token-metadata';
+
 
 export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructionsMessage> {
-    private __offlineIdlDecoders = new Map<string, typeof BaseIdlDecoder>([]);
+    private __offlineIdlDecoders = new Map<string, typeof BaseIdlDecoder>([
+        ["metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s", MplTokenMetadataIdlDecoder]
+    ]);
 
     private idlDecoders = new Map<string, SolanaInstructionDecoderFn>([]);
 
@@ -45,9 +49,16 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
         data: string,
         encode = 'base58'
     ): SolanaInstructionProcessorDecodedData | null {
-        // TODO: Write a way to load coder from file or on-chain and maintain a cache for life of the class
+
         if (this.idlDecoders.has(programId)) {
-            return this.idlDecoders.get(programId)!(data, encode);
+            const decoded =  this.idlDecoders.get(programId)!(data, encode);
+            if (!decoded) {
+                return null;
+            }
+            return {
+                name: decoded.name,
+                args: decoded.args ? this.__argParser(decoded.args): decoded.args,
+            }
         }
         return {
             name: 'unknown',
@@ -56,6 +67,17 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
     }
 
     public __getInstructionModel = this.getInstructionModel;
+
+
+    private __argParser(data: Record<string, any>): any {
+        for (const [key, value] of Object.entries(data)) {
+            if (typeof value === 'bigint' || value instanceof BN || value instanceof web3.PublicKey) {
+                data[key] = value.toString();
+            } 
+        }  
+        
+        return data;
+    }
 
     private getInstructionModel({
         innerInstructionIndex = null,
@@ -127,7 +149,7 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
         };
     }
 
-    private async __preSetupIdlCoders(programIds: string[]) {
+    public async __preSetupIdlCoders(programIds: string[]) {
         const serviceProvider = await this.providers.serviceProvider();
         const provider = { connection: serviceProvider.connection };
 
@@ -138,7 +160,10 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
             if (this.__offlineIdlDecoders.has(programId)) {
                 this.idlDecoders.set(
                     programId,
-                    new (this.__offlineIdlDecoders.get(programId)!)().decode
+                    (data, encode) => {
+                        const decoder = new (this.__offlineIdlDecoders.get(programId)!)()
+                        return decoder.decode(data, encode);
+                    }
                 );
                 continue;
             }

@@ -7,12 +7,17 @@
   "scripts": {
     "dev": "echo 'Add dev script here'",
     "build": "echo 'Add build script here'",
-    "test": "echo 'Add test script here'",
+    "test": "mocha",
     "lint": "echo 'Add lint script here'"
   },
   "devDependencies": {
     "@metaplex-foundation/kinobi": "^0.15.1",
+    "@types/chai": "^4.3.6",
+    "@types/mocha": "^10.0.1",
     "borsh": "^1.0.0",
+    "chai": "^4.3.8",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
     "tsconfig": "workspace:*",
     "typescript": "^4.5.2"
   },

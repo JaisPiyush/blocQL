@@ -259,6 +259,21 @@ importers:
       '@metaplex-foundation/kinobi':
         specifier: ^0.15.1
         version: 0.15.1
+      '@types/chai':
+        specifier: ^4.3.6
+        version: 4.3.6
+      '@types/mocha':
+        specifier: ^10.0.1
+        version: 10.0.1
+      chai:
+        specifier: ^4.3.8
+        version: 4.3.8
+      mocha:
+        specifier: ^10.2.0
+        version: 10.2.0
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@20.6.3)(typescript@4.9.5)
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -6051,6 +6066,7 @@ packages:
   /nanoid@3.3.6:
     resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
     dev: false
 
   /natural-compare@1.4.0:

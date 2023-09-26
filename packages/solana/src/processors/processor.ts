@@ -3,7 +3,7 @@ import { SolanaServiceProvider } from '../scanner/providers/solana_service_provi
 import { BroadcastData } from '../types';
 import { DatastoreProvider } from 'types';
 
-type SolanaProcessorProvider = {
+export type SolanaProcessorProvider = {
     serviceProvider: ProvidersOptions<SolanaServiceProvider>['serviceProvider'];
     dataBroadcasterProvider: ProvidersOptions<SolanaServiceProvider>['dataBroadcasterProvider'];
     logProvider?: ProvidersOptions<SolanaServiceProvider>['logProvider'];
