@@ -1,6 +1,6 @@
 import { logger } from './logger';
 
-export const runScanner = async (
+export const runner = async (
     start: () => Promise<void>,
     stop: () => Promise<void>
 ) => {
@@ -33,3 +33,9 @@ export const runScanner = async (
     await stop();
     process.exit(0);
 };
+
+export const runScanner = runner;
+
+
+
+

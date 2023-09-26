@@ -1,10 +1,10 @@
-import {expect} from 'chai'
+import { expect } from 'chai';
 
-import { SolanaTransactionModel } from "types/src/models/solana/transaction";
+import { SolanaTransactionModel } from 'types/src/models/solana/transaction';
 import { SolanaInstructionsProcessor } from './instruction_processor';
 import { SolanaProcessorProvider } from './processor';
 import { solanaServiceProvider } from '../scanner';
-import * as web3 from '@solana/web3.js'
+import * as web3 from '@solana/web3.js';
 import { ConsoleDataBroadcaster } from 'scanner/src/broadcaster/console_data_broadcaster';
 import { nullDataStoreProvider } from 'types';
 
@@ -53,7 +53,6 @@ const instructions = [
     },
 ];
 
-
 const txn: SolanaTransactionModel = {
     signature: 'txn-signature',
     slot: 123,
@@ -71,7 +70,7 @@ const txn: SolanaTransactionModel = {
     block_hash: 'block-hash',
     required_signatures: 1,
     recent_block_hash: 'recent-block-hash',
-}
+};
 
 describe('instruction_processor', function () {
     this.timeout(5000);
@@ -80,17 +79,19 @@ describe('instruction_processor', function () {
         maxRequestPerSecond: 10,
         defaultStartBlockHeight: 218827117,
     });
-    const _solanaServiceProvider = solanaServiceProvider(solanaTestConfigProvider);
+    const _solanaServiceProvider = solanaServiceProvider(
+        solanaTestConfigProvider
+    );
     const providers: SolanaProcessorProvider = {
         serviceProvider: _solanaServiceProvider,
         dataBroadcasterProvider: async () => new ConsoleDataBroadcaster(),
         datastoreProvider: nullDataStoreProvider,
-    }
+    };
     const processor = new SolanaInstructionsProcessor(providers);
 
     before(async () => {
         const programIds = instructions.map((ins) => ins.programId);
-        await processor.__preSetupIdlCoders(programIds)
+        await processor.__preSetupIdlCoders(programIds);
     });
     it('should be able to process fully parsed instruction', () => {
         const instruction = processor.__getInstructionModel({
@@ -98,7 +99,7 @@ describe('instruction_processor', function () {
                 program: instructions[0].program,
                 programId: new web3.PublicKey(instructions[0].programId),
                 parsed: instructions[0].parsed,
-            }as web3.ParsedInstruction,
+            } as web3.ParsedInstruction,
             index: 0,
             isInner: true,
             mainProgramId: instructions[0].programId,
@@ -134,7 +135,9 @@ describe('instruction_processor', function () {
             instruction: {
                 programId: new web3.PublicKey(instructions[1].programId),
                 data: instructions[1].data,
-                accounts: instructions[1].accounts!.map((acc) => new web3.PublicKey(acc)),
+                accounts: instructions[1].accounts!.map(
+                    (acc) => new web3.PublicKey(acc)
+                ),
             } as web3.PartiallyDecodedInstruction,
             index: 0,
             isInner: false,
@@ -153,9 +156,7 @@ describe('instruction_processor', function () {
             instruction_index: 0,
             is_inner: false,
             program_id: instructions[1].programId,
-            accounts: [
-                '65MjuX2uqTLLovtAb77LWF3rPJYCy9hEETQT85ns2Ynm',
-            ],
+            accounts: ['65MjuX2uqTLLovtAb77LWF3rPJYCy9hEETQT85ns2Ynm'],
             main_program_id: instructions[1].programId,
             inner_instructions: [],
             instruction_name: 'unknown',
@@ -163,7 +164,7 @@ describe('instruction_processor', function () {
             data: null,
             program: null,
             raw_data: instructions[1].data,
-    })
+        });
     });
 
     it('should be able to process partially decoded instruction with known program', () => {
@@ -171,7 +172,9 @@ describe('instruction_processor', function () {
             instruction: {
                 programId: new web3.PublicKey(instructions[2].programId),
                 data: instructions[2].data,
-                accounts: instructions[2].accounts!.map((acc) => new web3.PublicKey(acc)),
+                accounts: instructions[2].accounts!.map(
+                    (acc) => new web3.PublicKey(acc)
+                ),
             } as web3.PartiallyDecodedInstruction,
             index: 0,
             isInner: false,
@@ -197,11 +200,10 @@ describe('instruction_processor', function () {
             id: `${txn.signature}.0`,
             data: {
                 amount: '1',
-                authorizationData: null
+                authorizationData: null,
             },
             program: null,
             raw_data: instructions[2].data,
-    });
+        });
     });
 });
-

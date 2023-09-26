@@ -10,13 +10,14 @@ export type DatastoreProvider = (
     storeName: string
 ) => Promise<DatastoreInterface>;
 
-
-export async function nullDataStoreProvider(storeName: string): Promise<DatastoreInterface> {
+export async function nullDataStoreProvider(
+    storeName: string
+): Promise<DatastoreInterface> {
     return {
         insert: async (data: any) => {},
         get: async (data: any) => null,
         update: async () => {},
         find: async () => [],
         batchInsert: async () => {},
-    }
+    };
 }

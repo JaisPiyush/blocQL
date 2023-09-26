@@ -8,4 +8,4 @@ export interface DataBroadcasterInterface {
     destroy?: () => Promise<void>;
 }
 
-export type DataBroadcasterProvider = () => Promise<DataBroadcasterInterface>;
+export type DataBroadcasterProvider = (t?: string) => Promise<DataBroadcasterInterface>;

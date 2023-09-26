@@ -26,40 +26,23 @@ export class SQSConsumer {
     AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
 
     // @property {SQSClient} sqs
-    sqs;
+    sqs: SQSClient;
 
     // @property {Consumer} app
-    app;
-
-    /**
-     * @async
-     * @callback handleMessageCallback
-     * @param {any} message
-     * 
-     * @callback consumerErrorCallback
-     * @param {object} err
-     * 
-     * @typedef {Object} SQSConsumerErrorOptions
-     *  @property {consumerErrorCallback} [error]
-     *  @property {consumerErrorCallback} [processingError]
-     *  @property {consumerErrorCallback} [timeoutError]
-     * 
-     * @typedef {Object} SQSConsumerOptions
-     *  @property {string} queueUrl
-     *  @property {handleMessageCallback} handleMessage
-     *  @property {string} [region]
-     *  @property {string} [accessKeyId]
-     *  @property {string} [secretAccessKey]
-     *  @property {number} [pollingWaitTimeMs]
-     *  @property {SQSConsumerErrorOptions} [error]
-     *  
-     * @param {SQSConsumerOptions} data
-     * 
-     * @throws {Error} AWS_REGION is required
-     * @throws {Error} AWS_ACCESS_KEY_ID is required
-     * @throws {Error} AWS_SECRET_ACCESS_KEY is required
-     */
-    constructor(data) {
+    app: Consumer;
+    constructor(data: {
+        queueUrl: string,
+        handleMessage: (message: any) => Promise<void>,
+        region?: string,
+        accessKeyId?: string,
+        secretAccessKey?: string,
+        pollingWaitTimeMs?: number,
+        error? :{
+            error?: (err: any) => void,
+            processingError?: (err: any) => void,
+            timeoutError?: (err: any) => void
+        }
+    }) {
         let _queueUrl = data.queueUrl;
         let _handleMessage = data.handleMessage;
         let _region = data.region || process.env[this.AWS_REGION];
@@ -77,7 +60,7 @@ export class SQSConsumer {
             pollingWaitTimeMs: _pollingWaitTimeMs
         });
 
-        let logCallback = (err) => {console.log(err)}
+        let logCallback = (err: any) => {console.log(err)}
 
         let _error = data.error || {};
         this.app.on('error', _error.error || logCallback);
@@ -91,13 +74,13 @@ export class SQSConsumer {
      * @method
      */
     start() {
-        if (this.app.isRunning()) return;
+        if (this.app.isRunning) return;
         this.app.start();
     }
 
     // @property {boolean} isRunning
     get isRunning() {
-        return this.app.isRunning();
+        return this.app.isRunning;
     }
 
     /**
@@ -106,7 +89,7 @@ export class SQSConsumer {
      * @param {boolean} [abort=true] - default true
     **/
     stop(abort = true) {
-        if (!this.app.isRunning()) return;
+        if (!this.app.isRunning) return;
         this.app.stop({abort});
     }
     
@@ -115,7 +98,7 @@ export class SQSConsumer {
      * @param {string} event 
      * @param {callback} callback 
      */
-    on(event, callback) {
+    on(event: any, callback: (...args:any) => void) {
         this.app.on(event, callback);
     }
 

@@ -1,10 +1,9 @@
-import { Knex } from "knex";
-import { TableNames } from "../src/constants";
-
+import { Knex } from 'knex';
+import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
     await knex.schema.createTable(TableNames.SolanaTokensMetadata, (table) => {
-        table.string("address").primary();
+        table.string('address').primary();
         table.string('model');
         table.string('update_authority_address');
         table.jsonb('json').defaultTo(null);
@@ -24,34 +23,27 @@ export async function up(knex: Knex): Promise<void> {
         table.jsonb('programmable_config').defaultTo(null);
         table.string('metadata_address').defaultTo(null);
         table.string('freeze_authority_address').defaultTo(null);
-        table.integer('supply').defaultTo(0);
-        table.bigint('supply_basis_points').defaultTo(0);
-        table.jsonb('supply_currency').defaultTo(null);
+        table.jsonb('supply').defaultTo(0);
         table.boolean('is_wrapped_sol').defaultTo(false);
-        table.string('currency_symbol').defaultTo(null);
-        table.integer('currency_decimals').defaultTo(0);
-        table.string('currency_namespace').defaultTo('spl-token');
+        table.jsonb('currency').defaultTo(null);
+        table.integer('decimals').defaultTo(0);
         table.jsonb('edition').defaultTo(null);
         table.string('image').defaultTo(null);
         table.string('description').defaultTo(null);
         table.string('uri');
         table.specificType('attributes', 'json[]').defaultTo(null);
-        
+
         table.index('model', 'idx_solana_tokens_metadata_model', {
-            storageEngineIndexType: 'hash'
+            storageEngineIndexType: 'hash',
         });
 
         table.index('is_mutable', 'idx_solana_tokens_metadata_is_mutable', {
-            storageEngineIndexType: 'btree'
+            storageEngineIndexType: 'btree',
         });
 
         table.index('json_loaded', 'idx_solana_tokens_metadata_json_loaded', {
-            storageEngineIndexType: 'btree'
+            storageEngineIndexType: 'btree',
         });
-
-
-
-
     });
 
     // Create GIN Indexes
@@ -67,11 +59,8 @@ export async function up(knex: Knex): Promise<void> {
     await knex.raw(
         `CREATE INDEX idx_solana_tokens_edition ON ${TableNames.SolanaTokensMetadata} USING GIN (edition)`
     );
-
 }
-
 
 export async function down(knex: Knex): Promise<void> {
     await knex.schema.dropTable(TableNames.SolanaTokensMetadata);
 }
-

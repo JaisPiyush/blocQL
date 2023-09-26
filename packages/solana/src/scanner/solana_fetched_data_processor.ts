@@ -18,7 +18,7 @@ export class SolanaFetchedDataProcessor extends FetchedDataProcessor<SolanaBlock
                 await scanner.providers.settingsServiceProvider();
             if (scanner.blockChainScanner.fetchedBlockPayloads) {
                 const eventBroadcaster =
-                    await scanner.providers.dataBroadcasterProvider();
+                    await scanner.providers.dataBroadcasterProvider(SolanaDatBroadcastType.BlockBroadcast);
                 for (const blockPayload of scanner.blockChainScanner
                     .fetchedBlockPayloads) {
                     blockPayload.data.transactions = [];

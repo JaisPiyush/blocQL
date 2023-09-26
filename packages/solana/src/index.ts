@@ -4,3 +4,4 @@ export { web3 };
 
 export * from './scanner';
 export * from './scanner/providers';
+export * from './consumer';

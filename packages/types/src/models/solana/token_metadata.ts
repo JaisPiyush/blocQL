@@ -19,25 +19,25 @@ export interface SolanaTokenMetadataModel {
     token_standard: number | null;
     collection: {
         verified: boolean;
-        key: string;
         address: string;
     } | null;
     collection_details: any | null;
     programmable_config: {
         __kind: string;
-        rule_set: string;
-        address: string;
-        metadata_address: string;
+        rule_set?: string;
     } | null;
-    metadata_address: string;
-    freeze_authority_address: string;
-    supply: number;
-    supply_basis_points: number;
-    supply_currency: any;
+    metadata_address?: string;
+    freeze_authority_address?: string;
+    supply: {
+        basis_points: number;
+        currency: {
+            symbol: string;
+            decimals: number;
+            namespace: string;
+        };
+    } | null;
     is_wrapped_sol: boolean;
-    currency_symbol: string;
-    currency_decimals: number;
-    currency_namespace: string;
+    decimals: number;
     edition: {
         model: string;
         is_original: boolean;
@@ -45,7 +45,9 @@ export interface SolanaTokenMetadataModel {
         supply: number;
         max_supply: number;
     } | null;
-    image: string;
-    description: string;
-    attributes: {value: unknown, trait_type: string}[];
+    image?: string | null;
+    description?: string | null;
+    attributes?:
+        | { value?: string; trait_type?: string; [key: string]: unknown }[]
+        | null;
 }

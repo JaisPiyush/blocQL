@@ -21,39 +21,47 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
     protected async __process(
         data: BroadcastData<SolanaTransactionMessage>
     ): Promise<void> {
-        const serviceProvider = await this.providers.serviceProvider();
         const logger = this.providers.logProvider();
-        const blockDatastore = await this.providers.datastoreProvider(
-            SolanaDatastoreName.BlockDatastore
-        );
-        const { index: txnIndex, signature } = data.payload;
-        const txn = await serviceProvider.getTransaction(signature);
+        try {
+            const serviceProvider = await this.providers.serviceProvider();
+            const blockDatastore = await this.providers.datastoreProvider(
+                SolanaDatastoreName.BlockDatastore
+            );
+            const { index: txnIndex, signature } = data.payload;
+            const txn = await serviceProvider.getTransaction(signature);
 
-        if (!txn) {
-            logger.warn(`Transaction not found: ${signature}`);
-            return;
+            if (!txn) {
+                logger.warn(`Transaction not found: ${signature}`);
+                return;
+            }
+            const blocks = await blockDatastore.find<
+                SolanaBlockModel,
+                { slot: number | bigint }
+            >({ slot: txn!.slot });
+            if (blocks.length === 0) {
+                throw new Error(`Block not found: ${txn!.slot}`);
+            }
+            const block = blocks[0];
+            const instructions = txn.transaction.message.instructions;
+            if (instructions.length === 0) {
+                logger.warn(`Transaction has no instructions: ${signature}`);
+                return;
+            }
+            const firstInstruction = instructions[0];
+            if (
+                firstInstruction.programId.toString() === this.VOTE_PROGRAM_ID
+            ) {
+                await this._processVoteTransaction(txnIndex, block, txn);
+            } else {
+                await this._processNonVoteTransaction(txnIndex, block, txn);
+            }
+            await this._processBalanceChangeInTransaction(txnIndex, block, txn);
+            logger.info(`Transaction processed: ${signature}`);
+        } catch (err) {
+            logger.error(
+                `SolanaTransactionProcessor Error processing transaction ${data.payload.signature}: ${err}`
+            );
         }
-        const blocks = await blockDatastore.find<
-            SolanaBlockModel,
-            { slot: number | bigint }
-        >({ slot: txn!.slot });
-        if (blocks.length === 0) {
-            throw new Error(`Block not found: ${txn!.slot}`);
-        }
-        const block = blocks[0];
-        const instructions = txn.transaction.message.instructions;
-        if (instructions.length === 0) {
-            logger.warn(`Transaction has no instructions: ${signature}`);
-            return;
-        }
-        const firstInstruction = instructions[0];
-        if (firstInstruction.programId.toString() === this.VOTE_PROGRAM_ID) {
-            await this._processVoteTransaction(txnIndex, block, txn);
-        } else {
-            await this._processNonVoteTransaction(txnIndex, block, txn);
-        }
-        await this._processBalanceChangeInTransaction(txnIndex, block, txn);
-        logger.info(`Transaction processed: ${signature}`);
     }
 
     private async _processVoteTransaction(
@@ -114,9 +122,8 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
                 txnIndex,
                 block,
                 rawTxn: txn,
-                txn: txnModel
-            }
+                txn: txnModel,
+            },
         });
-        
     }
 }

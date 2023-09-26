@@ -10,6 +10,7 @@
     "indexer": "ts-node src/index.ts"
   },
   "dependencies": {
+    "aws-sdk": "^2.1459.0",
     "commander": "^11.0.0",
     "pino": "^8.15.1",
     "pino-pretty": "^10.2.0",
