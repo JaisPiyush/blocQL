@@ -91,27 +91,39 @@ export async function getMint(
  *
  * @return Unpacked mint
  */
-export function unpackMint(address: PublicKey, info: AccountInfo<Buffer> | null, programId = TOKEN_PROGRAM_ID): Mint {
+export function unpackMint(
+    address: PublicKey,
+    info: AccountInfo<Buffer> | null,
+    programId = TOKEN_PROGRAM_ID
+): Mint {
     if (!info) throw new TokenAccountNotFoundError();
-    if (!info.owner.equals(programId)) throw new TokenInvalidAccountOwnerError();
+    if (!info.owner.equals(programId))
+        throw new TokenInvalidAccountOwnerError();
     if (info.data.length < MINT_SIZE) throw new TokenInvalidAccountSizeError();
 
     const rawMint = MintLayout.decode(info.data.slice(0, MINT_SIZE));
     let tlvData = Buffer.alloc(0);
     if (info.data.length > MINT_SIZE) {
-        if (info.data.length <= ACCOUNT_SIZE) throw new TokenInvalidAccountSizeError();
-        if (info.data.length === MULTISIG_SIZE) throw new TokenInvalidAccountSizeError();
-        if (info.data[ACCOUNT_SIZE] != AccountType.Mint) throw new TokenInvalidMintError();
+        if (info.data.length <= ACCOUNT_SIZE)
+            throw new TokenInvalidAccountSizeError();
+        if (info.data.length === MULTISIG_SIZE)
+            throw new TokenInvalidAccountSizeError();
+        if (info.data[ACCOUNT_SIZE] != AccountType.Mint)
+            throw new TokenInvalidMintError();
         tlvData = info.data.slice(ACCOUNT_SIZE + ACCOUNT_TYPE_SIZE);
     }
 
     return {
         address,
-        mintAuthority: rawMint.mintAuthorityOption ? rawMint.mintAuthority : null,
+        mintAuthority: rawMint.mintAuthorityOption
+            ? rawMint.mintAuthority
+            : null,
         supply: rawMint.supply,
         decimals: rawMint.decimals,
         isInitialized: rawMint.isInitialized,
-        freezeAuthority: rawMint.freezeAuthorityOption ? rawMint.freezeAuthority : null,
+        freezeAuthority: rawMint.freezeAuthorityOption
+            ? rawMint.freezeAuthority
+            : null,
         tlvData,
     };
 }
@@ -127,7 +139,11 @@ export async function getMinimumBalanceForRentExemptMint(
     connection: Connection,
     commitment?: Commitment
 ): Promise<number> {
-    return await getMinimumBalanceForRentExemptMintWithExtensions(connection, [], commitment);
+    return await getMinimumBalanceForRentExemptMintWithExtensions(
+        connection,
+        [],
+        commitment
+    );
 }
 
 /** Get the minimum lamport balance for a rent-exempt mint with extensions
@@ -144,7 +160,10 @@ export async function getMinimumBalanceForRentExemptMintWithExtensions(
     commitment?: Commitment
 ): Promise<number> {
     const mintLen = getMintLen(extensions);
-    return await connection.getMinimumBalanceForRentExemption(mintLen, commitment);
+    return await connection.getMinimumBalanceForRentExemption(
+        mintLen,
+        commitment
+    );
 }
 
 /**
@@ -166,7 +185,8 @@ export async function getAssociatedTokenAddress(
     programId = TOKEN_PROGRAM_ID,
     associatedTokenProgramId = ASSOCIATED_TOKEN_PROGRAM_ID
 ): Promise<PublicKey> {
-    if (!allowOwnerOffCurve && !PublicKey.isOnCurve(owner.toBuffer())) throw new TokenOwnerOffCurveError();
+    if (!allowOwnerOffCurve && !PublicKey.isOnCurve(owner.toBuffer()))
+        throw new TokenOwnerOffCurveError();
 
     const [address] = await PublicKey.findProgramAddress(
         [owner.toBuffer(), programId.toBuffer(), mint.toBuffer()],
@@ -194,7 +214,8 @@ export function getAssociatedTokenAddressSync(
     programId = TOKEN_PROGRAM_ID,
     associatedTokenProgramId = ASSOCIATED_TOKEN_PROGRAM_ID
 ): PublicKey {
-    if (!allowOwnerOffCurve && !PublicKey.isOnCurve(owner.toBuffer())) throw new TokenOwnerOffCurveError();
+    if (!allowOwnerOffCurve && !PublicKey.isOnCurve(owner.toBuffer()))
+        throw new TokenOwnerOffCurveError();
 
     const [address] = PublicKey.findProgramAddressSync(
         [owner.toBuffer(), programId.toBuffer(), mint.toBuffer()],

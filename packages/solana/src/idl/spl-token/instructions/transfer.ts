@@ -19,7 +19,10 @@ export interface TransferInstructionData {
 }
 
 /** TODO: docs */
-export const transferInstructionData = struct<TransferInstructionData>([u8('instruction'), u64('amount')]);
+export const transferInstructionData = struct<TransferInstructionData>([
+    u8('instruction'),
+    u64('amount'),
+]);
 
 /**
  * Construct a Transfer instruction
@@ -89,15 +92,19 @@ export function decodeTransferInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedTransferInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== transferInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== transferInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { source, destination, owner, multiSigners },
         data,
     } = decodeTransferInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.Transfer) throw new TokenInvalidInstructionTypeError();
-    if (!source || !destination || !owner) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.Transfer)
+        throw new TokenInvalidInstructionTypeError();
+    if (!source || !destination || !owner)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

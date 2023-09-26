@@ -5,13 +5,10 @@ import {
     SolanaTransactionMessage,
 } from '../../types';
 import { SolanaBlockModel } from 'types/src/models/solana/block';
-import {
-    SolanaVoteTransactionModel,
-} from 'types/src/models/solana/transaction';
+import { SolanaVoteTransactionModel } from 'types/src/models/solana/transaction';
 import { BaseSolanaTransactionProcessor } from './base';
 
 export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
-    
     protected async __process(
         data: BroadcastData<SolanaTransactionMessage>
     ): Promise<void> {
@@ -84,7 +81,6 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
         });
     }
 
-    
     private async _processNonVoteTransaction(
         txnIndex: number,
         block: SolanaBlockModel,

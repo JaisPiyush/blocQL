@@ -20,11 +20,12 @@ export interface ApproveCheckedInstructionData {
 }
 
 /** TODO: docs */
-export const approveCheckedInstructionData = struct<ApproveCheckedInstructionData>([
-    u8('instruction'),
-    u64('amount'),
-    u8('decimals'),
-]);
+export const approveCheckedInstructionData =
+    struct<ApproveCheckedInstructionData>([
+        u8('instruction'),
+        u64('amount'),
+        u8('decimals'),
+    ]);
 
 /**
  * Construct an ApproveChecked instruction
@@ -102,15 +103,19 @@ export function decodeApproveCheckedInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedApproveCheckedInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== approveCheckedInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== approveCheckedInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, mint, delegate, owner, multiSigners },
         data,
     } = decodeApproveCheckedInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.ApproveChecked) throw new TokenInvalidInstructionTypeError();
-    if (!account || !mint || !delegate || !owner) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.ApproveChecked)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !mint || !delegate || !owner)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

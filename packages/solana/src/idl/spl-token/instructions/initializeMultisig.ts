@@ -1,6 +1,10 @@
 import { struct, u8 } from '@solana/buffer-layout';
 import type { AccountMeta, Signer } from '@solana/web3.js';
-import { PublicKey, SYSVAR_RENT_PUBKEY, TransactionInstruction } from '@solana/web3.js';
+import {
+    PublicKey,
+    SYSVAR_RENT_PUBKEY,
+    TransactionInstruction,
+} from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import {
     TokenInvalidInstructionDataError,
@@ -18,10 +22,8 @@ export interface InitializeMultisigInstructionData {
 }
 
 /** TODO: docs */
-export const initializeMultisigInstructionData = struct<InitializeMultisigInstructionData>([
-    u8('instruction'),
-    u8('m'),
-]);
+export const initializeMultisigInstructionData =
+    struct<InitializeMultisigInstructionData>([u8('instruction'), u8('m')]);
 
 /**
  * Construct an InitializeMultisig instruction
@@ -89,7 +91,8 @@ export function decodeInitializeMultisigInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedInitializeMultisigInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
     if (instruction.data.length !== initializeMultisigInstructionData.span)
         throw new TokenInvalidInstructionDataError();
 
@@ -97,8 +100,10 @@ export function decodeInitializeMultisigInstruction(
         keys: { account, rent, signers },
         data,
     } = decodeInitializeMultisigInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializeMultisig) throw new TokenInvalidInstructionTypeError();
-    if (!account || !rent || !signers.length) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.InitializeMultisig)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !rent || !signers.length)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

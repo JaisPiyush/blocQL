@@ -7,13 +7,13 @@
  */
 
 import {
-  AccountMeta,
-  isSigner,
-  Pda,
-  publicKey,
-  PublicKey,
-  Signer,
-  isPda,
+    AccountMeta,
+    isSigner,
+    Pda,
+    publicKey,
+    PublicKey,
+    Signer,
+    isPda,
 } from '@metaplex-foundation/umi';
 
 /**
@@ -21,17 +21,17 @@ import {
  * @internal
  */
 export type PickPartial<T, K extends keyof T> = Omit<T, K> &
-  Partial<Pick<T, K>>;
+    Partial<Pick<T, K>>;
 
 /**
  * Asserts that the given value is not null or undefined.
  * @internal
  */
 export function expectSome<T>(value: T | null | undefined): T {
-  if (value == null) {
-    throw new Error('Expected a value but received null or undefined.');
-  }
-  return value;
+    if (value == null) {
+        throw new Error('Expected a value but received null or undefined.');
+    }
+    return value;
 }
 
 /**
@@ -39,12 +39,12 @@ export function expectSome<T>(value: T | null | undefined): T {
  * @internal
  */
 export function expectPublicKey(
-  value: PublicKey | Pda | Signer | null | undefined
+    value: PublicKey | Pda | Signer | null | undefined
 ): PublicKey {
-  if (!value) {
-    throw new Error('Expected a PublicKey.');
-  }
-  return publicKey(value, false);
+    if (!value) {
+        throw new Error('Expected a PublicKey.');
+    }
+    return publicKey(value, false);
 }
 
 /**
@@ -52,12 +52,12 @@ export function expectPublicKey(
  * @internal
  */
 export function expectPda(
-  value: PublicKey | Pda | Signer | null | undefined
+    value: PublicKey | Pda | Signer | null | undefined
 ): Pda {
-  if (!value || !Array.isArray(value) || !isPda(value)) {
-    throw new Error('Expected a PDA.');
-  }
-  return value;
+    if (!value || !Array.isArray(value) || !isPda(value)) {
+        throw new Error('Expected a PDA.');
+    }
+    return value;
 }
 
 /**
@@ -65,8 +65,8 @@ export function expectPda(
  * @internal
  */
 export type ResolvedAccount<T = PublicKey | Pda | Signer | null> = {
-  isWritable: boolean;
-  value: T;
+    isWritable: boolean;
+    value: T;
 };
 
 /**
@@ -80,8 +80,8 @@ export type ResolvedAccounts = Record<string, ResolvedAccount>;
  * @internal
  */
 export type ResolvedAccountsWithIndices = Record<
-  string,
-  ResolvedAccount & { index: number }
+    string,
+    ResolvedAccount & { index: number }
 >;
 
 /**
@@ -89,29 +89,33 @@ export type ResolvedAccountsWithIndices = Record<
  * @internal
  */
 export function getAccountMetasAndSigners(
-  accounts: ResolvedAccount[],
-  optionalAccountStrategy: 'omitted' | 'programId',
-  programId: PublicKey
+    accounts: ResolvedAccount[],
+    optionalAccountStrategy: 'omitted' | 'programId',
+    programId: PublicKey
 ): [AccountMeta[], Signer[]] {
-  const keys: AccountMeta[] = [];
-  const signers: Signer[] = [];
+    const keys: AccountMeta[] = [];
+    const signers: Signer[] = [];
 
-  accounts.forEach((account) => {
-    if (!account.value) {
-      if (optionalAccountStrategy === 'omitted') return;
-      keys.push({ pubkey: programId, isSigner: false, isWritable: false });
-      return;
-    }
+    accounts.forEach((account) => {
+        if (!account.value) {
+            if (optionalAccountStrategy === 'omitted') return;
+            keys.push({
+                pubkey: programId,
+                isSigner: false,
+                isWritable: false,
+            });
+            return;
+        }
 
-    if (isSigner(account.value)) {
-      signers.push(account.value);
-    }
-    keys.push({
-      pubkey: publicKey(account.value, false),
-      isSigner: isSigner(account.value),
-      isWritable: account.isWritable,
+        if (isSigner(account.value)) {
+            signers.push(account.value);
+        }
+        keys.push({
+            pubkey: publicKey(account.value, false),
+            isSigner: isSigner(account.value),
+            isWritable: account.isWritable,
+        });
     });
-  });
 
-  return [keys, signers];
+    return [keys, signers];
 }

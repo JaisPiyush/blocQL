@@ -1,7 +1,11 @@
 import { struct, u8 } from '@solana/buffer-layout';
 import { publicKey } from '@solana/buffer-layout-utils';
 import type { AccountMeta } from '@solana/web3.js';
-import { PublicKey, SYSVAR_RENT_PUBKEY, TransactionInstruction } from '@solana/web3.js';
+import {
+    PublicKey,
+    SYSVAR_RENT_PUBKEY,
+    TransactionInstruction,
+} from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import {
     TokenInvalidInstructionDataError,
@@ -21,13 +25,14 @@ export interface InitializeMintInstructionData {
 }
 
 /** TODO: docs */
-export const initializeMintInstructionData = struct<InitializeMintInstructionData>([
-    u8('instruction'),
-    u8('decimals'),
-    publicKey('mintAuthority'),
-    u8('freezeAuthorityOption'),
-    publicKey('freezeAuthority'),
-]);
+export const initializeMintInstructionData =
+    struct<InitializeMintInstructionData>([
+        u8('instruction'),
+        u8('decimals'),
+        publicKey('mintAuthority'),
+        u8('freezeAuthorityOption'),
+        publicKey('freezeAuthority'),
+    ]);
 
 /**
  * Construct an InitializeMint instruction
@@ -94,14 +99,17 @@ export function decodeInitializeMintInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedInitializeMintInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== initializeMintInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== initializeMintInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { mint, rent },
         data,
     } = decodeInitializeMintInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializeMint) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.InitializeMint)
+        throw new TokenInvalidInstructionTypeError();
     if (!mint || !rent) throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
@@ -143,8 +151,13 @@ export function decodeInitializeMintInstructionUnchecked({
     keys: [mint, rent],
     data,
 }: TransactionInstruction): DecodedInitializeMintInstructionUnchecked {
-    const { instruction, decimals, mintAuthority, freezeAuthorityOption, freezeAuthority } =
-        initializeMintInstructionData.decode(data);
+    const {
+        instruction,
+        decimals,
+        mintAuthority,
+        freezeAuthorityOption,
+        freezeAuthority,
+    } = initializeMintInstructionData.decode(data);
 
     return {
         programId,

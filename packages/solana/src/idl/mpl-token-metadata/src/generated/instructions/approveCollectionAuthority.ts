@@ -7,153 +7,161 @@
  */
 
 import {
-  Context,
-  Pda,
-  PublicKey,
-  Signer,
-  TransactionBuilder,
-  transactionBuilder,
+    Context,
+    Pda,
+    PublicKey,
+    Signer,
+    TransactionBuilder,
+    transactionBuilder,
 } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  mapSerializer,
-  struct,
-  u8,
+    Serializer,
+    mapSerializer,
+    struct,
+    u8,
 } from '@metaplex-foundation/umi/serializers';
 import { findMetadataPda } from '../accounts';
 import {
-  ResolvedAccount,
-  ResolvedAccountsWithIndices,
-  expectPublicKey,
-  getAccountMetasAndSigners,
+    ResolvedAccount,
+    ResolvedAccountsWithIndices,
+    expectPublicKey,
+    getAccountMetasAndSigners,
 } from '../shared';
 
 // Accounts.
 export type ApproveCollectionAuthorityInstructionAccounts = {
-  /** Collection Authority Record PDA */
-  collectionAuthorityRecord: PublicKey | Pda;
-  /** A Collection Authority */
-  newCollectionAuthority: PublicKey | Pda;
-  /** Update Authority of Collection NFT */
-  updateAuthority?: Signer;
-  /** Payer */
-  payer?: Signer;
-  /** Collection Metadata account */
-  metadata?: PublicKey | Pda;
-  /** Mint of Collection Metadata */
-  mint: PublicKey | Pda;
-  /** System program */
-  systemProgram?: PublicKey | Pda;
-  /** Rent info */
-  rent?: PublicKey | Pda;
+    /** Collection Authority Record PDA */
+    collectionAuthorityRecord: PublicKey | Pda;
+    /** A Collection Authority */
+    newCollectionAuthority: PublicKey | Pda;
+    /** Update Authority of Collection NFT */
+    updateAuthority?: Signer;
+    /** Payer */
+    payer?: Signer;
+    /** Collection Metadata account */
+    metadata?: PublicKey | Pda;
+    /** Mint of Collection Metadata */
+    mint: PublicKey | Pda;
+    /** System program */
+    systemProgram?: PublicKey | Pda;
+    /** Rent info */
+    rent?: PublicKey | Pda;
 };
 
 // Data.
 export type ApproveCollectionAuthorityInstructionData = {
-  discriminator: number;
+    discriminator: number;
 };
 
 export type ApproveCollectionAuthorityInstructionDataArgs = {};
 
 export function getApproveCollectionAuthorityInstructionDataSerializer(): Serializer<
-  ApproveCollectionAuthorityInstructionDataArgs,
-  ApproveCollectionAuthorityInstructionData
+    ApproveCollectionAuthorityInstructionDataArgs,
+    ApproveCollectionAuthorityInstructionData
 > {
-  return mapSerializer<
-    ApproveCollectionAuthorityInstructionDataArgs,
-    any,
-    ApproveCollectionAuthorityInstructionData
-  >(
-    struct<ApproveCollectionAuthorityInstructionData>(
-      [['discriminator', u8()]],
-      { description: 'ApproveCollectionAuthorityInstructionData' }
-    ),
-    (value) => ({ ...value, discriminator: 23 })
-  ) as Serializer<
-    ApproveCollectionAuthorityInstructionDataArgs,
-    ApproveCollectionAuthorityInstructionData
-  >;
+    return mapSerializer<
+        ApproveCollectionAuthorityInstructionDataArgs,
+        any,
+        ApproveCollectionAuthorityInstructionData
+    >(
+        struct<ApproveCollectionAuthorityInstructionData>(
+            [['discriminator', u8()]],
+            { description: 'ApproveCollectionAuthorityInstructionData' }
+        ),
+        (value) => ({ ...value, discriminator: 23 })
+    ) as Serializer<
+        ApproveCollectionAuthorityInstructionDataArgs,
+        ApproveCollectionAuthorityInstructionData
+    >;
 }
 
 // Instruction.
 export function approveCollectionAuthority(
-  context: Pick<Context, 'eddsa' | 'identity' | 'payer' | 'programs'>,
-  input: ApproveCollectionAuthorityInstructionAccounts
+    context: Pick<Context, 'eddsa' | 'identity' | 'payer' | 'programs'>,
+    input: ApproveCollectionAuthorityInstructionAccounts
 ): TransactionBuilder {
-  // Program ID.
-  const programId = context.programs.getPublicKey(
-    'mplTokenMetadata',
-    'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
-  );
-
-  // Accounts.
-  const resolvedAccounts: ResolvedAccountsWithIndices = {
-    collectionAuthorityRecord: {
-      index: 0,
-      isWritable: true,
-      value: input.collectionAuthorityRecord ?? null,
-    },
-    newCollectionAuthority: {
-      index: 1,
-      isWritable: false,
-      value: input.newCollectionAuthority ?? null,
-    },
-    updateAuthority: {
-      index: 2,
-      isWritable: true,
-      value: input.updateAuthority ?? null,
-    },
-    payer: { index: 3, isWritable: true, value: input.payer ?? null },
-    metadata: { index: 4, isWritable: false, value: input.metadata ?? null },
-    mint: { index: 5, isWritable: false, value: input.mint ?? null },
-    systemProgram: {
-      index: 6,
-      isWritable: false,
-      value: input.systemProgram ?? null,
-    },
-    rent: { index: 7, isWritable: false, value: input.rent ?? null },
-  };
-
-  // Default values.
-  if (!resolvedAccounts.updateAuthority.value) {
-    resolvedAccounts.updateAuthority.value = context.identity;
-  }
-  if (!resolvedAccounts.payer.value) {
-    resolvedAccounts.payer.value = context.payer;
-  }
-  if (!resolvedAccounts.metadata.value) {
-    resolvedAccounts.metadata.value = findMetadataPda(context, {
-      mint: expectPublicKey(resolvedAccounts.mint.value),
-    });
-  }
-  if (!resolvedAccounts.systemProgram.value) {
-    resolvedAccounts.systemProgram.value = context.programs.getPublicKey(
-      'splSystem',
-      '11111111111111111111111111111111'
+    // Program ID.
+    const programId = context.programs.getPublicKey(
+        'mplTokenMetadata',
+        'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
     );
-    resolvedAccounts.systemProgram.isWritable = false;
-  }
 
-  // Accounts in order.
-  const orderedAccounts: ResolvedAccount[] = Object.values(
-    resolvedAccounts
-  ).sort((a, b) => a.index - b.index);
+    // Accounts.
+    const resolvedAccounts: ResolvedAccountsWithIndices = {
+        collectionAuthorityRecord: {
+            index: 0,
+            isWritable: true,
+            value: input.collectionAuthorityRecord ?? null,
+        },
+        newCollectionAuthority: {
+            index: 1,
+            isWritable: false,
+            value: input.newCollectionAuthority ?? null,
+        },
+        updateAuthority: {
+            index: 2,
+            isWritable: true,
+            value: input.updateAuthority ?? null,
+        },
+        payer: { index: 3, isWritable: true, value: input.payer ?? null },
+        metadata: {
+            index: 4,
+            isWritable: false,
+            value: input.metadata ?? null,
+        },
+        mint: { index: 5, isWritable: false, value: input.mint ?? null },
+        systemProgram: {
+            index: 6,
+            isWritable: false,
+            value: input.systemProgram ?? null,
+        },
+        rent: { index: 7, isWritable: false, value: input.rent ?? null },
+    };
 
-  // Keys and Signers.
-  const [keys, signers] = getAccountMetasAndSigners(
-    orderedAccounts,
-    'omitted',
-    programId
-  );
+    // Default values.
+    if (!resolvedAccounts.updateAuthority.value) {
+        resolvedAccounts.updateAuthority.value = context.identity;
+    }
+    if (!resolvedAccounts.payer.value) {
+        resolvedAccounts.payer.value = context.payer;
+    }
+    if (!resolvedAccounts.metadata.value) {
+        resolvedAccounts.metadata.value = findMetadataPda(context, {
+            mint: expectPublicKey(resolvedAccounts.mint.value),
+        });
+    }
+    if (!resolvedAccounts.systemProgram.value) {
+        resolvedAccounts.systemProgram.value = context.programs.getPublicKey(
+            'splSystem',
+            '11111111111111111111111111111111'
+        );
+        resolvedAccounts.systemProgram.isWritable = false;
+    }
 
-  // Data.
-  const data =
-    getApproveCollectionAuthorityInstructionDataSerializer().serialize({});
+    // Accounts in order.
+    const orderedAccounts: ResolvedAccount[] = Object.values(
+        resolvedAccounts
+    ).sort((a, b) => a.index - b.index);
 
-  // Bytes Created On Chain.
-  const bytesCreatedOnChain = 0;
+    // Keys and Signers.
+    const [keys, signers] = getAccountMetasAndSigners(
+        orderedAccounts,
+        'omitted',
+        programId
+    );
 
-  return transactionBuilder([
-    { instruction: { keys, programId, data }, signers, bytesCreatedOnChain },
-  ]);
+    // Data.
+    const data =
+        getApproveCollectionAuthorityInstructionDataSerializer().serialize({});
+
+    // Bytes Created On Chain.
+    const bytesCreatedOnChain = 0;
+
+    return transactionBuilder([
+        {
+            instruction: { keys, programId, data },
+            signers,
+            bytesCreatedOnChain,
+        },
+    ]);
 }

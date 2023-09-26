@@ -17,7 +17,9 @@ export interface ThawAccountInstructionData {
 }
 
 /** TODO: docs */
-export const thawAccountInstructionData = struct<ThawAccountInstructionData>([u8('instruction')]);
+export const thawAccountInstructionData = struct<ThawAccountInstructionData>([
+    u8('instruction'),
+]);
 
 /**
  * Construct a ThawAccount instruction
@@ -47,7 +49,10 @@ export function createThawAccountInstruction(
     );
 
     const data = Buffer.alloc(thawAccountInstructionData.span);
-    thawAccountInstructionData.encode({ instruction: TokenInstruction.ThawAccount }, data);
+    thawAccountInstructionData.encode(
+        { instruction: TokenInstruction.ThawAccount },
+        data
+    );
 
     return new TransactionInstruction({ keys, programId, data });
 }
@@ -78,15 +83,19 @@ export function decodeThawAccountInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedThawAccountInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== thawAccountInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== thawAccountInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, mint, authority, multiSigners },
         data,
     } = decodeThawAccountInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.ThawAccount) throw new TokenInvalidInstructionTypeError();
-    if (!account || !mint || !authority) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.ThawAccount)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !mint || !authority)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

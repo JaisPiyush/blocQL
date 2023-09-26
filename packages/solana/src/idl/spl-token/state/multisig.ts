@@ -1,8 +1,17 @@
 import { struct, u8 } from '@solana/buffer-layout';
 import { bool, publicKey } from '@solana/buffer-layout-utils';
-import type { AccountInfo, Commitment, Connection, PublicKey } from '@solana/web3.js';
+import type {
+    AccountInfo,
+    Commitment,
+    Connection,
+    PublicKey,
+} from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
-import { TokenAccountNotFoundError, TokenInvalidAccountOwnerError, TokenInvalidAccountSizeError } from '../errors.js';
+import {
+    TokenAccountNotFoundError,
+    TokenInvalidAccountOwnerError,
+    TokenInvalidAccountSizeError,
+} from '../errors.js';
 
 /** Information about a multisig */
 export interface Multisig {
@@ -87,8 +96,10 @@ export function unpackMultisig(
     programId = TOKEN_PROGRAM_ID
 ): Multisig {
     if (!info) throw new TokenAccountNotFoundError();
-    if (!info.owner.equals(programId)) throw new TokenInvalidAccountOwnerError();
-    if (info.data.length != MULTISIG_SIZE) throw new TokenInvalidAccountSizeError();
+    if (!info.owner.equals(programId))
+        throw new TokenInvalidAccountOwnerError();
+    if (info.data.length != MULTISIG_SIZE)
+        throw new TokenInvalidAccountSizeError();
 
     const multisig = MultisigLayout.decode(info.data);
 
@@ -106,5 +117,8 @@ export async function getMinimumBalanceForRentExemptMultisig(
     connection: Connection,
     commitment?: Commitment
 ): Promise<number> {
-    return await connection.getMinimumBalanceForRentExemption(MULTISIG_SIZE, commitment);
+    return await connection.getMinimumBalanceForRentExemption(
+        MULTISIG_SIZE,
+        commitment
+    );
 }

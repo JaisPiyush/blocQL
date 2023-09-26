@@ -8,70 +8,73 @@
 
 import { Option, OptionOrNullable, none } from '@metaplex-foundation/umi';
 import {
-  GetDataEnumKind,
-  GetDataEnumKindContent,
-  Serializer,
-  dataEnum,
-  mapSerializer,
-  option,
-  struct,
+    GetDataEnumKind,
+    GetDataEnumKindContent,
+    Serializer,
+    dataEnum,
+    mapSerializer,
+    option,
+    struct,
 } from '@metaplex-foundation/umi/serializers';
 import {
-  AuthorizationData,
-  AuthorizationDataArgs,
-  getAuthorizationDataSerializer,
+    AuthorizationData,
+    AuthorizationDataArgs,
+    getAuthorizationDataSerializer,
 } from '.';
 
 export type UseArgs = {
-  __kind: 'V1';
-  authorizationData: Option<AuthorizationData>;
+    __kind: 'V1';
+    authorizationData: Option<AuthorizationData>;
 };
 
 export type UseArgsArgs = {
-  __kind: 'V1';
-  authorizationData?: OptionOrNullable<AuthorizationDataArgs>;
+    __kind: 'V1';
+    authorizationData?: OptionOrNullable<AuthorizationDataArgs>;
 };
 
 export function getUseArgsSerializer(): Serializer<UseArgsArgs, UseArgs> {
-  return dataEnum<UseArgs>(
-    [
-      [
-        'V1',
-        mapSerializer<
-          GetDataEnumKindContent<UseArgsArgs, 'V1'>,
-          any,
-          GetDataEnumKindContent<UseArgs, 'V1'>
-        >(
-          struct<GetDataEnumKindContent<UseArgs, 'V1'>>([
-            ['authorizationData', option(getAuthorizationDataSerializer())],
-          ]),
-          (value) => ({
-            ...value,
-            authorizationData: value.authorizationData ?? none(),
-          })
-        ),
-      ],
-    ],
-    { description: 'UseArgs' }
-  ) as Serializer<UseArgsArgs, UseArgs>;
+    return dataEnum<UseArgs>(
+        [
+            [
+                'V1',
+                mapSerializer<
+                    GetDataEnumKindContent<UseArgsArgs, 'V1'>,
+                    any,
+                    GetDataEnumKindContent<UseArgs, 'V1'>
+                >(
+                    struct<GetDataEnumKindContent<UseArgs, 'V1'>>([
+                        [
+                            'authorizationData',
+                            option(getAuthorizationDataSerializer()),
+                        ],
+                    ]),
+                    (value) => ({
+                        ...value,
+                        authorizationData: value.authorizationData ?? none(),
+                    })
+                ),
+            ],
+        ],
+        { description: 'UseArgs' }
+    ) as Serializer<UseArgsArgs, UseArgs>;
 }
 
 // Data Enum Helpers.
 export function useArgs(
-  kind: 'V1',
-  data: GetDataEnumKindContent<UseArgsArgs, 'V1'>
+    kind: 'V1',
+    data: GetDataEnumKindContent<UseArgsArgs, 'V1'>
 ): GetDataEnumKind<UseArgsArgs, 'V1'>;
 export function useArgs<K extends UseArgsArgs['__kind']>(
-  kind: K,
-  data?: any
+    kind: K,
+    data?: any
 ): Extract<UseArgsArgs, { __kind: K }> {
-  return Array.isArray(data)
-    ? { __kind: kind, fields: data }
-    : { __kind: kind, ...(data ?? {}) };
+    return Array.isArray(data)
+        ? { __kind: kind, fields: data }
+        : { __kind: kind, ...(data ?? {}) };
 }
 export function isUseArgs<K extends UseArgs['__kind']>(
-  kind: K,
-  value: UseArgs
+    kind: K,
+    value: UseArgs
 ): value is UseArgs & { __kind: K } {
-  return value.__kind === kind;
+    return value.__kind === kind;
 }

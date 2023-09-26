@@ -7,11 +7,11 @@
  */
 
 import {
-  Serializer,
-  array,
-  bytes,
-  struct,
-  u32,
+    Serializer,
+    array,
+    bytes,
+    struct,
+    u32,
 } from '@metaplex-foundation/umi/serializers';
 
 export type SeedsVec = { seeds: Array<Uint8Array> };
@@ -19,7 +19,7 @@ export type SeedsVec = { seeds: Array<Uint8Array> };
 export type SeedsVecArgs = SeedsVec;
 
 export function getSeedsVecSerializer(): Serializer<SeedsVecArgs, SeedsVec> {
-  return struct<SeedsVec>([['seeds', array(bytes({ size: u32() }))]], {
-    description: 'SeedsVec',
-  }) as Serializer<SeedsVecArgs, SeedsVec>;
+    return struct<SeedsVec>([['seeds', array(bytes({ size: u32() }))]], {
+        description: 'SeedsVec',
+    }) as Serializer<SeedsVecArgs, SeedsVec>;
 }

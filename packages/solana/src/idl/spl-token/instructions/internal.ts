@@ -8,7 +8,11 @@ export function addSigners(
     multiSigners: (Signer | PublicKey)[]
 ): AccountMeta[] {
     if (multiSigners.length) {
-        keys.push({ pubkey: ownerOrAuthority, isSigner: false, isWritable: false });
+        keys.push({
+            pubkey: ownerOrAuthority,
+            isSigner: false,
+            isWritable: false,
+        });
         for (const signer of multiSigners) {
             keys.push({
                 pubkey: signer instanceof PublicKey ? signer : signer.publicKey,
@@ -17,7 +21,11 @@ export function addSigners(
             });
         }
     } else {
-        keys.push({ pubkey: ownerOrAuthority, isSigner: true, isWritable: false });
+        keys.push({
+            pubkey: ownerOrAuthority,
+            isSigner: true,
+            isWritable: false,
+        });
     }
     return keys;
 }

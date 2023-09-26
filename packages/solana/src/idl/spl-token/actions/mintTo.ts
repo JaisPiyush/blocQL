@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createMintToInstruction } from '../instructions/mintTo.js';
@@ -33,8 +39,20 @@ export async function mintTo(
     const [authorityPublicKey, signers] = getSigners(authority, multiSigners);
 
     const transaction = new Transaction().add(
-        createMintToInstruction(mint, destination, authorityPublicKey, amount, multiSigners, programId)
+        createMintToInstruction(
+            mint,
+            destination,
+            authorityPublicKey,
+            amount,
+            multiSigners,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

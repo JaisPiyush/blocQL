@@ -8,56 +8,56 @@
 
 import { Option, OptionOrNullable } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  array,
-  option,
-  string,
-  struct,
-  u16,
+    Serializer,
+    array,
+    option,
+    string,
+    struct,
+    u16,
 } from '@metaplex-foundation/umi/serializers';
 import {
-  Collection,
-  CollectionArgs,
-  Creator,
-  CreatorArgs,
-  Uses,
-  UsesArgs,
-  getCollectionSerializer,
-  getCreatorSerializer,
-  getUsesSerializer,
+    Collection,
+    CollectionArgs,
+    Creator,
+    CreatorArgs,
+    Uses,
+    UsesArgs,
+    getCollectionSerializer,
+    getCreatorSerializer,
+    getUsesSerializer,
 } from '.';
 
 export type DataV2 = {
-  name: string;
-  symbol: string;
-  uri: string;
-  sellerFeeBasisPoints: number;
-  creators: Option<Array<Creator>>;
-  collection: Option<Collection>;
-  uses: Option<Uses>;
+    name: string;
+    symbol: string;
+    uri: string;
+    sellerFeeBasisPoints: number;
+    creators: Option<Array<Creator>>;
+    collection: Option<Collection>;
+    uses: Option<Uses>;
 };
 
 export type DataV2Args = {
-  name: string;
-  symbol: string;
-  uri: string;
-  sellerFeeBasisPoints: number;
-  creators: OptionOrNullable<Array<CreatorArgs>>;
-  collection: OptionOrNullable<CollectionArgs>;
-  uses: OptionOrNullable<UsesArgs>;
+    name: string;
+    symbol: string;
+    uri: string;
+    sellerFeeBasisPoints: number;
+    creators: OptionOrNullable<Array<CreatorArgs>>;
+    collection: OptionOrNullable<CollectionArgs>;
+    uses: OptionOrNullable<UsesArgs>;
 };
 
 export function getDataV2Serializer(): Serializer<DataV2Args, DataV2> {
-  return struct<DataV2>(
-    [
-      ['name', string()],
-      ['symbol', string()],
-      ['uri', string()],
-      ['sellerFeeBasisPoints', u16()],
-      ['creators', option(array(getCreatorSerializer()))],
-      ['collection', option(getCollectionSerializer())],
-      ['uses', option(getUsesSerializer())],
-    ],
-    { description: 'DataV2' }
-  ) as Serializer<DataV2Args, DataV2>;
+    return struct<DataV2>(
+        [
+            ['name', string()],
+            ['symbol', string()],
+            ['uri', string()],
+            ['sellerFeeBasisPoints', u16()],
+            ['creators', option(array(getCreatorSerializer()))],
+            ['collection', option(getCollectionSerializer())],
+            ['uses', option(getUsesSerializer())],
+        ],
+        { description: 'DataV2' }
+    ) as Serializer<DataV2Args, DataV2>;
 }

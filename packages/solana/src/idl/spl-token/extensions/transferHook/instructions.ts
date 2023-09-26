@@ -1,7 +1,16 @@
 import { struct, u8 } from '@solana/buffer-layout';
-import type { Commitment, Connection, PublicKey, Signer } from '@solana/web3.js';
+import type {
+    Commitment,
+    Connection,
+    PublicKey,
+    Signer,
+} from '@solana/web3.js';
 import { TransactionInstruction } from '@solana/web3.js';
-import { programSupportsExtensions, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '../../constants.js';
+import {
+    programSupportsExtensions,
+    TOKEN_2022_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
+} from '../../constants.js';
 import { TokenUnsupportedInstructionError } from '../../errors.js';
 import { addSigners } from '../../instructions/internal.js';
 import { TokenInstruction } from '../../instructions/types.js';
@@ -9,7 +18,12 @@ import { publicKey } from '@solana/buffer-layout-utils';
 import { createTransferCheckedInstruction } from '../../instructions/transferChecked.js';
 import { createTransferCheckedWithFeeInstruction } from '../transferFee/instructions.js';
 import { getMint } from '../../state/mint.js';
-import { getExtraAccountMetaAddress, getExtraAccountMetas, getTransferHook, resolveExtraAccountMeta } from './state.js';
+import {
+    getExtraAccountMetaAddress,
+    getExtraAccountMetas,
+    getTransferHook,
+    resolveExtraAccountMeta,
+} from './state.js';
 
 export enum TransferHookInstruction {
     Initialize = 0,
@@ -25,12 +39,13 @@ export interface InitializeTransferHookInstructionData {
 }
 
 /** The struct that represents the instruction data as it is read by the program */
-export const initializeTransferHookInstructionData = struct<InitializeTransferHookInstructionData>([
-    u8('instruction'),
-    u8('transferHookInstruction'),
-    publicKey('authority'),
-    publicKey('transferHookProgramId'),
-]);
+export const initializeTransferHookInstructionData =
+    struct<InitializeTransferHookInstructionData>([
+        u8('instruction'),
+        u8('transferHookInstruction'),
+        publicKey('authority'),
+        publicKey('transferHookProgramId'),
+    ]);
 
 /**
  * Construct an InitializeTransferHook instruction
@@ -75,11 +90,12 @@ export interface UpdateTransferHookInstructionData {
 }
 
 /** The struct that represents the instruction data as it is read by the program */
-export const updateTransferHookInstructionData = struct<UpdateTransferHookInstructionData>([
-    u8('instruction'),
-    u8('transferHookInstruction'),
-    publicKey('transferHookProgramId'),
-]);
+export const updateTransferHookInstructionData =
+    struct<UpdateTransferHookInstructionData>([
+        u8('instruction'),
+        u8('transferHookInstruction'),
+        publicKey('transferHookProgramId'),
+    ]);
 
 /**
  * Construct an UpdateTransferHook instruction
@@ -103,7 +119,11 @@ export function createUpdateTransferHookInstruction(
         throw new TokenUnsupportedInstructionError();
     }
 
-    const keys = addSigners([{ pubkey: mint, isSigner: false, isWritable: true }], authority, multiSigners);
+    const keys = addSigners(
+        [{ pubkey: mint, isSigner: false, isWritable: true }],
+        authority,
+        multiSigners
+    );
     const data = Buffer.alloc(updateTransferHookInstructionData.span);
     updateTransferHookInstructionData.encode(
         {
@@ -144,8 +164,14 @@ export async function addExtraAccountsToInstruction(
         return instruction;
     }
 
-    const extraAccountsAccount = getExtraAccountMetaAddress(mint, transferHook.programId);
-    const extraAccountsInfo = await connection.getAccountInfo(extraAccountsAccount, commitment);
+    const extraAccountsAccount = getExtraAccountMetaAddress(
+        mint,
+        transferHook.programId
+    );
+    const extraAccountsInfo = await connection.getAccountInfo(
+        extraAccountsAccount,
+        commitment
+    );
     if (extraAccountsInfo == null) {
         return instruction;
     }
@@ -153,7 +179,11 @@ export async function addExtraAccountsToInstruction(
     const extraAccountMetas = getExtraAccountMetas(extraAccountsInfo);
 
     const accountMetas = instruction.keys;
-    accountMetas.push({ pubkey: extraAccountsAccount, isSigner: false, isWritable: false });
+    accountMetas.push({
+        pubkey: extraAccountsAccount,
+        isSigner: false,
+        isWritable: false,
+    });
 
     for (const extraAccountMeta of extraAccountMetas) {
         const accountMeta = resolveExtraAccountMeta(
@@ -164,9 +194,17 @@ export async function addExtraAccountsToInstruction(
         );
         accountMetas.push(accountMeta);
     }
-    accountMetas.push({ pubkey: transferHook.programId, isSigner: false, isWritable: false });
+    accountMetas.push({
+        pubkey: transferHook.programId,
+        isSigner: false,
+        isWritable: false,
+    });
 
-    return new TransactionInstruction({ keys: accountMetas, programId, data: instruction.data });
+    return new TransactionInstruction({
+        keys: accountMetas,
+        programId,
+        data: instruction.data,
+    });
 }
 
 /**

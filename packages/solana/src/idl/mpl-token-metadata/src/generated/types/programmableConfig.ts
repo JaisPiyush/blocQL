@@ -8,55 +8,55 @@
 
 import { Option, OptionOrNullable, PublicKey } from '@metaplex-foundation/umi';
 import {
-  GetDataEnumKind,
-  GetDataEnumKindContent,
-  Serializer,
-  dataEnum,
-  option,
-  publicKey as publicKeySerializer,
-  struct,
+    GetDataEnumKind,
+    GetDataEnumKindContent,
+    Serializer,
+    dataEnum,
+    option,
+    publicKey as publicKeySerializer,
+    struct,
 } from '@metaplex-foundation/umi/serializers';
 
 export type ProgrammableConfig = { __kind: 'V1'; ruleSet: Option<PublicKey> };
 
 export type ProgrammableConfigArgs = {
-  __kind: 'V1';
-  ruleSet: OptionOrNullable<PublicKey>;
+    __kind: 'V1';
+    ruleSet: OptionOrNullable<PublicKey>;
 };
 
 export function getProgrammableConfigSerializer(): Serializer<
-  ProgrammableConfigArgs,
-  ProgrammableConfig
+    ProgrammableConfigArgs,
+    ProgrammableConfig
 > {
-  return dataEnum<ProgrammableConfig>(
-    [
-      [
-        'V1',
-        struct<GetDataEnumKindContent<ProgrammableConfig, 'V1'>>([
-          ['ruleSet', option(publicKeySerializer())],
-        ]),
-      ],
-    ],
-    { description: 'ProgrammableConfig' }
-  ) as Serializer<ProgrammableConfigArgs, ProgrammableConfig>;
+    return dataEnum<ProgrammableConfig>(
+        [
+            [
+                'V1',
+                struct<GetDataEnumKindContent<ProgrammableConfig, 'V1'>>([
+                    ['ruleSet', option(publicKeySerializer())],
+                ]),
+            ],
+        ],
+        { description: 'ProgrammableConfig' }
+    ) as Serializer<ProgrammableConfigArgs, ProgrammableConfig>;
 }
 
 // Data Enum Helpers.
 export function programmableConfig(
-  kind: 'V1',
-  data: GetDataEnumKindContent<ProgrammableConfigArgs, 'V1'>
+    kind: 'V1',
+    data: GetDataEnumKindContent<ProgrammableConfigArgs, 'V1'>
 ): GetDataEnumKind<ProgrammableConfigArgs, 'V1'>;
 export function programmableConfig<K extends ProgrammableConfigArgs['__kind']>(
-  kind: K,
-  data?: any
+    kind: K,
+    data?: any
 ): Extract<ProgrammableConfigArgs, { __kind: K }> {
-  return Array.isArray(data)
-    ? { __kind: kind, fields: data }
-    : { __kind: kind, ...(data ?? {}) };
+    return Array.isArray(data)
+        ? { __kind: kind, fields: data }
+        : { __kind: kind, ...(data ?? {}) };
 }
 export function isProgrammableConfig<K extends ProgrammableConfig['__kind']>(
-  kind: K,
-  value: ProgrammableConfig
+    kind: K,
+    value: ProgrammableConfig
 ): value is ProgrammableConfig & { __kind: K } {
-  return value.__kind === kind;
+    return value.__kind === kind;
 }

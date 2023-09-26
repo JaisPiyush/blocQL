@@ -26,7 +26,10 @@ function unpackSeedLiteral(seeds: Uint8Array): Seed {
     };
 }
 
-function unpackSeedInstructionArg(seeds: Uint8Array, instructionData: Buffer): Seed {
+function unpackSeedInstructionArg(
+    seeds: Uint8Array,
+    instructionData: Buffer
+): Seed {
     if (seeds.length < 2) {
         throw new TokenTransferHookInvalidSeed();
     }
@@ -36,11 +39,17 @@ function unpackSeedInstructionArg(seeds: Uint8Array, instructionData: Buffer): S
     }
     return {
         data: instructionData.subarray(index, index + length),
-        packedLength: DISCRIMINATOR_SPAN + INSTRUCTION_ARG_OFFSET_SPAN + INSTRUCTION_ARG_LENGTH_SPAN,
+        packedLength:
+            DISCRIMINATOR_SPAN +
+            INSTRUCTION_ARG_OFFSET_SPAN +
+            INSTRUCTION_ARG_LENGTH_SPAN,
     };
 }
 
-function unpackSeedAccountKey(seeds: Uint8Array, previousMetas: AccountMeta[]): Seed {
+function unpackSeedAccountKey(
+    seeds: Uint8Array,
+    previousMetas: AccountMeta[]
+): Seed {
     if (seeds.length < 1) {
         throw new TokenTransferHookInvalidSeed();
     }
@@ -54,7 +63,11 @@ function unpackSeedAccountKey(seeds: Uint8Array, previousMetas: AccountMeta[]): 
     };
 }
 
-function unpackFirstSeed(seeds: Uint8Array, previousMetas: AccountMeta[], instructionData: Buffer): Seed | null {
+function unpackFirstSeed(
+    seeds: Uint8Array,
+    previousMetas: AccountMeta[],
+    instructionData: Buffer
+): Seed | null {
     const [discriminator, ...rest] = seeds;
     const remaining = new Uint8Array(rest);
     switch (discriminator) {
@@ -71,11 +84,19 @@ function unpackFirstSeed(seeds: Uint8Array, previousMetas: AccountMeta[], instru
     }
 }
 
-export function unpackSeeds(seeds: Uint8Array, previousMetas: AccountMeta[], instructionData: Buffer): Buffer[] {
+export function unpackSeeds(
+    seeds: Uint8Array,
+    previousMetas: AccountMeta[],
+    instructionData: Buffer
+): Buffer[] {
     const unpackedSeeds: Buffer[] = [];
     let i = 0;
     while (i < 32) {
-        const seed = unpackFirstSeed(seeds.slice(i), previousMetas, instructionData);
+        const seed = unpackFirstSeed(
+            seeds.slice(i),
+            previousMetas,
+            instructionData
+        );
         if (seed == null) {
             break;
         }

@@ -27,42 +27,49 @@ export async function up(knex: Knex): Promise<void> {
             table.specificType('inner_instructions', 'text[]').defaultTo(null);
 
             table.index('tx_id', 'idx_solana_instruction_call_tx_id', {
-                storageEngineIndexType: 'hash'
+                storageEngineIndexType: 'hash',
             });
 
             table.index('tx_signer', 'idx_solana_instruction_call_tx_signer', {
-                storageEngineIndexType: 'hash'
+                storageEngineIndexType: 'hash',
             });
 
             table.index('slot', 'idx_solana_instruction_call_slot', {
-                storageEngineIndexType: 'btree'
+                storageEngineIndexType: 'btree',
             });
 
-            table.index('block_time', 'idx_solana_instruction_call_block_time', {
-                storageEngineIndexType: 'btree'
-            });
+            table.index(
+                'block_time',
+                'idx_solana_instruction_call_block_time',
+                {
+                    storageEngineIndexType: 'btree',
+                }
+            );
 
-            table.index('program_id', 'idx_solana_instruction_call_program_id', {
-                storageEngineIndexType: 'hash'
-            });
+            table.index(
+                'program_id',
+                'idx_solana_instruction_call_program_id',
+                {
+                    storageEngineIndexType: 'hash',
+                }
+            );
 
-            table.index('instruction_name', 'idx_solana_instruction_call_program_name', {
-                storageEngineIndexType: 'hash'
-            });
-
-            
-
-            
+            table.index(
+                'instruction_name',
+                'idx_solana_instruction_call_program_name',
+                {
+                    storageEngineIndexType: 'hash',
+                }
+            );
         }
-        
     );
 
     // Create GIN Indexes
     await knex.raw(
-        `CREATE INDEX idx_solana_instruction_call_data ON ${TableNames.SolanaInstructionCalls} USING GIN (data)` 
+        `CREATE INDEX idx_solana_instruction_call_data ON ${TableNames.SolanaInstructionCalls} USING GIN (data)`
     );
     await knex.raw(
-        `CREATE INDEX idx_solana_instruction_call_accounts ON ${TableNames.SolanaInstructionCalls} USING GIN (accounts)` 
+        `CREATE INDEX idx_solana_instruction_call_accounts ON ${TableNames.SolanaInstructionCalls} USING GIN (accounts)`
     );
 }
 

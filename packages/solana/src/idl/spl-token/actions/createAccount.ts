@@ -1,5 +1,15 @@
-import type { ConfirmOptions, Connection, Keypair, PublicKey, Signer } from '@solana/web3.js';
-import { sendAndConfirmTransaction, SystemProgram, Transaction } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    Keypair,
+    PublicKey,
+    Signer,
+} from '@solana/web3.js';
+import {
+    sendAndConfirmTransaction,
+    SystemProgram,
+    Transaction,
+} from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { getAccountLenForMint } from '../extensions/extensionType.js';
 import { createInitializeAccountInstruction } from '../instructions/initializeAccount.js';
@@ -29,10 +39,23 @@ export async function createAccount(
     programId = TOKEN_PROGRAM_ID
 ): Promise<PublicKey> {
     // If a keypair isn't provided, create the associated token account and return its address
-    if (!keypair) return await createAssociatedTokenAccount(connection, payer, mint, owner, confirmOptions, programId);
+    if (!keypair)
+        return await createAssociatedTokenAccount(
+            connection,
+            payer,
+            mint,
+            owner,
+            confirmOptions,
+            programId
+        );
 
     // Otherwise, create the account with the provided keypair and return its public key
-    const mintState = await getMint(connection, mint, confirmOptions?.commitment, programId);
+    const mintState = await getMint(
+        connection,
+        mint,
+        confirmOptions?.commitment,
+        programId
+    );
     const space = getAccountLenForMint(mintState);
     const lamports = await connection.getMinimumBalanceForRentExemption(space);
 
@@ -44,10 +67,20 @@ export async function createAccount(
             lamports,
             programId,
         }),
-        createInitializeAccountInstruction(keypair.publicKey, mint, owner, programId)
+        createInitializeAccountInstruction(
+            keypair.publicKey,
+            mint,
+            owner,
+            programId
+        )
     );
 
-    await sendAndConfirmTransaction(connection, transaction, [payer, keypair], confirmOptions);
+    await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, keypair],
+        confirmOptions
+    );
 
     return keypair.publicKey;
 }

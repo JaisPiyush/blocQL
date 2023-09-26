@@ -8,30 +8,30 @@
 
 import { PublicKey } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  publicKey as publicKeySerializer,
-  struct,
-  u8,
+    Serializer,
+    publicKey as publicKeySerializer,
+    struct,
+    u8,
 } from '@metaplex-foundation/umi/serializers';
 
 export type ReservationV1 = {
-  address: PublicKey;
-  spotsRemaining: number;
-  totalSpots: number;
+    address: PublicKey;
+    spotsRemaining: number;
+    totalSpots: number;
 };
 
 export type ReservationV1Args = ReservationV1;
 
 export function getReservationV1Serializer(): Serializer<
-  ReservationV1Args,
-  ReservationV1
+    ReservationV1Args,
+    ReservationV1
 > {
-  return struct<ReservationV1>(
-    [
-      ['address', publicKeySerializer()],
-      ['spotsRemaining', u8()],
-      ['totalSpots', u8()],
-    ],
-    { description: 'ReservationV1' }
-  ) as Serializer<ReservationV1Args, ReservationV1>;
+    return struct<ReservationV1>(
+        [
+            ['address', publicKeySerializer()],
+            ['spotsRemaining', u8()],
+            ['totalSpots', u8()],
+        ],
+        { description: 'ReservationV1' }
+    ) as Serializer<ReservationV1Args, ReservationV1>;
 }

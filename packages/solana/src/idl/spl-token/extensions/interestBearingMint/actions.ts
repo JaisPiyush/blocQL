@@ -1,5 +1,15 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer } from '@solana/web3.js';
-import { Keypair, sendAndConfirmTransaction, SystemProgram, Transaction } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+} from '@solana/web3.js';
+import {
+    Keypair,
+    sendAndConfirmTransaction,
+    SystemProgram,
+    Transaction,
+} from '@solana/web3.js';
 import { getSigners } from '../../actions/internal.js';
 import { TOKEN_2022_PROGRAM_ID } from '../../constants.js';
 import { createInitializeMintInstruction } from '../../instructions/initializeMint.js';
@@ -38,7 +48,8 @@ export async function createInterestBearingMint(
     programId = TOKEN_2022_PROGRAM_ID
 ): Promise<PublicKey> {
     const mintLen = getMintLen([ExtensionType.InterestBearingConfig]);
-    const lamports = await connection.getMinimumBalanceForRentExemption(mintLen);
+    const lamports =
+        await connection.getMinimumBalanceForRentExemption(mintLen);
     const transaction = new Transaction().add(
         SystemProgram.createAccount({
             fromPubkey: payer.publicKey,
@@ -47,10 +58,26 @@ export async function createInterestBearingMint(
             lamports,
             programId,
         }),
-        createInitializeInterestBearingMintInstruction(keypair.publicKey, rateAuthority, rate, programId),
-        createInitializeMintInstruction(keypair.publicKey, decimals, mintAuthority, freezeAuthority, programId)
+        createInitializeInterestBearingMintInstruction(
+            keypair.publicKey,
+            rateAuthority,
+            rate,
+            programId
+        ),
+        createInitializeMintInstruction(
+            keypair.publicKey,
+            decimals,
+            mintAuthority,
+            freezeAuthority,
+            programId
+        )
     );
-    await sendAndConfirmTransaction(connection, transaction, [payer, keypair], confirmOptions);
+    await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, keypair],
+        confirmOptions
+    );
     return keypair.publicKey;
 }
 
@@ -78,10 +105,24 @@ export async function updateRateInterestBearingMint(
     confirmOptions?: ConfirmOptions,
     programId = TOKEN_2022_PROGRAM_ID
 ): Promise<string> {
-    const [rateAuthorityPublicKey, signers] = getSigners(rateAuthority, multiSigners);
+    const [rateAuthorityPublicKey, signers] = getSigners(
+        rateAuthority,
+        multiSigners
+    );
     const transaction = new Transaction().add(
-        createUpdateRateInterestBearingMintInstruction(mint, rateAuthorityPublicKey, rate, signers, programId)
+        createUpdateRateInterestBearingMintInstruction(
+            mint,
+            rateAuthorityPublicKey,
+            rate,
+            signers,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, rateAuthority, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, rateAuthority, ...signers],
+        confirmOptions
+    );
 }

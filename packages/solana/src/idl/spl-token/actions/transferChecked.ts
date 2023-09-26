@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createTransferCheckedInstruction } from '../instructions/transferChecked.js';
@@ -49,5 +55,10 @@ export async function transferChecked(
         )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

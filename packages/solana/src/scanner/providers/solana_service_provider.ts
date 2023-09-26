@@ -29,6 +29,10 @@ export class SolanaServiceProvider extends ServiceProvider {
         return fn();
     }
 
+    public get connection() {
+        return this.client.connection;
+    }
+
     async getLatestBlockHeight(): Promise<number> {
         return await this.__waitAndExecute<number>(async () => {
             return await this.client.getLatestBlockHeight();

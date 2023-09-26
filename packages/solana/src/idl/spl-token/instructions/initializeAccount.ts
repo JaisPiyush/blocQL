@@ -16,7 +16,8 @@ export interface InitializeAccountInstructionData {
 }
 
 /** TODO: docs */
-export const initializeAccountInstructionData = struct<InitializeAccountInstructionData>([u8('instruction')]);
+export const initializeAccountInstructionData =
+    struct<InitializeAccountInstructionData>([u8('instruction')]);
 
 /**
  * Construct an InitializeAccount instruction
@@ -42,7 +43,10 @@ export function createInitializeAccountInstruction(
     ];
 
     const data = Buffer.alloc(initializeAccountInstructionData.span);
-    initializeAccountInstructionData.encode({ instruction: TokenInstruction.InitializeAccount }, data);
+    initializeAccountInstructionData.encode(
+        { instruction: TokenInstruction.InitializeAccount },
+        data
+    );
 
     return new TransactionInstruction({ keys, programId, data });
 }
@@ -73,15 +77,19 @@ export function decodeInitializeAccountInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedInitializeAccountInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== initializeAccountInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== initializeAccountInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, mint, owner, rent },
         data,
     } = decodeInitializeAccountInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializeAccount) throw new TokenInvalidInstructionTypeError();
-    if (!account || !mint || !owner || !rent) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.InitializeAccount)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !mint || !owner || !rent)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

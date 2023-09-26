@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { getSigners } from '../../actions/internal.js';
 import { TOKEN_2022_PROGRAM_ID } from '../../constants.js';
@@ -32,10 +38,20 @@ export async function enableRequiredMemoTransfers(
     const [ownerPublicKey, signers] = getSigners(owner, multiSigners);
 
     const transaction = new Transaction().add(
-        createEnableRequiredMemoTransfersInstruction(account, ownerPublicKey, signers, programId)
+        createEnableRequiredMemoTransfersInstruction(
+            account,
+            ownerPublicKey,
+            signers,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }
 
 /**
@@ -63,8 +79,18 @@ export async function disableRequiredMemoTransfers(
     const [ownerPublicKey, signers] = getSigners(owner, multiSigners);
 
     const transaction = new Transaction().add(
-        createDisableRequiredMemoTransfersInstruction(account, ownerPublicKey, signers, programId)
+        createDisableRequiredMemoTransfersInstruction(
+            account,
+            ownerPublicKey,
+            signers,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

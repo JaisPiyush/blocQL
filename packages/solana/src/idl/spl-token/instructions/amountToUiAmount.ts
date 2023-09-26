@@ -18,10 +18,8 @@ export interface AmountToUiAmountInstructionData {
 }
 
 /** TODO: docs */
-export const amountToUiAmountInstructionData = struct<AmountToUiAmountInstructionData>([
-    u8('instruction'),
-    u64('amount'),
-]);
+export const amountToUiAmountInstructionData =
+    struct<AmountToUiAmountInstructionData>([u8('instruction'), u64('amount')]);
 
 /**
  * Construct a AmountToUiAmount instruction
@@ -75,14 +73,17 @@ export function decodeAmountToUiAmountInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedAmountToUiAmountInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== amountToUiAmountInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== amountToUiAmountInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { mint },
         data,
     } = decodeAmountToUiAmountInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.AmountToUiAmount) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.AmountToUiAmount)
+        throw new TokenInvalidInstructionTypeError();
     if (!mint) throw new TokenInvalidInstructionKeysError();
 
     return {

@@ -1,7 +1,10 @@
 import { struct, u8 } from '@solana/buffer-layout';
 import type { PublicKey, Signer } from '@solana/web3.js';
 import { TransactionInstruction } from '@solana/web3.js';
-import { programSupportsExtensions, TOKEN_2022_PROGRAM_ID } from '../../constants.js';
+import {
+    programSupportsExtensions,
+    TOKEN_2022_PROGRAM_ID,
+} from '../../constants.js';
 import { TokenUnsupportedInstructionError } from '../../errors.js';
 import { addSigners } from '../../instructions/internal.js';
 import { TokenInstruction } from '../../instructions/types.js';
@@ -20,11 +23,12 @@ export interface DefaultAccountStateInstructionData {
 }
 
 /** TODO: docs */
-export const defaultAccountStateInstructionData = struct<DefaultAccountStateInstructionData>([
-    u8('instruction'),
-    u8('defaultAccountStateInstruction'),
-    u8('accountState'),
-]);
+export const defaultAccountStateInstructionData =
+    struct<DefaultAccountStateInstructionData>([
+        u8('instruction'),
+        u8('defaultAccountStateInstruction'),
+        u8('accountState'),
+    ]);
 
 /**
  * Construct an InitializeDefaultAccountState instruction
@@ -48,7 +52,8 @@ export function createInitializeDefaultAccountStateInstruction(
     defaultAccountStateInstructionData.encode(
         {
             instruction: TokenInstruction.DefaultAccountStateExtension,
-            defaultAccountStateInstruction: DefaultAccountStateInstruction.Initialize,
+            defaultAccountStateInstruction:
+                DefaultAccountStateInstruction.Initialize,
             accountState,
         },
         data
@@ -79,12 +84,17 @@ export function createUpdateDefaultAccountStateInstruction(
         throw new TokenUnsupportedInstructionError();
     }
 
-    const keys = addSigners([{ pubkey: mint, isSigner: false, isWritable: true }], freezeAuthority, multiSigners);
+    const keys = addSigners(
+        [{ pubkey: mint, isSigner: false, isWritable: true }],
+        freezeAuthority,
+        multiSigners
+    );
     const data = Buffer.alloc(defaultAccountStateInstructionData.span);
     defaultAccountStateInstructionData.encode(
         {
             instruction: TokenInstruction.DefaultAccountStateExtension,
-            defaultAccountStateInstruction: DefaultAccountStateInstruction.Update,
+            defaultAccountStateInstruction:
+                DefaultAccountStateInstruction.Update,
             accountState,
         },
         data

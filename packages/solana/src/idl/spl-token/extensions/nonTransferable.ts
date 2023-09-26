@@ -16,7 +16,10 @@ export const NON_TRANSFERABLE_SIZE = NonTransferableLayout.span;
 export const NON_TRANSFERABLE_ACCOUNT_SIZE = NonTransferableLayout.span;
 
 export function getNonTransferable(mint: Mint): NonTransferable | null {
-    const extensionData = getExtensionData(ExtensionType.NonTransferable, mint.tlvData);
+    const extensionData = getExtensionData(
+        ExtensionType.NonTransferable,
+        mint.tlvData
+    );
     if (extensionData !== null) {
         return NonTransferableLayout.decode(extensionData);
     } else {
@@ -24,8 +27,13 @@ export function getNonTransferable(mint: Mint): NonTransferable | null {
     }
 }
 
-export function getNonTransferableAccount(account: Account): NonTransferableAccount | null {
-    const extensionData = getExtensionData(ExtensionType.NonTransferableAccount, account.tlvData);
+export function getNonTransferableAccount(
+    account: Account
+): NonTransferableAccount | null {
+    const extensionData = getExtensionData(
+        ExtensionType.NonTransferableAccount,
+        account.tlvData
+    );
     if (extensionData !== null) {
         return NonTransferableLayout.decode(extensionData);
     } else {

@@ -7,10 +7,10 @@
  */
 
 import {
-  Serializer,
-  map,
-  string,
-  struct,
+    Serializer,
+    map,
+    string,
+    struct,
 } from '@metaplex-foundation/umi/serializers';
 import { PayloadType, PayloadTypeArgs, getPayloadTypeSerializer } from '.';
 
@@ -19,7 +19,10 @@ export type Payload = { map: Map<string, PayloadType> };
 export type PayloadArgs = { map: Map<string, PayloadTypeArgs> };
 
 export function getPayloadSerializer(): Serializer<PayloadArgs, Payload> {
-  return struct<Payload>([['map', map(string(), getPayloadTypeSerializer())]], {
-    description: 'Payload',
-  }) as Serializer<PayloadArgs, Payload>;
+    return struct<Payload>(
+        [['map', map(string(), getPayloadTypeSerializer())]],
+        {
+            description: 'Payload',
+        }
+    ) as Serializer<PayloadArgs, Payload>;
 }

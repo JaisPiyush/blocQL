@@ -20,7 +20,16 @@ export async function createNativeMint(
     programId = TOKEN_2022_PROGRAM_ID
 ): Promise<void> {
     const transaction = new Transaction().add(
-        createCreateNativeMintInstruction(payer.publicKey, nativeMint, programId)
+        createCreateNativeMintInstruction(
+            payer.publicKey,
+            nativeMint,
+            programId
+        )
     );
-    await sendAndConfirmTransaction(connection, transaction, [payer], confirmOptions);
+    await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer],
+        confirmOptions
+    );
 }

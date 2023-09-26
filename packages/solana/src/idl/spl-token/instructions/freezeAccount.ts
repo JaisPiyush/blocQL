@@ -17,7 +17,8 @@ export interface FreezeAccountInstructionData {
 }
 
 /** TODO: docs */
-export const freezeAccountInstructionData = struct<FreezeAccountInstructionData>([u8('instruction')]);
+export const freezeAccountInstructionData =
+    struct<FreezeAccountInstructionData>([u8('instruction')]);
 
 /**
  * Construct a FreezeAccount instruction
@@ -47,7 +48,10 @@ export function createFreezeAccountInstruction(
     );
 
     const data = Buffer.alloc(freezeAccountInstructionData.span);
-    freezeAccountInstructionData.encode({ instruction: TokenInstruction.FreezeAccount }, data);
+    freezeAccountInstructionData.encode(
+        { instruction: TokenInstruction.FreezeAccount },
+        data
+    );
 
     return new TransactionInstruction({ keys, programId, data });
 }
@@ -78,15 +82,19 @@ export function decodeFreezeAccountInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedFreezeAccountInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== freezeAccountInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== freezeAccountInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, mint, authority, multiSigners },
         data,
     } = decodeFreezeAccountInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.FreezeAccount) throw new TokenInvalidInstructionTypeError();
-    if (!account || !mint || !authority) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.FreezeAccount)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !mint || !authority)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

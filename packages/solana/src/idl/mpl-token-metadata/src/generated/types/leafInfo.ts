@@ -7,10 +7,10 @@
  */
 
 import {
-  Serializer,
-  array,
-  bytes,
-  struct,
+    Serializer,
+    array,
+    bytes,
+    struct,
 } from '@metaplex-foundation/umi/serializers';
 
 export type LeafInfo = { leaf: Uint8Array; proof: Array<Uint8Array> };
@@ -18,11 +18,11 @@ export type LeafInfo = { leaf: Uint8Array; proof: Array<Uint8Array> };
 export type LeafInfoArgs = LeafInfo;
 
 export function getLeafInfoSerializer(): Serializer<LeafInfoArgs, LeafInfo> {
-  return struct<LeafInfo>(
-    [
-      ['leaf', bytes({ size: 32 })],
-      ['proof', array(bytes({ size: 32 }))],
-    ],
-    { description: 'LeafInfo' }
-  ) as Serializer<LeafInfoArgs, LeafInfo>;
+    return struct<LeafInfo>(
+        [
+            ['leaf', bytes({ size: 32 })],
+            ['proof', array(bytes({ size: 32 }))],
+        ],
+        { description: 'LeafInfo' }
+    ) as Serializer<LeafInfoArgs, LeafInfo>;
 }

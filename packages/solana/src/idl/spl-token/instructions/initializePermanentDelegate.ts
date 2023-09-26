@@ -20,10 +20,11 @@ export interface InitializePermanentDelegateInstructionData {
 }
 
 /** TODO: docs */
-export const initializePermanentDelegateInstructionData = struct<InitializePermanentDelegateInstructionData>([
-    u8('instruction'),
-    publicKey('delegate'),
-]);
+export const initializePermanentDelegateInstructionData =
+    struct<InitializePermanentDelegateInstructionData>([
+        u8('instruction'),
+        publicKey('delegate'),
+    ]);
 
 /**
  * Construct an InitializePermanentDelegate instruction
@@ -80,15 +81,20 @@ export function decodeInitializePermanentDelegateInstruction(
     instruction: TransactionInstruction,
     programId: PublicKey
 ): DecodedInitializePermanentDelegateInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== initializePermanentDelegateInstructionData.span)
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (
+        instruction.data.length !==
+        initializePermanentDelegateInstructionData.span
+    )
         throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { mint },
         data,
     } = decodeInitializePermanentDelegateInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializePermanentDelegate) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.InitializePermanentDelegate)
+        throw new TokenInvalidInstructionTypeError();
     if (!mint) throw new TokenInvalidInstructionKeysError();
 
     return {
@@ -124,7 +130,8 @@ export function decodeInitializePermanentDelegateInstructionUnchecked({
     keys: [mint],
     data,
 }: TransactionInstruction): DecodedInitializePermanentDelegateInstructionUnchecked {
-    const { instruction, delegate } = initializePermanentDelegateInstructionData.decode(data);
+    const { instruction, delegate } =
+        initializePermanentDelegateInstructionData.decode(data);
 
     return {
         programId,

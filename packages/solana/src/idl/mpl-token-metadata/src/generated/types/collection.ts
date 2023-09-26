@@ -8,10 +8,10 @@
 
 import { PublicKey } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  bool,
-  publicKey as publicKeySerializer,
-  struct,
+    Serializer,
+    bool,
+    publicKey as publicKeySerializer,
+    struct,
 } from '@metaplex-foundation/umi/serializers';
 
 export type Collection = { verified: boolean; key: PublicKey };
@@ -19,14 +19,14 @@ export type Collection = { verified: boolean; key: PublicKey };
 export type CollectionArgs = Collection;
 
 export function getCollectionSerializer(): Serializer<
-  CollectionArgs,
-  Collection
+    CollectionArgs,
+    Collection
 > {
-  return struct<Collection>(
-    [
-      ['verified', bool()],
-      ['key', publicKeySerializer()],
-    ],
-    { description: 'Collection' }
-  ) as Serializer<CollectionArgs, Collection>;
+    return struct<Collection>(
+        [
+            ['verified', bool()],
+            ['key', publicKeySerializer()],
+        ],
+        { description: 'Collection' }
+    ) as Serializer<CollectionArgs, Collection>;
 }

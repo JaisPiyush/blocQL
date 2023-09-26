@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '../constants.js';
 import { createRecoverNestedInstruction } from '../instructions/associatedTokenAccount.js';
@@ -65,5 +71,10 @@ export async function recoverNested(
         )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, owner], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, owner],
+        confirmOptions
+    );
 }

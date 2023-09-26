@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createFreezeAccountInstruction } from '../instructions/freezeAccount.js';
@@ -31,8 +37,19 @@ export async function freezeAccount(
     const [authorityPublicKey, signers] = getSigners(authority, multiSigners);
 
     const transaction = new Transaction().add(
-        createFreezeAccountInstruction(account, mint, authorityPublicKey, multiSigners, programId)
+        createFreezeAccountInstruction(
+            account,
+            mint,
+            authorityPublicKey,
+            multiSigners,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

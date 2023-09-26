@@ -1,5 +1,10 @@
 import { u64 } from '@solana/buffer-layout-utils';
-import type { Connection, PublicKey, Signer, TransactionError } from '@solana/web3.js';
+import type {
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionError,
+} from '@solana/web3.js';
 import { Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createUiAmountToAmountInstruction } from '../instructions/uiAmountToAmount.js';
@@ -22,8 +27,12 @@ export async function uiAmountToAmount(
     amount: string,
     programId = TOKEN_PROGRAM_ID
 ): Promise<bigint | TransactionError | null> {
-    const transaction = new Transaction().add(createUiAmountToAmountInstruction(mint, amount, programId));
-    const { returnData, err } = (await connection.simulateTransaction(transaction, [payer], false)).value;
+    const transaction = new Transaction().add(
+        createUiAmountToAmountInstruction(mint, amount, programId)
+    );
+    const { returnData, err } = (
+        await connection.simulateTransaction(transaction, [payer], false)
+    ).value;
     if (returnData) {
         const data = Buffer.from(returnData.data[0], returnData.data[1]);
         return u64().decode(data);

@@ -9,10 +9,19 @@ import { IMMUTABLE_OWNER_SIZE } from './immutableOwner.js';
 import { INTEREST_BEARING_MINT_CONFIG_STATE_SIZE } from './interestBearingMint/state.js';
 import { MEMO_TRANSFER_SIZE } from './memoTransfer/index.js';
 import { MINT_CLOSE_AUTHORITY_SIZE } from './mintCloseAuthority.js';
-import { NON_TRANSFERABLE_SIZE, NON_TRANSFERABLE_ACCOUNT_SIZE } from './nonTransferable.js';
+import {
+    NON_TRANSFERABLE_SIZE,
+    NON_TRANSFERABLE_ACCOUNT_SIZE,
+} from './nonTransferable.js';
 import { PERMANENT_DELEGATE_SIZE } from './permanentDelegate.js';
-import { TRANSFER_FEE_AMOUNT_SIZE, TRANSFER_FEE_CONFIG_SIZE } from './transferFee/index.js';
-import { TRANSFER_HOOK_ACCOUNT_SIZE, TRANSFER_HOOK_SIZE } from './transferHook/index.js';
+import {
+    TRANSFER_FEE_AMOUNT_SIZE,
+    TRANSFER_FEE_CONFIG_SIZE,
+} from './transferFee/index.js';
+import {
+    TRANSFER_HOOK_ACCOUNT_SIZE,
+    TRANSFER_HOOK_SIZE,
+} from './transferHook/index.js';
 
 export enum ExtensionType {
     Uninitialized,
@@ -180,11 +189,16 @@ export function getAccountLen(extensionTypes: ExtensionType[]): number {
     return getLen(extensionTypes, ACCOUNT_SIZE);
 }
 
-export function getExtensionData(extension: ExtensionType, tlvData: Buffer): Buffer | null {
+export function getExtensionData(
+    extension: ExtensionType,
+    tlvData: Buffer
+): Buffer | null {
     let extensionTypeIndex = 0;
     while (extensionTypeIndex + TYPE_SIZE + LENGTH_SIZE <= tlvData.length) {
         const entryType = tlvData.readUInt16LE(extensionTypeIndex);
-        const entryLength = tlvData.readUInt16LE(extensionTypeIndex + TYPE_SIZE);
+        const entryLength = tlvData.readUInt16LE(
+            extensionTypeIndex + TYPE_SIZE
+        );
         const typeIndex = extensionTypeIndex + TYPE_SIZE + LENGTH_SIZE;
         if (entryType == extension) {
             return tlvData.slice(typeIndex, typeIndex + entryLength);
@@ -200,7 +214,9 @@ export function getExtensionTypes(tlvData: Buffer): ExtensionType[] {
     while (extensionTypeIndex < tlvData.length) {
         const entryType = tlvData.readUInt16LE(extensionTypeIndex);
         extensionTypes.push(entryType);
-        const entryLength = tlvData.readUInt16LE(extensionTypeIndex + TYPE_SIZE);
+        const entryLength = tlvData.readUInt16LE(
+            extensionTypeIndex + TYPE_SIZE
+        );
         extensionTypeIndex += TYPE_SIZE + LENGTH_SIZE + entryLength;
     }
     return extensionTypes;

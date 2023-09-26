@@ -20,11 +20,12 @@ export interface MintToCheckedInstructionData {
 }
 
 /** TODO: docs */
-export const mintToCheckedInstructionData = struct<MintToCheckedInstructionData>([
-    u8('instruction'),
-    u64('amount'),
-    u8('decimals'),
-]);
+export const mintToCheckedInstructionData =
+    struct<MintToCheckedInstructionData>([
+        u8('instruction'),
+        u64('amount'),
+        u8('decimals'),
+    ]);
 
 /**
  * Construct a MintToChecked instruction
@@ -98,15 +99,19 @@ export function decodeMintToCheckedInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedMintToCheckedInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== mintToCheckedInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== mintToCheckedInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { mint, destination, authority, multiSigners },
         data,
     } = decodeMintToCheckedInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.MintToChecked) throw new TokenInvalidInstructionTypeError();
-    if (!mint || !destination || !authority) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.MintToChecked)
+        throw new TokenInvalidInstructionTypeError();
+    if (!mint || !destination || !authority)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

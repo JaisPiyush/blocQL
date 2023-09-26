@@ -15,9 +15,8 @@ export interface InitializeImmutableOwnerInstructionData {
 }
 
 /** The struct that represents the instruction data as it is read by the program */
-export const initializeImmutableOwnerInstructionData = struct<InitializeImmutableOwnerInstructionData>([
-    u8('instruction'),
-]);
+export const initializeImmutableOwnerInstructionData =
+    struct<InitializeImmutableOwnerInstructionData>([u8('instruction')]);
 
 /**
  * Construct an InitializeImmutableOwner instruction
@@ -67,15 +66,19 @@ export function decodeInitializeImmutableOwnerInstruction(
     instruction: TransactionInstruction,
     programId: PublicKey
 ): DecodedInitializeImmutableOwnerInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== initializeImmutableOwnerInstructionData.span)
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (
+        instruction.data.length !== initializeImmutableOwnerInstructionData.span
+    )
         throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account },
         data,
     } = decodeInitializeImmutableOwnerInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializeImmutableOwner) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.InitializeImmutableOwner)
+        throw new TokenInvalidInstructionTypeError();
     if (!account) throw new TokenInvalidInstructionKeysError();
 
     return {
@@ -110,7 +113,8 @@ export function decodeInitializeImmutableOwnerInstructionUnchecked({
     keys: [account],
     data,
 }: TransactionInstruction): DecodedInitializeImmutableOwnerInstructionUnchecked {
-    const { instruction } = initializeImmutableOwnerInstructionData.decode(data);
+    const { instruction } =
+        initializeImmutableOwnerInstructionData.decode(data);
 
     return {
         programId,

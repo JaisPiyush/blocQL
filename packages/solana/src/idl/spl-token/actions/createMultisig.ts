@@ -1,8 +1,21 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer } from '@solana/web3.js';
-import { Keypair, sendAndConfirmTransaction, SystemProgram, Transaction } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+} from '@solana/web3.js';
+import {
+    Keypair,
+    sendAndConfirmTransaction,
+    SystemProgram,
+    Transaction,
+} from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createInitializeMultisigInstruction } from '../instructions/initializeMultisig.js';
-import { getMinimumBalanceForRentExemptMultisig, MULTISIG_SIZE } from '../state/multisig.js';
+import {
+    getMinimumBalanceForRentExemptMultisig,
+    MULTISIG_SIZE,
+} from '../state/multisig.js';
 
 /**
  * Create and initialize a new multisig
@@ -36,10 +49,20 @@ export async function createMultisig(
             lamports,
             programId,
         }),
-        createInitializeMultisigInstruction(keypair.publicKey, signers, m, programId)
+        createInitializeMultisigInstruction(
+            keypair.publicKey,
+            signers,
+            m,
+            programId
+        )
     );
 
-    await sendAndConfirmTransaction(connection, transaction, [payer, keypair], confirmOptions);
+    await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, keypair],
+        confirmOptions
+    );
 
     return keypair.publicKey;
 }

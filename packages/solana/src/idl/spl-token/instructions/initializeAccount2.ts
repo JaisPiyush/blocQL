@@ -16,10 +16,11 @@ export interface InitializeAccount2InstructionData {
     owner: PublicKey;
 }
 
-export const initializeAccount2InstructionData = struct<InitializeAccount2InstructionData>([
-    u8('instruction'),
-    publicKey('owner'),
-]);
+export const initializeAccount2InstructionData =
+    struct<InitializeAccount2InstructionData>([
+        u8('instruction'),
+        publicKey('owner'),
+    ]);
 
 /**
  * Construct an InitializeAccount2 instruction
@@ -43,7 +44,10 @@ export function createInitializeAccount2Instruction(
         { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
     ];
     const data = Buffer.alloc(initializeAccount2InstructionData.span);
-    initializeAccount2InstructionData.encode({ instruction: TokenInstruction.InitializeAccount2, owner }, data);
+    initializeAccount2InstructionData.encode(
+        { instruction: TokenInstruction.InitializeAccount2, owner },
+        data
+    );
     return new TransactionInstruction({ keys, programId, data });
 }
 
@@ -73,7 +77,8 @@ export function decodeInitializeAccount2Instruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedInitializeAccount2Instruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
     if (instruction.data.length !== initializeAccount2InstructionData.span)
         throw new TokenInvalidInstructionDataError();
 
@@ -81,8 +86,10 @@ export function decodeInitializeAccount2Instruction(
         keys: { account, mint, rent },
         data,
     } = decodeInitializeAccount2InstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializeAccount2) throw new TokenInvalidInstructionTypeError();
-    if (!account || !mint || !rent) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.InitializeAccount2)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !mint || !rent)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

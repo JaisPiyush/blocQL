@@ -19,7 +19,10 @@ export interface MintToInstructionData {
 }
 
 /** TODO: docs */
-export const mintToInstructionData = struct<MintToInstructionData>([u8('instruction'), u64('amount')]);
+export const mintToInstructionData = struct<MintToInstructionData>([
+    u8('instruction'),
+    u64('amount'),
+]);
 
 /**
  * Construct a MintTo instruction
@@ -89,15 +92,19 @@ export function decodeMintToInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedMintToInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== mintToInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== mintToInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { mint, destination, authority, multiSigners },
         data,
     } = decodeMintToInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.MintTo) throw new TokenInvalidInstructionTypeError();
-    if (!mint || !destination || !authority) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.MintTo)
+        throw new TokenInvalidInstructionTypeError();
+    if (!mint || !destination || !authority)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

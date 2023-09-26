@@ -98,15 +98,19 @@ export function decodeBurnCheckedInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedBurnCheckedInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== burnCheckedInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== burnCheckedInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, mint, owner, multiSigners },
         data,
     } = decodeBurnCheckedInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.BurnChecked) throw new TokenInvalidInstructionTypeError();
-    if (!account || !mint || !owner) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.BurnChecked)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !mint || !owner)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

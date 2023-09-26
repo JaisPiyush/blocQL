@@ -17,7 +17,9 @@ export interface RevokeInstructionData {
 }
 
 /** TODO: docs */
-export const revokeInstructionData = struct<RevokeInstructionData>([u8('instruction')]);
+export const revokeInstructionData = struct<RevokeInstructionData>([
+    u8('instruction'),
+]);
 
 /**
  * Construct a Revoke instruction
@@ -35,10 +37,17 @@ export function createRevokeInstruction(
     multiSigners: (Signer | PublicKey)[] = [],
     programId = TOKEN_PROGRAM_ID
 ): TransactionInstruction {
-    const keys = addSigners([{ pubkey: account, isSigner: false, isWritable: true }], owner, multiSigners);
+    const keys = addSigners(
+        [{ pubkey: account, isSigner: false, isWritable: true }],
+        owner,
+        multiSigners
+    );
 
     const data = Buffer.alloc(revokeInstructionData.span);
-    revokeInstructionData.encode({ instruction: TokenInstruction.Revoke }, data);
+    revokeInstructionData.encode(
+        { instruction: TokenInstruction.Revoke },
+        data
+    );
 
     return new TransactionInstruction({ keys, programId, data });
 }
@@ -68,14 +77,17 @@ export function decodeRevokeInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedRevokeInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== revokeInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== revokeInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, owner, multiSigners },
         data,
     } = decodeRevokeInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.Revoke) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.Revoke)
+        throw new TokenInvalidInstructionTypeError();
     if (!account || !owner) throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?

@@ -16,10 +16,11 @@ export interface InitializeAccount3InstructionData {
     owner: PublicKey;
 }
 
-export const initializeAccount3InstructionData = struct<InitializeAccount3InstructionData>([
-    u8('instruction'),
-    publicKey('owner'),
-]);
+export const initializeAccount3InstructionData =
+    struct<InitializeAccount3InstructionData>([
+        u8('instruction'),
+        publicKey('owner'),
+    ]);
 
 /**
  * Construct an InitializeAccount3 instruction
@@ -42,7 +43,10 @@ export function createInitializeAccount3Instruction(
         { pubkey: mint, isSigner: false, isWritable: false },
     ];
     const data = Buffer.alloc(initializeAccount3InstructionData.span);
-    initializeAccount3InstructionData.encode({ instruction: TokenInstruction.InitializeAccount3, owner }, data);
+    initializeAccount3InstructionData.encode(
+        { instruction: TokenInstruction.InitializeAccount3, owner },
+        data
+    );
     return new TransactionInstruction({ keys, programId, data });
 }
 
@@ -71,7 +75,8 @@ export function decodeInitializeAccount3Instruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedInitializeAccount3Instruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
     if (instruction.data.length !== initializeAccount3InstructionData.span)
         throw new TokenInvalidInstructionDataError();
 
@@ -79,7 +84,8 @@ export function decodeInitializeAccount3Instruction(
         keys: { account, mint },
         data,
     } = decodeInitializeAccount3InstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializeAccount3) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.InitializeAccount3)
+        throw new TokenInvalidInstructionTypeError();
     if (!account || !mint) throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?

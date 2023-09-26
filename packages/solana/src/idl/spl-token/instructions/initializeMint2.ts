@@ -21,13 +21,14 @@ export interface InitializeMint2InstructionData {
 }
 
 /** TODO: docs */
-export const initializeMint2InstructionData = struct<InitializeMint2InstructionData>([
-    u8('instruction'),
-    u8('decimals'),
-    publicKey('mintAuthority'),
-    u8('freezeAuthorityOption'),
-    publicKey('freezeAuthority'),
-]);
+export const initializeMint2InstructionData =
+    struct<InitializeMint2InstructionData>([
+        u8('instruction'),
+        u8('decimals'),
+        publicKey('mintAuthority'),
+        u8('freezeAuthorityOption'),
+        publicKey('freezeAuthority'),
+    ]);
 
 /**
  * Construct an InitializeMint2 instruction
@@ -90,14 +91,17 @@ export function decodeInitializeMint2Instruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedInitializeMint2Instruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== initializeMint2InstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== initializeMint2InstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { mint },
         data,
     } = decodeInitializeMint2InstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.InitializeMint2) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.InitializeMint2)
+        throw new TokenInvalidInstructionTypeError();
     if (!mint) throw new TokenInvalidInstructionKeysError();
 
     return {
@@ -135,8 +139,13 @@ export function decodeInitializeMint2InstructionUnchecked({
     keys: [mint],
     data,
 }: TransactionInstruction): DecodedInitializeMint2InstructionUnchecked {
-    const { instruction, decimals, mintAuthority, freezeAuthorityOption, freezeAuthority } =
-        initializeMint2InstructionData.decode(data);
+    const {
+        instruction,
+        decimals,
+        mintAuthority,
+        freezeAuthorityOption,
+        freezeAuthority,
+    } = initializeMint2InstructionData.decode(data);
 
     return {
         programId,

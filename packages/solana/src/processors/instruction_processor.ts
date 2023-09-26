@@ -1,0 +1,225 @@
+import {
+    BroadcastData,
+    SolanaDatastoreName,
+    SolanaInstructionDecoderFn,
+    SolanaInstructionsMessage,
+} from '../types';
+import { SolanaProcessor } from './processor';
+import { Provider, Program } from '@project-serum/anchor';
+import { BorshCoder } from '@coral-xyz/anchor';
+import { SolanaTransactionModel } from 'types/src/models/solana/transaction';
+import {
+    ParsedInstruction,
+    PartiallyDecodedInstruction,
+} from '@solana/web3.js';
+import { SolanaInstructionCallModel } from 'types/src/models/solana/instruction_call';
+import { BaseIdlDecoder } from '../idl/base';
+import { SolanaInstructionProcessorDecodedData } from 'types';
+
+export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructionsMessage> {
+    private __offlineIdlDecoders = new Map<string, typeof BaseIdlDecoder>([]);
+
+    private idlDecoders = new Map<string, SolanaInstructionDecoderFn>([]);
+
+    public _getInstructionId(
+        txnId: string,
+        index: number,
+        innerIndex?: number
+    ): string {
+        if (innerIndex) {
+            return `${txnId}.${index}.${innerIndex}`;
+        }
+        return `${txnId}.${index}`;
+    }
+
+    private async getIdl(programId: string, provider: Provider) {
+        return await Program.fetchIdl(programId, provider);
+    }
+
+    private getCoder(idl: any) {
+        return new BorshCoder(idl);
+    }
+
+    private decode(
+        programId: string,
+        data: string,
+        encode = 'base58'
+    ): SolanaInstructionProcessorDecodedData | null {
+        // TODO: Write a way to load coder from file or on-chain and maintain a cache for life of the class
+        if (this.idlDecoders.has(programId)) {
+            return this.idlDecoders.get(programId)!(data, encode);
+        }
+        return {
+            name: 'unknown',
+            args: null,
+        };
+    }
+
+    public __getInstructionModel = this.getInstructionModel;
+
+    private getInstructionModel({
+        innerInstructionIndex = null,
+        ...data
+    }: {
+        instruction: ParsedInstruction | PartiallyDecodedInstruction;
+        index: number;
+        isInner: boolean;
+        innerInstructionIndex: number | null;
+        txn: SolanaTransactionModel;
+        mainProgramId?: string;
+    }): SolanaInstructionCallModel {
+        const partialCallData: Omit<
+            SolanaInstructionCallModel,
+            'data' | 'program' | 'raw_data'
+        > = {
+            tx_id: data.txn.signature,
+            block_hash: data.txn.block_hash,
+            block_slot: data.txn.slot,
+            block_time: data.txn.block_time,
+            tx_signer: data.txn.signer,
+            tx_success: data.txn.success,
+            inner_instruction_index: innerInstructionIndex,
+            instruction_index: data.index,
+            is_inner: data.isInner,
+            program_id: data.instruction.programId.toString(),
+            accounts: [],
+            main_program_id: data.isInner
+                ? (data.mainProgramId as string)
+                : data.instruction.programId.toString(),
+            inner_instructions: [],
+            instruction_name: 'unknown',
+            id: data.isInner
+                ? this._getInstructionId(
+                      data.txn.signature,
+                      data.index,
+                      innerInstructionIndex as number
+                  )
+                : this._getInstructionId(data.txn.signature, data.index),
+        };
+
+        if ((data.instruction as ParsedInstruction).parsed) {
+            const ins = data.instruction as ParsedInstruction;
+            return {
+                ...partialCallData,
+                data: ins.parsed.info,
+                program: ins.program,
+                instruction_name: ins.parsed.type,
+            };
+        }
+        const ins = data.instruction as PartiallyDecodedInstruction;
+        const decoded = this.decode(ins.programId.toString(), ins.data);
+        if (decoded) {
+            return {
+                ...partialCallData,
+                data: decoded.args,
+                program: null,
+                raw_data: ins.data,
+                instruction_name: decoded.name,
+                accounts: ins.accounts.map((acc) => acc.toString()),
+            };
+        }
+        return {
+            ...partialCallData,
+            data: null,
+            program: null,
+            raw_data: ins.data,
+            accounts: ins.accounts.map((acc) => acc.toString()),
+        };
+    }
+
+    private async __preSetupIdlCoders(programIds: string[]) {
+        const serviceProvider = await this.providers.serviceProvider();
+        const provider = { connection: serviceProvider.connection };
+
+        for (const programId of programIds) {
+            if (this.idlDecoders.has(programId)) {
+                continue;
+            }
+            if (this.__offlineIdlDecoders.has(programId)) {
+                this.idlDecoders.set(
+                    programId,
+                    new (this.__offlineIdlDecoders.get(programId)!)().decode
+                );
+                continue;
+            }
+            const idl = await this.getIdl(programId, provider);
+            if (idl !== null) {
+                const coder = this.getCoder(idl);
+                this.idlDecoders.set(programId, (data, encode) => {
+                    const decoded = coder.instruction.decode(data, encode);
+                    if (!decoded) {
+                        return null;
+                    }
+                    return {
+                        name: decoded.name,
+                        args: (decoded.data as any).args,
+                    };
+                });
+            }
+        }
+    }
+
+    protected async __process(
+        data: BroadcastData<SolanaInstructionsMessage>
+    ): Promise<void> {
+        const logger = this.providers.logProvider();
+        const instructionDatastore = await this.providers.datastoreProvider(
+            SolanaDatastoreName.InstructionDatastore
+        );
+        const tokenDatastore = await this.providers.datastoreProvider(
+            SolanaDatastoreName.TokenDatastore
+        );
+
+        const programIds =
+            data.payload.rawTxn.transaction.message.instructions.map((ins) =>
+                ins.programId.toString()
+            );
+        await this.__preSetupIdlCoders(programIds);
+
+        const instructionCalls: SolanaInstructionCallModel[] = [];
+        for (const [
+            index,
+            instruction,
+        ] of data.payload.rawTxn.transaction.message.instructions.entries()) {
+            const instructionModel = this.getInstructionModel({
+                instruction,
+                index,
+                isInner: false,
+                innerInstructionIndex: null,
+                txn: data.payload.txn,
+                mainProgramId: instruction.programId.toString(),
+            });
+            instructionCalls.push(instructionModel);
+        }
+        if (data.payload.rawTxn.meta!.innerInstructions) {
+            for (const innerInstructions of data.payload.rawTxn.meta!
+                .innerInstructions) {
+                for (const [
+                    index,
+                    instruction,
+                ] of innerInstructions.instructions.entries()) {
+                    const instructionModel = this.getInstructionModel({
+                        instruction,
+                        index: innerInstructions.index,
+                        isInner: true,
+                        innerInstructionIndex: index,
+                        txn: data.payload.txn,
+                        mainProgramId:
+                            data.payload.rawTxn.transaction.message.instructions[
+                                innerInstructions.index
+                            ].programId.toString(),
+                    });
+                    instructionCalls.push(instructionModel);
+                }
+            }
+        }
+
+        await instructionDatastore.batchInsert(instructionCalls);
+        logger.info(
+            `Inserted ${instructionCalls.length} instructions for transaction ${data.payload.txn.signature} into datastore`
+        );
+        // Clear the decoders
+        this.idlDecoders.clear();
+        // TODO: Add the step to scrap token metadata
+    }
+}

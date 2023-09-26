@@ -20,11 +20,12 @@ export interface InitializeMintCloseAuthorityInstructionData {
 }
 
 /** TODO: docs */
-export const initializeMintCloseAuthorityInstructionData = struct<InitializeMintCloseAuthorityInstructionData>([
-    u8('instruction'),
-    u8('closeAuthorityOption'),
-    publicKey('closeAuthority'),
-]);
+export const initializeMintCloseAuthorityInstructionData =
+    struct<InitializeMintCloseAuthorityInstructionData>([
+        u8('instruction'),
+        u8('closeAuthorityOption'),
+        publicKey('closeAuthority'),
+    ]);
 
 /**
  * Construct an InitializeMintCloseAuthority instruction
@@ -82,8 +83,12 @@ export function decodeInitializeMintCloseAuthorityInstruction(
     instruction: TransactionInstruction,
     programId: PublicKey
 ): DecodedInitializeMintCloseAuthorityInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== initializeMintCloseAuthorityInstructionData.span)
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (
+        instruction.data.length !==
+        initializeMintCloseAuthorityInstructionData.span
+    )
         throw new TokenInvalidInstructionDataError();
 
     const {

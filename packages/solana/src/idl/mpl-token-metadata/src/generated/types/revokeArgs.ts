@@ -9,29 +9,29 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum RevokeArgs {
-  CollectionV1,
-  SaleV1,
-  TransferV1,
-  DataV1,
-  UtilityV1,
-  StakingV1,
-  StandardV1,
-  LockedTransferV1,
-  ProgrammableConfigV1,
-  MigrationV1,
-  AuthorityItemV1,
-  DataItemV1,
-  CollectionItemV1,
-  ProgrammableConfigItemV1,
+    CollectionV1,
+    SaleV1,
+    TransferV1,
+    DataV1,
+    UtilityV1,
+    StakingV1,
+    StandardV1,
+    LockedTransferV1,
+    ProgrammableConfigV1,
+    MigrationV1,
+    AuthorityItemV1,
+    DataItemV1,
+    CollectionItemV1,
+    ProgrammableConfigItemV1,
 }
 
 export type RevokeArgsArgs = RevokeArgs;
 
 export function getRevokeArgsSerializer(): Serializer<
-  RevokeArgsArgs,
-  RevokeArgs
+    RevokeArgsArgs,
+    RevokeArgs
 > {
-  return scalarEnum<RevokeArgs>(RevokeArgs, {
-    description: 'RevokeArgs',
-  }) as Serializer<RevokeArgsArgs, RevokeArgs>;
+    return scalarEnum<RevokeArgs>(RevokeArgs, {
+        description: 'RevokeArgs',
+    }) as Serializer<RevokeArgsArgs, RevokeArgs>;
 }

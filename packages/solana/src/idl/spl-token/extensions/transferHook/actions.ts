@@ -1,4 +1,9 @@
-import type { ConfirmOptions, Connection, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import type { PublicKey } from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { getSigners } from '../../actions/internal.js';
@@ -33,10 +38,20 @@ export async function initializeTransferHook(
     programId = TOKEN_2022_PROGRAM_ID
 ): Promise<TransactionSignature> {
     const transaction = new Transaction().add(
-        createInitializeTransferHookInstruction(mint, authority, transferHookProgramId, programId)
+        createInitializeTransferHookInstruction(
+            mint,
+            authority,
+            transferHookProgramId,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer],
+        confirmOptions
+    );
 }
 
 /**
@@ -66,10 +81,21 @@ export async function updateTransferHook(
     const [authorityPublicKey, signers] = getSigners(authority, multiSigners);
 
     const transaction = new Transaction().add(
-        createUpdateTransferHookInstruction(mint, authorityPublicKey, transferHookProgramId, signers, programId)
+        createUpdateTransferHookInstruction(
+            mint,
+            authorityPublicKey,
+            transferHookProgramId,
+            signers,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }
 
 /**
@@ -119,7 +145,12 @@ export async function transferCheckedWithTransferHook(
         )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }
 
 /**
@@ -172,5 +203,10 @@ export async function transferCheckedWithFeeAndTransferHook(
         )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

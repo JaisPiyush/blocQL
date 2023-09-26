@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createBurnCheckedInstruction } from '../instructions/burnChecked.js';
@@ -35,8 +41,21 @@ export async function burnChecked(
     const [ownerPublicKey, signers] = getSigners(owner, multiSigners);
 
     const transaction = new Transaction().add(
-        createBurnCheckedInstruction(account, mint, ownerPublicKey, amount, decimals, multiSigners, programId)
+        createBurnCheckedInstruction(
+            account,
+            mint,
+            ownerPublicKey,
+            amount,
+            decimals,
+            multiSigners,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

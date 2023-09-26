@@ -7,262 +7,270 @@
  */
 
 import {
-  Context,
-  Option,
-  OptionOrNullable,
-  Pda,
-  PublicKey,
-  Signer,
-  TransactionBuilder,
-  none,
-  publicKey,
-  transactionBuilder,
+    Context,
+    Option,
+    OptionOrNullable,
+    Pda,
+    PublicKey,
+    Signer,
+    TransactionBuilder,
+    none,
+    publicKey,
+    transactionBuilder,
 } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  bool,
-  mapSerializer,
-  option,
-  publicKey as publicKeySerializer,
-  struct,
-  u8,
+    Serializer,
+    bool,
+    mapSerializer,
+    option,
+    publicKey as publicKeySerializer,
+    struct,
+    u8,
 } from '@metaplex-foundation/umi/serializers';
 import { findMetadataDelegateRecordPda, findMetadataPda } from '../accounts';
 import {
-  PickPartial,
-  ResolvedAccount,
-  ResolvedAccountsWithIndices,
-  expectPublicKey,
-  expectSome,
-  getAccountMetasAndSigners,
+    PickPartial,
+    ResolvedAccount,
+    ResolvedAccountsWithIndices,
+    expectPublicKey,
+    expectSome,
+    getAccountMetasAndSigners,
 } from '../shared';
 import {
-  AuthorizationData,
-  AuthorizationDataArgs,
-  MetadataDelegateRole,
-  TokenStandard,
-  TokenStandardArgs,
-  getAuthorizationDataSerializer,
-  getTokenStandardSerializer,
+    AuthorizationData,
+    AuthorizationDataArgs,
+    MetadataDelegateRole,
+    TokenStandard,
+    TokenStandardArgs,
+    getAuthorizationDataSerializer,
+    getTokenStandardSerializer,
 } from '../types';
 
 // Accounts.
 export type UpdateAsAuthorityItemDelegateV2InstructionAccounts = {
-  /** Update authority or delegate */
-  authority?: Signer;
-  /** Delegate record PDA */
-  delegateRecord?: PublicKey | Pda;
-  /** Token account */
-  token?: PublicKey | Pda;
-  /** Mint account */
-  mint: PublicKey | Pda;
-  /** Metadata account */
-  metadata?: PublicKey | Pda;
-  /** Edition account */
-  edition?: PublicKey | Pda;
-  /** Payer */
-  payer?: Signer;
-  /** System program */
-  systemProgram?: PublicKey | Pda;
-  /** Instructions sysvar account */
-  sysvarInstructions?: PublicKey | Pda;
-  /** Token Authorization Rules Program */
-  authorizationRulesProgram?: PublicKey | Pda;
-  /** Token Authorization Rules account */
-  authorizationRules?: PublicKey | Pda;
+    /** Update authority or delegate */
+    authority?: Signer;
+    /** Delegate record PDA */
+    delegateRecord?: PublicKey | Pda;
+    /** Token account */
+    token?: PublicKey | Pda;
+    /** Mint account */
+    mint: PublicKey | Pda;
+    /** Metadata account */
+    metadata?: PublicKey | Pda;
+    /** Edition account */
+    edition?: PublicKey | Pda;
+    /** Payer */
+    payer?: Signer;
+    /** System program */
+    systemProgram?: PublicKey | Pda;
+    /** Instructions sysvar account */
+    sysvarInstructions?: PublicKey | Pda;
+    /** Token Authorization Rules Program */
+    authorizationRulesProgram?: PublicKey | Pda;
+    /** Token Authorization Rules account */
+    authorizationRules?: PublicKey | Pda;
 };
 
 // Data.
 export type UpdateAsAuthorityItemDelegateV2InstructionData = {
-  discriminator: number;
-  updateAsAuthorityItemDelegateV2Discriminator: number;
-  newUpdateAuthority: Option<PublicKey>;
-  primarySaleHappened: Option<boolean>;
-  isMutable: Option<boolean>;
-  tokenStandard: Option<TokenStandard>;
-  authorizationData: Option<AuthorizationData>;
+    discriminator: number;
+    updateAsAuthorityItemDelegateV2Discriminator: number;
+    newUpdateAuthority: Option<PublicKey>;
+    primarySaleHappened: Option<boolean>;
+    isMutable: Option<boolean>;
+    tokenStandard: Option<TokenStandard>;
+    authorizationData: Option<AuthorizationData>;
 };
 
 export type UpdateAsAuthorityItemDelegateV2InstructionDataArgs = {
-  newUpdateAuthority?: OptionOrNullable<PublicKey>;
-  primarySaleHappened?: OptionOrNullable<boolean>;
-  isMutable?: OptionOrNullable<boolean>;
-  tokenStandard?: OptionOrNullable<TokenStandardArgs>;
-  authorizationData?: OptionOrNullable<AuthorizationDataArgs>;
+    newUpdateAuthority?: OptionOrNullable<PublicKey>;
+    primarySaleHappened?: OptionOrNullable<boolean>;
+    isMutable?: OptionOrNullable<boolean>;
+    tokenStandard?: OptionOrNullable<TokenStandardArgs>;
+    authorizationData?: OptionOrNullable<AuthorizationDataArgs>;
 };
 
 export function getUpdateAsAuthorityItemDelegateV2InstructionDataSerializer(): Serializer<
-  UpdateAsAuthorityItemDelegateV2InstructionDataArgs,
-  UpdateAsAuthorityItemDelegateV2InstructionData
+    UpdateAsAuthorityItemDelegateV2InstructionDataArgs,
+    UpdateAsAuthorityItemDelegateV2InstructionData
 > {
-  return mapSerializer<
-    UpdateAsAuthorityItemDelegateV2InstructionDataArgs,
-    any,
-    UpdateAsAuthorityItemDelegateV2InstructionData
-  >(
-    struct<UpdateAsAuthorityItemDelegateV2InstructionData>(
-      [
-        ['discriminator', u8()],
-        ['updateAsAuthorityItemDelegateV2Discriminator', u8()],
-        ['newUpdateAuthority', option(publicKeySerializer())],
-        ['primarySaleHappened', option(bool())],
-        ['isMutable', option(bool())],
-        ['tokenStandard', option(getTokenStandardSerializer())],
-        ['authorizationData', option(getAuthorizationDataSerializer())],
-      ],
-      { description: 'UpdateAsAuthorityItemDelegateV2InstructionData' }
-    ),
-    (value) => ({
-      ...value,
-      discriminator: 50,
-      updateAsAuthorityItemDelegateV2Discriminator: 2,
-      newUpdateAuthority: value.newUpdateAuthority ?? none(),
-      primarySaleHappened: value.primarySaleHappened ?? none(),
-      isMutable: value.isMutable ?? none(),
-      tokenStandard: value.tokenStandard ?? none(),
-      authorizationData: value.authorizationData ?? none(),
-    })
-  ) as Serializer<
-    UpdateAsAuthorityItemDelegateV2InstructionDataArgs,
-    UpdateAsAuthorityItemDelegateV2InstructionData
-  >;
+    return mapSerializer<
+        UpdateAsAuthorityItemDelegateV2InstructionDataArgs,
+        any,
+        UpdateAsAuthorityItemDelegateV2InstructionData
+    >(
+        struct<UpdateAsAuthorityItemDelegateV2InstructionData>(
+            [
+                ['discriminator', u8()],
+                ['updateAsAuthorityItemDelegateV2Discriminator', u8()],
+                ['newUpdateAuthority', option(publicKeySerializer())],
+                ['primarySaleHappened', option(bool())],
+                ['isMutable', option(bool())],
+                ['tokenStandard', option(getTokenStandardSerializer())],
+                ['authorizationData', option(getAuthorizationDataSerializer())],
+            ],
+            { description: 'UpdateAsAuthorityItemDelegateV2InstructionData' }
+        ),
+        (value) => ({
+            ...value,
+            discriminator: 50,
+            updateAsAuthorityItemDelegateV2Discriminator: 2,
+            newUpdateAuthority: value.newUpdateAuthority ?? none(),
+            primarySaleHappened: value.primarySaleHappened ?? none(),
+            isMutable: value.isMutable ?? none(),
+            tokenStandard: value.tokenStandard ?? none(),
+            authorizationData: value.authorizationData ?? none(),
+        })
+    ) as Serializer<
+        UpdateAsAuthorityItemDelegateV2InstructionDataArgs,
+        UpdateAsAuthorityItemDelegateV2InstructionData
+    >;
 }
 
 // Extra Args.
 export type UpdateAsAuthorityItemDelegateV2InstructionExtraArgs = {
-  updateAuthority: PublicKey;
+    updateAuthority: PublicKey;
 };
 
 // Args.
 export type UpdateAsAuthorityItemDelegateV2InstructionArgs = PickPartial<
-  UpdateAsAuthorityItemDelegateV2InstructionDataArgs &
-    UpdateAsAuthorityItemDelegateV2InstructionExtraArgs,
-  'updateAuthority'
+    UpdateAsAuthorityItemDelegateV2InstructionDataArgs &
+        UpdateAsAuthorityItemDelegateV2InstructionExtraArgs,
+    'updateAuthority'
 >;
 
 // Instruction.
 export function updateAsAuthorityItemDelegateV2(
-  context: Pick<Context, 'eddsa' | 'identity' | 'payer' | 'programs'>,
-  input: UpdateAsAuthorityItemDelegateV2InstructionAccounts &
-    UpdateAsAuthorityItemDelegateV2InstructionArgs
+    context: Pick<Context, 'eddsa' | 'identity' | 'payer' | 'programs'>,
+    input: UpdateAsAuthorityItemDelegateV2InstructionAccounts &
+        UpdateAsAuthorityItemDelegateV2InstructionArgs
 ): TransactionBuilder {
-  // Program ID.
-  const programId = context.programs.getPublicKey(
-    'mplTokenMetadata',
-    'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
-  );
-
-  // Accounts.
-  const resolvedAccounts: ResolvedAccountsWithIndices = {
-    authority: { index: 0, isWritable: false, value: input.authority ?? null },
-    delegateRecord: {
-      index: 1,
-      isWritable: false,
-      value: input.delegateRecord ?? null,
-    },
-    token: { index: 2, isWritable: false, value: input.token ?? null },
-    mint: { index: 3, isWritable: false, value: input.mint ?? null },
-    metadata: { index: 4, isWritable: true, value: input.metadata ?? null },
-    edition: { index: 5, isWritable: false, value: input.edition ?? null },
-    payer: { index: 6, isWritable: true, value: input.payer ?? null },
-    systemProgram: {
-      index: 7,
-      isWritable: false,
-      value: input.systemProgram ?? null,
-    },
-    sysvarInstructions: {
-      index: 8,
-      isWritable: false,
-      value: input.sysvarInstructions ?? null,
-    },
-    authorizationRulesProgram: {
-      index: 9,
-      isWritable: false,
-      value: input.authorizationRulesProgram ?? null,
-    },
-    authorizationRules: {
-      index: 10,
-      isWritable: false,
-      value: input.authorizationRules ?? null,
-    },
-  };
-
-  // Arguments.
-  const resolvedArgs: UpdateAsAuthorityItemDelegateV2InstructionArgs = {
-    ...input,
-  };
-
-  // Default values.
-  if (!resolvedAccounts.authority.value) {
-    resolvedAccounts.authority.value = context.identity;
-  }
-  if (!resolvedArgs.updateAuthority) {
-    resolvedArgs.updateAuthority = context.identity.publicKey;
-  }
-  if (!resolvedAccounts.delegateRecord.value) {
-    resolvedAccounts.delegateRecord.value = findMetadataDelegateRecordPda(
-      context,
-      {
-        mint: expectPublicKey(resolvedAccounts.mint.value),
-        delegateRole: MetadataDelegateRole.AuthorityItem,
-        updateAuthority: expectSome(resolvedArgs.updateAuthority),
-        delegate: expectPublicKey(resolvedAccounts.authority.value),
-      }
+    // Program ID.
+    const programId = context.programs.getPublicKey(
+        'mplTokenMetadata',
+        'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
     );
-  }
-  if (!resolvedAccounts.metadata.value) {
-    resolvedAccounts.metadata.value = findMetadataPda(context, {
-      mint: expectPublicKey(resolvedAccounts.mint.value),
-    });
-  }
-  if (!resolvedAccounts.payer.value) {
-    resolvedAccounts.payer.value = context.payer;
-  }
-  if (!resolvedAccounts.systemProgram.value) {
-    resolvedAccounts.systemProgram.value = context.programs.getPublicKey(
-      'splSystem',
-      '11111111111111111111111111111111'
-    );
-    resolvedAccounts.systemProgram.isWritable = false;
-  }
-  if (!resolvedAccounts.sysvarInstructions.value) {
-    resolvedAccounts.sysvarInstructions.value = publicKey(
-      'Sysvar1nstructions1111111111111111111111111'
-    );
-  }
-  if (!resolvedAccounts.authorizationRulesProgram.value) {
-    if (resolvedAccounts.authorizationRules.value) {
-      resolvedAccounts.authorizationRulesProgram.value =
-        context.programs.getPublicKey(
-          'mplTokenAuthRules',
-          'auth9SigNpDKz4sJJ1DfCTuZrZNSAgh9sFD3rboVmgg'
-        );
-      resolvedAccounts.authorizationRulesProgram.isWritable = false;
+
+    // Accounts.
+    const resolvedAccounts: ResolvedAccountsWithIndices = {
+        authority: {
+            index: 0,
+            isWritable: false,
+            value: input.authority ?? null,
+        },
+        delegateRecord: {
+            index: 1,
+            isWritable: false,
+            value: input.delegateRecord ?? null,
+        },
+        token: { index: 2, isWritable: false, value: input.token ?? null },
+        mint: { index: 3, isWritable: false, value: input.mint ?? null },
+        metadata: { index: 4, isWritable: true, value: input.metadata ?? null },
+        edition: { index: 5, isWritable: false, value: input.edition ?? null },
+        payer: { index: 6, isWritable: true, value: input.payer ?? null },
+        systemProgram: {
+            index: 7,
+            isWritable: false,
+            value: input.systemProgram ?? null,
+        },
+        sysvarInstructions: {
+            index: 8,
+            isWritable: false,
+            value: input.sysvarInstructions ?? null,
+        },
+        authorizationRulesProgram: {
+            index: 9,
+            isWritable: false,
+            value: input.authorizationRulesProgram ?? null,
+        },
+        authorizationRules: {
+            index: 10,
+            isWritable: false,
+            value: input.authorizationRules ?? null,
+        },
+    };
+
+    // Arguments.
+    const resolvedArgs: UpdateAsAuthorityItemDelegateV2InstructionArgs = {
+        ...input,
+    };
+
+    // Default values.
+    if (!resolvedAccounts.authority.value) {
+        resolvedAccounts.authority.value = context.identity;
     }
-  }
+    if (!resolvedArgs.updateAuthority) {
+        resolvedArgs.updateAuthority = context.identity.publicKey;
+    }
+    if (!resolvedAccounts.delegateRecord.value) {
+        resolvedAccounts.delegateRecord.value = findMetadataDelegateRecordPda(
+            context,
+            {
+                mint: expectPublicKey(resolvedAccounts.mint.value),
+                delegateRole: MetadataDelegateRole.AuthorityItem,
+                updateAuthority: expectSome(resolvedArgs.updateAuthority),
+                delegate: expectPublicKey(resolvedAccounts.authority.value),
+            }
+        );
+    }
+    if (!resolvedAccounts.metadata.value) {
+        resolvedAccounts.metadata.value = findMetadataPda(context, {
+            mint: expectPublicKey(resolvedAccounts.mint.value),
+        });
+    }
+    if (!resolvedAccounts.payer.value) {
+        resolvedAccounts.payer.value = context.payer;
+    }
+    if (!resolvedAccounts.systemProgram.value) {
+        resolvedAccounts.systemProgram.value = context.programs.getPublicKey(
+            'splSystem',
+            '11111111111111111111111111111111'
+        );
+        resolvedAccounts.systemProgram.isWritable = false;
+    }
+    if (!resolvedAccounts.sysvarInstructions.value) {
+        resolvedAccounts.sysvarInstructions.value = publicKey(
+            'Sysvar1nstructions1111111111111111111111111'
+        );
+    }
+    if (!resolvedAccounts.authorizationRulesProgram.value) {
+        if (resolvedAccounts.authorizationRules.value) {
+            resolvedAccounts.authorizationRulesProgram.value =
+                context.programs.getPublicKey(
+                    'mplTokenAuthRules',
+                    'auth9SigNpDKz4sJJ1DfCTuZrZNSAgh9sFD3rboVmgg'
+                );
+            resolvedAccounts.authorizationRulesProgram.isWritable = false;
+        }
+    }
 
-  // Accounts in order.
-  const orderedAccounts: ResolvedAccount[] = Object.values(
-    resolvedAccounts
-  ).sort((a, b) => a.index - b.index);
+    // Accounts in order.
+    const orderedAccounts: ResolvedAccount[] = Object.values(
+        resolvedAccounts
+    ).sort((a, b) => a.index - b.index);
 
-  // Keys and Signers.
-  const [keys, signers] = getAccountMetasAndSigners(
-    orderedAccounts,
-    'programId',
-    programId
-  );
-
-  // Data.
-  const data =
-    getUpdateAsAuthorityItemDelegateV2InstructionDataSerializer().serialize(
-      resolvedArgs as UpdateAsAuthorityItemDelegateV2InstructionDataArgs
+    // Keys and Signers.
+    const [keys, signers] = getAccountMetasAndSigners(
+        orderedAccounts,
+        'programId',
+        programId
     );
 
-  // Bytes Created On Chain.
-  const bytesCreatedOnChain = 0;
+    // Data.
+    const data =
+        getUpdateAsAuthorityItemDelegateV2InstructionDataSerializer().serialize(
+            resolvedArgs as UpdateAsAuthorityItemDelegateV2InstructionDataArgs
+        );
 
-  return transactionBuilder([
-    { instruction: { keys, programId, data }, signers, bytesCreatedOnChain },
-  ]);
+    // Bytes Created On Chain.
+    const bytesCreatedOnChain = 0;
+
+    return transactionBuilder([
+        {
+            instruction: { keys, programId, data },
+            signers,
+            bytesCreatedOnChain,
+        },
+    ]);
 }

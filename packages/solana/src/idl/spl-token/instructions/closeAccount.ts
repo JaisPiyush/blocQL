@@ -17,7 +17,9 @@ export interface CloseAccountInstructionData {
 }
 
 /** TODO: docs */
-export const closeAccountInstructionData = struct<CloseAccountInstructionData>([u8('instruction')]);
+export const closeAccountInstructionData = struct<CloseAccountInstructionData>([
+    u8('instruction'),
+]);
 
 /**
  * Construct a CloseAccount instruction
@@ -47,7 +49,10 @@ export function createCloseAccountInstruction(
     );
 
     const data = Buffer.alloc(closeAccountInstructionData.span);
-    closeAccountInstructionData.encode({ instruction: TokenInstruction.CloseAccount }, data);
+    closeAccountInstructionData.encode(
+        { instruction: TokenInstruction.CloseAccount },
+        data
+    );
 
     return new TransactionInstruction({ keys, programId, data });
 }
@@ -78,15 +83,19 @@ export function decodeCloseAccountInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedCloseAccountInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== closeAccountInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== closeAccountInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, destination, authority, multiSigners },
         data,
     } = decodeCloseAccountInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.CloseAccount) throw new TokenInvalidInstructionTypeError();
-    if (!account || !destination || !authority) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.CloseAccount)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !destination || !authority)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

@@ -7,67 +7,67 @@
  */
 
 import {
-  GetDataEnumKind,
-  GetDataEnumKindContent,
-  Serializer,
-  dataEnum,
-  struct,
-  tuple,
-  unit,
+    GetDataEnumKind,
+    GetDataEnumKindContent,
+    Serializer,
+    dataEnum,
+    struct,
+    tuple,
+    unit,
 } from '@metaplex-foundation/umi/serializers';
 import { Uses, UsesArgs, getUsesSerializer } from '.';
 
 export type UsesToggle =
-  | { __kind: 'None' }
-  | { __kind: 'Clear' }
-  | { __kind: 'Set'; fields: [Uses] };
+    | { __kind: 'None' }
+    | { __kind: 'Clear' }
+    | { __kind: 'Set'; fields: [Uses] };
 
 export type UsesToggleArgs =
-  | { __kind: 'None' }
-  | { __kind: 'Clear' }
-  | { __kind: 'Set'; fields: [UsesArgs] };
+    | { __kind: 'None' }
+    | { __kind: 'Clear' }
+    | { __kind: 'Set'; fields: [UsesArgs] };
 
 export function getUsesToggleSerializer(): Serializer<
-  UsesToggleArgs,
-  UsesToggle
+    UsesToggleArgs,
+    UsesToggle
 > {
-  return dataEnum<UsesToggle>(
-    [
-      ['None', unit()],
-      ['Clear', unit()],
-      [
-        'Set',
-        struct<GetDataEnumKindContent<UsesToggle, 'Set'>>([
-          ['fields', tuple([getUsesSerializer()])],
-        ]),
-      ],
-    ],
-    { description: 'UsesToggle' }
-  ) as Serializer<UsesToggleArgs, UsesToggle>;
+    return dataEnum<UsesToggle>(
+        [
+            ['None', unit()],
+            ['Clear', unit()],
+            [
+                'Set',
+                struct<GetDataEnumKindContent<UsesToggle, 'Set'>>([
+                    ['fields', tuple([getUsesSerializer()])],
+                ]),
+            ],
+        ],
+        { description: 'UsesToggle' }
+    ) as Serializer<UsesToggleArgs, UsesToggle>;
 }
 
 // Data Enum Helpers.
 export function usesToggle(
-  kind: 'None'
+    kind: 'None'
 ): GetDataEnumKind<UsesToggleArgs, 'None'>;
 export function usesToggle(
-  kind: 'Clear'
+    kind: 'Clear'
 ): GetDataEnumKind<UsesToggleArgs, 'Clear'>;
 export function usesToggle(
-  kind: 'Set',
-  data: GetDataEnumKindContent<UsesToggleArgs, 'Set'>['fields']
+    kind: 'Set',
+    data: GetDataEnumKindContent<UsesToggleArgs, 'Set'>['fields']
 ): GetDataEnumKind<UsesToggleArgs, 'Set'>;
 export function usesToggle<K extends UsesToggleArgs['__kind']>(
-  kind: K,
-  data?: any
+    kind: K,
+    data?: any
 ): Extract<UsesToggleArgs, { __kind: K }> {
-  return Array.isArray(data)
-    ? { __kind: kind, fields: data }
-    : { __kind: kind, ...(data ?? {}) };
+    return Array.isArray(data)
+        ? { __kind: kind, fields: data }
+        : { __kind: kind, ...(data ?? {}) };
 }
 export function isUsesToggle<K extends UsesToggle['__kind']>(
-  kind: K,
-  value: UsesToggle
+    kind: K,
+    value: UsesToggle
 ): value is UsesToggle & { __kind: K } {
-  return value.__kind === kind;
+    return value.__kind === kind;
 }

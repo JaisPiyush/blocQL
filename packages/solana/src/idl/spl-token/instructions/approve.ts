@@ -19,7 +19,10 @@ export interface ApproveInstructionData {
 }
 
 /** TODO: docs */
-export const approveInstructionData = struct<ApproveInstructionData>([u8('instruction'), u64('amount')]);
+export const approveInstructionData = struct<ApproveInstructionData>([
+    u8('instruction'),
+    u64('amount'),
+]);
 
 /**
  * Construct an Approve instruction
@@ -89,15 +92,19 @@ export function decodeApproveInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedApproveInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== approveInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== approveInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, delegate, owner, multiSigners },
         data,
     } = decodeApproveInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.Approve) throw new TokenInvalidInstructionTypeError();
-    if (!account || !delegate || !owner) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.Approve)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !delegate || !owner)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

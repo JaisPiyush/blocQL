@@ -65,7 +65,11 @@ export function createSetAuthorityInstruction(
     multiSigners: (Signer | PublicKey)[] = [],
     programId = TOKEN_PROGRAM_ID
 ): TransactionInstruction {
-    const keys = addSigners([{ pubkey: account, isSigner: false, isWritable: true }], currentAuthority, multiSigners);
+    const keys = addSigners(
+        [{ pubkey: account, isSigner: false, isWritable: true }],
+        currentAuthority,
+        multiSigners
+    );
 
     const data = Buffer.alloc(setAuthorityInstructionData.span);
     setAuthorityInstructionData.encode(
@@ -108,15 +112,19 @@ export function decodeSetAuthorityInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedSetAuthorityInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== setAuthorityInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== setAuthorityInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, currentAuthority, multiSigners },
         data,
     } = decodeSetAuthorityInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.SetAuthority) throw new TokenInvalidInstructionTypeError();
-    if (!account || !currentAuthority) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.SetAuthority)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !currentAuthority)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 
@@ -158,7 +166,8 @@ export function decodeSetAuthorityInstructionUnchecked({
     keys: [account, currentAuthority, ...multiSigners],
     data,
 }: TransactionInstruction): DecodedSetAuthorityInstructionUnchecked {
-    const { instruction, authorityType, newAuthorityOption, newAuthority } = setAuthorityInstructionData.decode(data);
+    const { instruction, authorityType, newAuthorityOption, newAuthority } =
+        setAuthorityInstructionData.decode(data);
 
     return {
         programId,

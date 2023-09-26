@@ -9,17 +9,17 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum VerificationArgs {
-  CreatorV1,
-  CollectionV1,
+    CreatorV1,
+    CollectionV1,
 }
 
 export type VerificationArgsArgs = VerificationArgs;
 
 export function getVerificationArgsSerializer(): Serializer<
-  VerificationArgsArgs,
-  VerificationArgs
+    VerificationArgsArgs,
+    VerificationArgs
 > {
-  return scalarEnum<VerificationArgs>(VerificationArgs, {
-    description: 'VerificationArgs',
-  }) as Serializer<VerificationArgsArgs, VerificationArgs>;
+    return scalarEnum<VerificationArgs>(VerificationArgs, {
+        description: 'VerificationArgs',
+    }) as Serializer<VerificationArgsArgs, VerificationArgs>;
 }

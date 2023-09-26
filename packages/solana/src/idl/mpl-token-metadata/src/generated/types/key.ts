@@ -9,27 +9,27 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum Key {
-  Uninitialized,
-  EditionV1,
-  MasterEditionV1,
-  ReservationListV1,
-  MetadataV1,
-  ReservationListV2,
-  MasterEditionV2,
-  EditionMarker,
-  UseAuthorityRecord,
-  CollectionAuthorityRecord,
-  TokenOwnedEscrow,
-  TokenRecord,
-  MetadataDelegate,
-  EditionMarkerV2,
+    Uninitialized,
+    EditionV1,
+    MasterEditionV1,
+    ReservationListV1,
+    MetadataV1,
+    ReservationListV2,
+    MasterEditionV2,
+    EditionMarker,
+    UseAuthorityRecord,
+    CollectionAuthorityRecord,
+    TokenOwnedEscrow,
+    TokenRecord,
+    MetadataDelegate,
+    EditionMarkerV2,
 }
 
 export type KeyArgs = Key;
 
 export function getKeySerializer(): Serializer<KeyArgs, Key> {
-  return scalarEnum<Key>(Key, { description: 'Key' }) as Serializer<
-    KeyArgs,
-    Key
-  >;
+    return scalarEnum<Key>(Key, { description: 'Key' }) as Serializer<
+        KeyArgs,
+        Key
+    >;
 }

@@ -9,18 +9,18 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum TokenState {
-  Unlocked,
-  Locked,
-  Listed,
+    Unlocked,
+    Locked,
+    Listed,
 }
 
 export type TokenStateArgs = TokenState;
 
 export function getTokenStateSerializer(): Serializer<
-  TokenStateArgs,
-  TokenState
+    TokenStateArgs,
+    TokenState
 > {
-  return scalarEnum<TokenState>(TokenState, {
-    description: 'TokenState',
-  }) as Serializer<TokenStateArgs, TokenState>;
+    return scalarEnum<TokenState>(TokenState, {
+        description: 'TokenState',
+    }) as Serializer<TokenStateArgs, TokenState>;
 }

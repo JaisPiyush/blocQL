@@ -8,40 +8,40 @@
 
 import { Option, OptionOrNullable } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  array,
-  option,
-  string,
-  struct,
-  u16,
+    Serializer,
+    array,
+    option,
+    string,
+    struct,
+    u16,
 } from '@metaplex-foundation/umi/serializers';
 import { Creator, CreatorArgs, getCreatorSerializer } from '.';
 
 export type Data = {
-  name: string;
-  symbol: string;
-  uri: string;
-  sellerFeeBasisPoints: number;
-  creators: Option<Array<Creator>>;
+    name: string;
+    symbol: string;
+    uri: string;
+    sellerFeeBasisPoints: number;
+    creators: Option<Array<Creator>>;
 };
 
 export type DataArgs = {
-  name: string;
-  symbol: string;
-  uri: string;
-  sellerFeeBasisPoints: number;
-  creators: OptionOrNullable<Array<CreatorArgs>>;
+    name: string;
+    symbol: string;
+    uri: string;
+    sellerFeeBasisPoints: number;
+    creators: OptionOrNullable<Array<CreatorArgs>>;
 };
 
 export function getDataSerializer(): Serializer<DataArgs, Data> {
-  return struct<Data>(
-    [
-      ['name', string()],
-      ['symbol', string()],
-      ['uri', string()],
-      ['sellerFeeBasisPoints', u16()],
-      ['creators', option(array(getCreatorSerializer()))],
-    ],
-    { description: 'Data' }
-  ) as Serializer<DataArgs, Data>;
+    return struct<Data>(
+        [
+            ['name', string()],
+            ['symbol', string()],
+            ['uri', string()],
+            ['sellerFeeBasisPoints', u16()],
+            ['creators', option(array(getCreatorSerializer()))],
+        ],
+        { description: 'Data' }
+    ) as Serializer<DataArgs, Data>;
 }

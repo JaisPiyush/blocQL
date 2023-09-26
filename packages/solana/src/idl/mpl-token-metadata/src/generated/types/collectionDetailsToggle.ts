@@ -7,72 +7,72 @@
  */
 
 import {
-  GetDataEnumKind,
-  GetDataEnumKindContent,
-  Serializer,
-  dataEnum,
-  struct,
-  tuple,
-  unit,
+    GetDataEnumKind,
+    GetDataEnumKindContent,
+    Serializer,
+    dataEnum,
+    struct,
+    tuple,
+    unit,
 } from '@metaplex-foundation/umi/serializers';
 import {
-  CollectionDetails,
-  CollectionDetailsArgs,
-  getCollectionDetailsSerializer,
+    CollectionDetails,
+    CollectionDetailsArgs,
+    getCollectionDetailsSerializer,
 } from '.';
 
 export type CollectionDetailsToggle =
-  | { __kind: 'None' }
-  | { __kind: 'Clear' }
-  | { __kind: 'Set'; fields: [CollectionDetails] };
+    | { __kind: 'None' }
+    | { __kind: 'Clear' }
+    | { __kind: 'Set'; fields: [CollectionDetails] };
 
 export type CollectionDetailsToggleArgs =
-  | { __kind: 'None' }
-  | { __kind: 'Clear' }
-  | { __kind: 'Set'; fields: [CollectionDetailsArgs] };
+    | { __kind: 'None' }
+    | { __kind: 'Clear' }
+    | { __kind: 'Set'; fields: [CollectionDetailsArgs] };
 
 export function getCollectionDetailsToggleSerializer(): Serializer<
-  CollectionDetailsToggleArgs,
-  CollectionDetailsToggle
+    CollectionDetailsToggleArgs,
+    CollectionDetailsToggle
 > {
-  return dataEnum<CollectionDetailsToggle>(
-    [
-      ['None', unit()],
-      ['Clear', unit()],
-      [
-        'Set',
-        struct<GetDataEnumKindContent<CollectionDetailsToggle, 'Set'>>([
-          ['fields', tuple([getCollectionDetailsSerializer()])],
-        ]),
-      ],
-    ],
-    { description: 'CollectionDetailsToggle' }
-  ) as Serializer<CollectionDetailsToggleArgs, CollectionDetailsToggle>;
+    return dataEnum<CollectionDetailsToggle>(
+        [
+            ['None', unit()],
+            ['Clear', unit()],
+            [
+                'Set',
+                struct<GetDataEnumKindContent<CollectionDetailsToggle, 'Set'>>([
+                    ['fields', tuple([getCollectionDetailsSerializer()])],
+                ]),
+            ],
+        ],
+        { description: 'CollectionDetailsToggle' }
+    ) as Serializer<CollectionDetailsToggleArgs, CollectionDetailsToggle>;
 }
 
 // Data Enum Helpers.
 export function collectionDetailsToggle(
-  kind: 'None'
+    kind: 'None'
 ): GetDataEnumKind<CollectionDetailsToggleArgs, 'None'>;
 export function collectionDetailsToggle(
-  kind: 'Clear'
+    kind: 'Clear'
 ): GetDataEnumKind<CollectionDetailsToggleArgs, 'Clear'>;
 export function collectionDetailsToggle(
-  kind: 'Set',
-  data: GetDataEnumKindContent<CollectionDetailsToggleArgs, 'Set'>['fields']
+    kind: 'Set',
+    data: GetDataEnumKindContent<CollectionDetailsToggleArgs, 'Set'>['fields']
 ): GetDataEnumKind<CollectionDetailsToggleArgs, 'Set'>;
 export function collectionDetailsToggle<
-  K extends CollectionDetailsToggleArgs['__kind']
+    K extends CollectionDetailsToggleArgs['__kind'],
 >(kind: K, data?: any): Extract<CollectionDetailsToggleArgs, { __kind: K }> {
-  return Array.isArray(data)
-    ? { __kind: kind, fields: data }
-    : { __kind: kind, ...(data ?? {}) };
+    return Array.isArray(data)
+        ? { __kind: kind, fields: data }
+        : { __kind: kind, ...(data ?? {}) };
 }
 export function isCollectionDetailsToggle<
-  K extends CollectionDetailsToggle['__kind']
+    K extends CollectionDetailsToggle['__kind'],
 >(
-  kind: K,
-  value: CollectionDetailsToggle
+    kind: K,
+    value: CollectionDetailsToggle
 ): value is CollectionDetailsToggle & { __kind: K } {
-  return value.__kind === kind;
+    return value.__kind === kind;
 }

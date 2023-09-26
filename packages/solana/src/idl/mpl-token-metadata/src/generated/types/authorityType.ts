@@ -9,20 +9,20 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum AuthorityType {
-  None,
-  Metadata,
-  Holder,
-  MetadataDelegate,
-  TokenDelegate,
+    None,
+    Metadata,
+    Holder,
+    MetadataDelegate,
+    TokenDelegate,
 }
 
 export type AuthorityTypeArgs = AuthorityType;
 
 export function getAuthorityTypeSerializer(): Serializer<
-  AuthorityTypeArgs,
-  AuthorityType
+    AuthorityTypeArgs,
+    AuthorityType
 > {
-  return scalarEnum<AuthorityType>(AuthorityType, {
-    description: 'AuthorityType',
-  }) as Serializer<AuthorityTypeArgs, AuthorityType>;
+    return scalarEnum<AuthorityType>(AuthorityType, {
+        description: 'AuthorityType',
+    }) as Serializer<AuthorityTypeArgs, AuthorityType>;
 }

@@ -7,213 +7,228 @@
  */
 
 import {
-  Account,
-  Context,
-  Option,
-  OptionOrNullable,
-  Pda,
-  PublicKey,
-  RpcAccount,
-  RpcGetAccountOptions,
-  RpcGetAccountsOptions,
-  assertAccountExists,
-  deserializeAccount,
-  gpaBuilder,
-  publicKey as toPublicKey,
+    Account,
+    Context,
+    Option,
+    OptionOrNullable,
+    Pda,
+    PublicKey,
+    RpcAccount,
+    RpcGetAccountOptions,
+    RpcGetAccountsOptions,
+    assertAccountExists,
+    deserializeAccount,
+    gpaBuilder,
+    publicKey as toPublicKey,
 } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  mapSerializer,
-  option,
-  publicKey as publicKeySerializer,
-  string,
-  struct,
-  u64,
-  u8,
+    Serializer,
+    mapSerializer,
+    option,
+    publicKey as publicKeySerializer,
+    string,
+    struct,
+    u64,
+    u8,
 } from '@metaplex-foundation/umi/serializers';
 import {
-  Key,
-  KeyArgs,
-  TokenDelegateRole,
-  TokenDelegateRoleArgs,
-  TokenState,
-  TokenStateArgs,
-  getKeySerializer,
-  getTokenDelegateRoleSerializer,
-  getTokenStateSerializer,
+    Key,
+    KeyArgs,
+    TokenDelegateRole,
+    TokenDelegateRoleArgs,
+    TokenState,
+    TokenStateArgs,
+    getKeySerializer,
+    getTokenDelegateRoleSerializer,
+    getTokenStateSerializer,
 } from '../types';
 
 export type TokenRecord = Account<TokenRecordAccountData>;
 
 export type TokenRecordAccountData = {
-  key: Key;
-  bump: number;
-  state: TokenState;
-  ruleSetRevision: Option<bigint>;
-  delegate: Option<PublicKey>;
-  delegateRole: Option<TokenDelegateRole>;
-  lockedTransfer: Option<PublicKey>;
+    key: Key;
+    bump: number;
+    state: TokenState;
+    ruleSetRevision: Option<bigint>;
+    delegate: Option<PublicKey>;
+    delegateRole: Option<TokenDelegateRole>;
+    lockedTransfer: Option<PublicKey>;
 };
 
 export type TokenRecordAccountDataArgs = {
-  bump: number;
-  state: TokenStateArgs;
-  ruleSetRevision: OptionOrNullable<number | bigint>;
-  delegate: OptionOrNullable<PublicKey>;
-  delegateRole: OptionOrNullable<TokenDelegateRoleArgs>;
-  lockedTransfer: OptionOrNullable<PublicKey>;
+    bump: number;
+    state: TokenStateArgs;
+    ruleSetRevision: OptionOrNullable<number | bigint>;
+    delegate: OptionOrNullable<PublicKey>;
+    delegateRole: OptionOrNullable<TokenDelegateRoleArgs>;
+    lockedTransfer: OptionOrNullable<PublicKey>;
 };
 
 export function getTokenRecordAccountDataSerializer(): Serializer<
-  TokenRecordAccountDataArgs,
-  TokenRecordAccountData
+    TokenRecordAccountDataArgs,
+    TokenRecordAccountData
 > {
-  return mapSerializer<TokenRecordAccountDataArgs, any, TokenRecordAccountData>(
-    struct<TokenRecordAccountData>(
-      [
-        ['key', getKeySerializer()],
-        ['bump', u8()],
-        ['state', getTokenStateSerializer()],
-        ['ruleSetRevision', option(u64())],
-        ['delegate', option(publicKeySerializer())],
-        ['delegateRole', option(getTokenDelegateRoleSerializer())],
-        ['lockedTransfer', option(publicKeySerializer())],
-      ],
-      { description: 'TokenRecordAccountData' }
-    ),
-    (value) => ({ ...value, key: Key.TokenRecord })
-  ) as Serializer<TokenRecordAccountDataArgs, TokenRecordAccountData>;
+    return mapSerializer<
+        TokenRecordAccountDataArgs,
+        any,
+        TokenRecordAccountData
+    >(
+        struct<TokenRecordAccountData>(
+            [
+                ['key', getKeySerializer()],
+                ['bump', u8()],
+                ['state', getTokenStateSerializer()],
+                ['ruleSetRevision', option(u64())],
+                ['delegate', option(publicKeySerializer())],
+                ['delegateRole', option(getTokenDelegateRoleSerializer())],
+                ['lockedTransfer', option(publicKeySerializer())],
+            ],
+            { description: 'TokenRecordAccountData' }
+        ),
+        (value) => ({ ...value, key: Key.TokenRecord })
+    ) as Serializer<TokenRecordAccountDataArgs, TokenRecordAccountData>;
 }
 
 export function deserializeTokenRecord(rawAccount: RpcAccount): TokenRecord {
-  return deserializeAccount(rawAccount, getTokenRecordAccountDataSerializer());
+    return deserializeAccount(
+        rawAccount,
+        getTokenRecordAccountDataSerializer()
+    );
 }
 
 export async function fetchTokenRecord(
-  context: Pick<Context, 'rpc'>,
-  publicKey: PublicKey | Pda,
-  options?: RpcGetAccountOptions
+    context: Pick<Context, 'rpc'>,
+    publicKey: PublicKey | Pda,
+    options?: RpcGetAccountOptions
 ): Promise<TokenRecord> {
-  const maybeAccount = await context.rpc.getAccount(
-    toPublicKey(publicKey, false),
-    options
-  );
-  assertAccountExists(maybeAccount, 'TokenRecord');
-  return deserializeTokenRecord(maybeAccount);
+    const maybeAccount = await context.rpc.getAccount(
+        toPublicKey(publicKey, false),
+        options
+    );
+    assertAccountExists(maybeAccount, 'TokenRecord');
+    return deserializeTokenRecord(maybeAccount);
 }
 
 export async function safeFetchTokenRecord(
-  context: Pick<Context, 'rpc'>,
-  publicKey: PublicKey | Pda,
-  options?: RpcGetAccountOptions
+    context: Pick<Context, 'rpc'>,
+    publicKey: PublicKey | Pda,
+    options?: RpcGetAccountOptions
 ): Promise<TokenRecord | null> {
-  const maybeAccount = await context.rpc.getAccount(
-    toPublicKey(publicKey, false),
-    options
-  );
-  return maybeAccount.exists ? deserializeTokenRecord(maybeAccount) : null;
+    const maybeAccount = await context.rpc.getAccount(
+        toPublicKey(publicKey, false),
+        options
+    );
+    return maybeAccount.exists ? deserializeTokenRecord(maybeAccount) : null;
 }
 
 export async function fetchAllTokenRecord(
-  context: Pick<Context, 'rpc'>,
-  publicKeys: Array<PublicKey | Pda>,
-  options?: RpcGetAccountsOptions
+    context: Pick<Context, 'rpc'>,
+    publicKeys: Array<PublicKey | Pda>,
+    options?: RpcGetAccountsOptions
 ): Promise<TokenRecord[]> {
-  const maybeAccounts = await context.rpc.getAccounts(
-    publicKeys.map((key) => toPublicKey(key, false)),
-    options
-  );
-  return maybeAccounts.map((maybeAccount) => {
-    assertAccountExists(maybeAccount, 'TokenRecord');
-    return deserializeTokenRecord(maybeAccount);
-  });
+    const maybeAccounts = await context.rpc.getAccounts(
+        publicKeys.map((key) => toPublicKey(key, false)),
+        options
+    );
+    return maybeAccounts.map((maybeAccount) => {
+        assertAccountExists(maybeAccount, 'TokenRecord');
+        return deserializeTokenRecord(maybeAccount);
+    });
 }
 
 export async function safeFetchAllTokenRecord(
-  context: Pick<Context, 'rpc'>,
-  publicKeys: Array<PublicKey | Pda>,
-  options?: RpcGetAccountsOptions
+    context: Pick<Context, 'rpc'>,
+    publicKeys: Array<PublicKey | Pda>,
+    options?: RpcGetAccountsOptions
 ): Promise<TokenRecord[]> {
-  const maybeAccounts = await context.rpc.getAccounts(
-    publicKeys.map((key) => toPublicKey(key, false)),
-    options
-  );
-  return maybeAccounts
-    .filter((maybeAccount) => maybeAccount.exists)
-    .map((maybeAccount) => deserializeTokenRecord(maybeAccount as RpcAccount));
+    const maybeAccounts = await context.rpc.getAccounts(
+        publicKeys.map((key) => toPublicKey(key, false)),
+        options
+    );
+    return maybeAccounts
+        .filter((maybeAccount) => maybeAccount.exists)
+        .map((maybeAccount) =>
+            deserializeTokenRecord(maybeAccount as RpcAccount)
+        );
 }
 
 export function getTokenRecordGpaBuilder(
-  context: Pick<Context, 'rpc' | 'programs'>
+    context: Pick<Context, 'rpc' | 'programs'>
 ) {
-  const programId = context.programs.getPublicKey(
-    'mplTokenMetadata',
-    'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
-  );
-  return gpaBuilder(context, programId)
-    .registerFields<{
-      key: KeyArgs;
-      bump: number;
-      state: TokenStateArgs;
-      ruleSetRevision: OptionOrNullable<number | bigint>;
-      delegate: OptionOrNullable<PublicKey>;
-      delegateRole: OptionOrNullable<TokenDelegateRoleArgs>;
-      lockedTransfer: OptionOrNullable<PublicKey>;
-    }>({
-      key: [0, getKeySerializer()],
-      bump: [1, u8()],
-      state: [2, getTokenStateSerializer()],
-      ruleSetRevision: [3, option(u64())],
-      delegate: [null, option(publicKeySerializer())],
-      delegateRole: [null, option(getTokenDelegateRoleSerializer())],
-      lockedTransfer: [null, option(publicKeySerializer())],
-    })
-    .deserializeUsing<TokenRecord>((account) => deserializeTokenRecord(account))
-    .whereField('key', Key.TokenRecord);
+    const programId = context.programs.getPublicKey(
+        'mplTokenMetadata',
+        'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
+    );
+    return gpaBuilder(context, programId)
+        .registerFields<{
+            key: KeyArgs;
+            bump: number;
+            state: TokenStateArgs;
+            ruleSetRevision: OptionOrNullable<number | bigint>;
+            delegate: OptionOrNullable<PublicKey>;
+            delegateRole: OptionOrNullable<TokenDelegateRoleArgs>;
+            lockedTransfer: OptionOrNullable<PublicKey>;
+        }>({
+            key: [0, getKeySerializer()],
+            bump: [1, u8()],
+            state: [2, getTokenStateSerializer()],
+            ruleSetRevision: [3, option(u64())],
+            delegate: [null, option(publicKeySerializer())],
+            delegateRole: [null, option(getTokenDelegateRoleSerializer())],
+            lockedTransfer: [null, option(publicKeySerializer())],
+        })
+        .deserializeUsing<TokenRecord>((account) =>
+            deserializeTokenRecord(account)
+        )
+        .whereField('key', Key.TokenRecord);
 }
 
 export function getTokenRecordSize(): number {
-  return 80;
+    return 80;
 }
 
 export function findTokenRecordPda(
-  context: Pick<Context, 'eddsa' | 'programs'>,
-  seeds: {
-    /** The address of the mint account */
-    mint: PublicKey;
-    /** The address of the token account (ata or not) */
-    token: PublicKey;
-  }
+    context: Pick<Context, 'eddsa' | 'programs'>,
+    seeds: {
+        /** The address of the mint account */
+        mint: PublicKey;
+        /** The address of the token account (ata or not) */
+        token: PublicKey;
+    }
 ): Pda {
-  const programId = context.programs.getPublicKey(
-    'mplTokenMetadata',
-    'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
-  );
-  return context.eddsa.findPda(programId, [
-    string({ size: 'variable' }).serialize('metadata'),
-    publicKeySerializer().serialize(programId),
-    publicKeySerializer().serialize(seeds.mint),
-    string({ size: 'variable' }).serialize('token_record'),
-    publicKeySerializer().serialize(seeds.token),
-  ]);
+    const programId = context.programs.getPublicKey(
+        'mplTokenMetadata',
+        'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
+    );
+    return context.eddsa.findPda(programId, [
+        string({ size: 'variable' }).serialize('metadata'),
+        publicKeySerializer().serialize(programId),
+        publicKeySerializer().serialize(seeds.mint),
+        string({ size: 'variable' }).serialize('token_record'),
+        publicKeySerializer().serialize(seeds.token),
+    ]);
 }
 
 export async function fetchTokenRecordFromSeeds(
-  context: Pick<Context, 'eddsa' | 'programs' | 'rpc'>,
-  seeds: Parameters<typeof findTokenRecordPda>[1],
-  options?: RpcGetAccountOptions
+    context: Pick<Context, 'eddsa' | 'programs' | 'rpc'>,
+    seeds: Parameters<typeof findTokenRecordPda>[1],
+    options?: RpcGetAccountOptions
 ): Promise<TokenRecord> {
-  return fetchTokenRecord(context, findTokenRecordPda(context, seeds), options);
+    return fetchTokenRecord(
+        context,
+        findTokenRecordPda(context, seeds),
+        options
+    );
 }
 
 export async function safeFetchTokenRecordFromSeeds(
-  context: Pick<Context, 'eddsa' | 'programs' | 'rpc'>,
-  seeds: Parameters<typeof findTokenRecordPda>[1],
-  options?: RpcGetAccountOptions
+    context: Pick<Context, 'eddsa' | 'programs' | 'rpc'>,
+    seeds: Parameters<typeof findTokenRecordPda>[1],
+    options?: RpcGetAccountOptions
 ): Promise<TokenRecord | null> {
-  return safeFetchTokenRecord(
-    context,
-    findTokenRecordPda(context, seeds),
-    options
-  );
+    return safeFetchTokenRecord(
+        context,
+        findTokenRecordPda(context, seeds),
+        options
+    );
 }

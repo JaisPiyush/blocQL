@@ -7,39 +7,39 @@
  */
 
 import {
-  Context,
-  Pda,
-  PublicKey,
-  Signer,
-  TransactionBuilder,
-  transactionBuilder,
+    Context,
+    Pda,
+    PublicKey,
+    Signer,
+    TransactionBuilder,
+    transactionBuilder,
 } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  mapSerializer,
-  struct,
-  u8,
+    Serializer,
+    mapSerializer,
+    struct,
+    u8,
 } from '@metaplex-foundation/umi/serializers';
 import { findMasterEditionPda } from '../accounts';
 import {
-  ResolvedAccount,
-  ResolvedAccountsWithIndices,
-  expectPublicKey,
-  getAccountMetasAndSigners,
+    ResolvedAccount,
+    ResolvedAccountsWithIndices,
+    expectPublicKey,
+    getAccountMetasAndSigners,
 } from '../shared';
 
 // Accounts.
 export type FreezeDelegatedAccountInstructionAccounts = {
-  /** Delegate */
-  delegate: Signer;
-  /** Token account to freeze */
-  tokenAccount: PublicKey | Pda;
-  /** Edition */
-  edition?: PublicKey | Pda;
-  /** Token mint */
-  mint: PublicKey | Pda;
-  /** Token Program */
-  tokenProgram?: PublicKey | Pda;
+    /** Delegate */
+    delegate: Signer;
+    /** Token account to freeze */
+    tokenAccount: PublicKey | Pda;
+    /** Edition */
+    edition?: PublicKey | Pda;
+    /** Token mint */
+    mint: PublicKey | Pda;
+    /** Token Program */
+    tokenProgram?: PublicKey | Pda;
 };
 
 // Data.
@@ -48,87 +48,94 @@ export type FreezeDelegatedAccountInstructionData = { discriminator: number };
 export type FreezeDelegatedAccountInstructionDataArgs = {};
 
 export function getFreezeDelegatedAccountInstructionDataSerializer(): Serializer<
-  FreezeDelegatedAccountInstructionDataArgs,
-  FreezeDelegatedAccountInstructionData
+    FreezeDelegatedAccountInstructionDataArgs,
+    FreezeDelegatedAccountInstructionData
 > {
-  return mapSerializer<
-    FreezeDelegatedAccountInstructionDataArgs,
-    any,
-    FreezeDelegatedAccountInstructionData
-  >(
-    struct<FreezeDelegatedAccountInstructionData>([['discriminator', u8()]], {
-      description: 'FreezeDelegatedAccountInstructionData',
-    }),
-    (value) => ({ ...value, discriminator: 26 })
-  ) as Serializer<
-    FreezeDelegatedAccountInstructionDataArgs,
-    FreezeDelegatedAccountInstructionData
-  >;
+    return mapSerializer<
+        FreezeDelegatedAccountInstructionDataArgs,
+        any,
+        FreezeDelegatedAccountInstructionData
+    >(
+        struct<FreezeDelegatedAccountInstructionData>(
+            [['discriminator', u8()]],
+            {
+                description: 'FreezeDelegatedAccountInstructionData',
+            }
+        ),
+        (value) => ({ ...value, discriminator: 26 })
+    ) as Serializer<
+        FreezeDelegatedAccountInstructionDataArgs,
+        FreezeDelegatedAccountInstructionData
+    >;
 }
 
 // Instruction.
 export function freezeDelegatedAccount(
-  context: Pick<Context, 'eddsa' | 'programs'>,
-  input: FreezeDelegatedAccountInstructionAccounts
+    context: Pick<Context, 'eddsa' | 'programs'>,
+    input: FreezeDelegatedAccountInstructionAccounts
 ): TransactionBuilder {
-  // Program ID.
-  const programId = context.programs.getPublicKey(
-    'mplTokenMetadata',
-    'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
-  );
-
-  // Accounts.
-  const resolvedAccounts: ResolvedAccountsWithIndices = {
-    delegate: { index: 0, isWritable: true, value: input.delegate ?? null },
-    tokenAccount: {
-      index: 1,
-      isWritable: true,
-      value: input.tokenAccount ?? null,
-    },
-    edition: { index: 2, isWritable: false, value: input.edition ?? null },
-    mint: { index: 3, isWritable: false, value: input.mint ?? null },
-    tokenProgram: {
-      index: 4,
-      isWritable: false,
-      value: input.tokenProgram ?? null,
-    },
-  };
-
-  // Default values.
-  if (!resolvedAccounts.edition.value) {
-    resolvedAccounts.edition.value = findMasterEditionPda(context, {
-      mint: expectPublicKey(resolvedAccounts.mint.value),
-    });
-  }
-  if (!resolvedAccounts.tokenProgram.value) {
-    resolvedAccounts.tokenProgram.value = context.programs.getPublicKey(
-      'splToken',
-      'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
+    // Program ID.
+    const programId = context.programs.getPublicKey(
+        'mplTokenMetadata',
+        'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
     );
-    resolvedAccounts.tokenProgram.isWritable = false;
-  }
 
-  // Accounts in order.
-  const orderedAccounts: ResolvedAccount[] = Object.values(
-    resolvedAccounts
-  ).sort((a, b) => a.index - b.index);
+    // Accounts.
+    const resolvedAccounts: ResolvedAccountsWithIndices = {
+        delegate: { index: 0, isWritable: true, value: input.delegate ?? null },
+        tokenAccount: {
+            index: 1,
+            isWritable: true,
+            value: input.tokenAccount ?? null,
+        },
+        edition: { index: 2, isWritable: false, value: input.edition ?? null },
+        mint: { index: 3, isWritable: false, value: input.mint ?? null },
+        tokenProgram: {
+            index: 4,
+            isWritable: false,
+            value: input.tokenProgram ?? null,
+        },
+    };
 
-  // Keys and Signers.
-  const [keys, signers] = getAccountMetasAndSigners(
-    orderedAccounts,
-    'programId',
-    programId
-  );
+    // Default values.
+    if (!resolvedAccounts.edition.value) {
+        resolvedAccounts.edition.value = findMasterEditionPda(context, {
+            mint: expectPublicKey(resolvedAccounts.mint.value),
+        });
+    }
+    if (!resolvedAccounts.tokenProgram.value) {
+        resolvedAccounts.tokenProgram.value = context.programs.getPublicKey(
+            'splToken',
+            'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
+        );
+        resolvedAccounts.tokenProgram.isWritable = false;
+    }
 
-  // Data.
-  const data = getFreezeDelegatedAccountInstructionDataSerializer().serialize(
-    {}
-  );
+    // Accounts in order.
+    const orderedAccounts: ResolvedAccount[] = Object.values(
+        resolvedAccounts
+    ).sort((a, b) => a.index - b.index);
 
-  // Bytes Created On Chain.
-  const bytesCreatedOnChain = 0;
+    // Keys and Signers.
+    const [keys, signers] = getAccountMetasAndSigners(
+        orderedAccounts,
+        'programId',
+        programId
+    );
 
-  return transactionBuilder([
-    { instruction: { keys, programId, data }, signers, bytesCreatedOnChain },
-  ]);
+    // Data.
+    const data = getFreezeDelegatedAccountInstructionDataSerializer().serialize(
+        {}
+    );
+
+    // Bytes Created On Chain.
+    const bytesCreatedOnChain = 0;
+
+    return transactionBuilder([
+        {
+            instruction: { keys, programId, data },
+            signers,
+            bytesCreatedOnChain,
+        },
+    ]);
 }

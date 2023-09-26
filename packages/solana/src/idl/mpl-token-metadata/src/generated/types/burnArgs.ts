@@ -7,13 +7,13 @@
  */
 
 import {
-  GetDataEnumKind,
-  GetDataEnumKindContent,
-  Serializer,
-  dataEnum,
-  mapSerializer,
-  struct,
-  u64,
+    GetDataEnumKind,
+    GetDataEnumKindContent,
+    Serializer,
+    dataEnum,
+    mapSerializer,
+    struct,
+    u64,
 } from '@metaplex-foundation/umi/serializers';
 
 export type BurnArgs = { __kind: 'V1'; amount: bigint };
@@ -21,40 +21,42 @@ export type BurnArgs = { __kind: 'V1'; amount: bigint };
 export type BurnArgsArgs = { __kind: 'V1'; amount?: number | bigint };
 
 export function getBurnArgsSerializer(): Serializer<BurnArgsArgs, BurnArgs> {
-  return dataEnum<BurnArgs>(
-    [
-      [
-        'V1',
-        mapSerializer<
-          GetDataEnumKindContent<BurnArgsArgs, 'V1'>,
-          any,
-          GetDataEnumKindContent<BurnArgs, 'V1'>
-        >(
-          struct<GetDataEnumKindContent<BurnArgs, 'V1'>>([['amount', u64()]]),
-          (value) => ({ ...value, amount: value.amount ?? 1 })
-        ),
-      ],
-    ],
-    { description: 'BurnArgs' }
-  ) as Serializer<BurnArgsArgs, BurnArgs>;
+    return dataEnum<BurnArgs>(
+        [
+            [
+                'V1',
+                mapSerializer<
+                    GetDataEnumKindContent<BurnArgsArgs, 'V1'>,
+                    any,
+                    GetDataEnumKindContent<BurnArgs, 'V1'>
+                >(
+                    struct<GetDataEnumKindContent<BurnArgs, 'V1'>>([
+                        ['amount', u64()],
+                    ]),
+                    (value) => ({ ...value, amount: value.amount ?? 1 })
+                ),
+            ],
+        ],
+        { description: 'BurnArgs' }
+    ) as Serializer<BurnArgsArgs, BurnArgs>;
 }
 
 // Data Enum Helpers.
 export function burnArgs(
-  kind: 'V1',
-  data: GetDataEnumKindContent<BurnArgsArgs, 'V1'>
+    kind: 'V1',
+    data: GetDataEnumKindContent<BurnArgsArgs, 'V1'>
 ): GetDataEnumKind<BurnArgsArgs, 'V1'>;
 export function burnArgs<K extends BurnArgsArgs['__kind']>(
-  kind: K,
-  data?: any
+    kind: K,
+    data?: any
 ): Extract<BurnArgsArgs, { __kind: K }> {
-  return Array.isArray(data)
-    ? { __kind: kind, fields: data }
-    : { __kind: kind, ...(data ?? {}) };
+    return Array.isArray(data)
+        ? { __kind: kind, fields: data }
+        : { __kind: kind, ...(data ?? {}) };
 }
 export function isBurnArgs<K extends BurnArgs['__kind']>(
-  kind: K,
-  value: BurnArgs
+    kind: K,
+    value: BurnArgs
 ): value is BurnArgs & { __kind: K } {
-  return value.__kind === kind;
+    return value.__kind === kind;
 }

@@ -8,34 +8,34 @@
 
 import { PublicKey } from '@metaplex-foundation/umi';
 import {
-  Serializer,
-  publicKey as publicKeySerializer,
-  struct,
-  u64,
+    Serializer,
+    publicKey as publicKeySerializer,
+    struct,
+    u64,
 } from '@metaplex-foundation/umi/serializers';
 
 export type Reservation = {
-  address: PublicKey;
-  spotsRemaining: bigint;
-  totalSpots: bigint;
+    address: PublicKey;
+    spotsRemaining: bigint;
+    totalSpots: bigint;
 };
 
 export type ReservationArgs = {
-  address: PublicKey;
-  spotsRemaining: number | bigint;
-  totalSpots: number | bigint;
+    address: PublicKey;
+    spotsRemaining: number | bigint;
+    totalSpots: number | bigint;
 };
 
 export function getReservationSerializer(): Serializer<
-  ReservationArgs,
-  Reservation
+    ReservationArgs,
+    Reservation
 > {
-  return struct<Reservation>(
-    [
-      ['address', publicKeySerializer()],
-      ['spotsRemaining', u64()],
-      ['totalSpots', u64()],
-    ],
-    { description: 'Reservation' }
-  ) as Serializer<ReservationArgs, Reservation>;
+    return struct<Reservation>(
+        [
+            ['address', publicKeySerializer()],
+            ['spotsRemaining', u64()],
+            ['totalSpots', u64()],
+        ],
+        { description: 'Reservation' }
+    ) as Serializer<ReservationArgs, Reservation>;
 }

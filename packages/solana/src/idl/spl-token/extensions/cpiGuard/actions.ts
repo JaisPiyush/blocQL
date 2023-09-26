@@ -1,8 +1,17 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { getSigners } from '../../actions/internal.js';
 import { TOKEN_2022_PROGRAM_ID } from '../../constants.js';
-import { createDisableCpiGuardInstruction, createEnableCpiGuardInstruction } from './instructions.js';
+import {
+    createDisableCpiGuardInstruction,
+    createEnableCpiGuardInstruction,
+} from './instructions.js';
 
 /**
  * Enable CPI Guard on the given account
@@ -29,10 +38,20 @@ export async function enableCpiGuard(
     const [ownerPublicKey, signers] = getSigners(owner, multiSigners);
 
     const transaction = new Transaction().add(
-        createEnableCpiGuardInstruction(account, ownerPublicKey, signers, programId)
+        createEnableCpiGuardInstruction(
+            account,
+            ownerPublicKey,
+            signers,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }
 
 /**
@@ -60,8 +79,18 @@ export async function disableCpiGuard(
     const [ownerPublicKey, signers] = getSigners(owner, multiSigners);
 
     const transaction = new Transaction().add(
-        createDisableCpiGuardInstruction(account, ownerPublicKey, signers, programId)
+        createDisableCpiGuardInstruction(
+            account,
+            ownerPublicKey,
+            signers,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

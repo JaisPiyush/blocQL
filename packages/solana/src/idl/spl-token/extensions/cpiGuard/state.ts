@@ -15,7 +15,10 @@ export const CpiGuardLayout = struct<CpiGuard>([bool('lockCpi')]);
 export const CPI_GUARD_SIZE = CpiGuardLayout.span;
 
 export function getCpiGuard(account: Account): CpiGuard | null {
-    const extensionData = getExtensionData(ExtensionType.CpiGuard, account.tlvData);
+    const extensionData = getExtensionData(
+        ExtensionType.CpiGuard,
+        account.tlvData
+    );
     if (extensionData !== null) {
         return CpiGuardLayout.decode(extensionData);
     } else {

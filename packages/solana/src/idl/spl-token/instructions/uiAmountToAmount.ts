@@ -34,10 +34,11 @@ export function createUiAmountToAmountInstruction(
 ): TransactionInstruction {
     const keys = [{ pubkey: mint, isSigner: false, isWritable: false }];
     const buf = Buffer.from(amount, 'utf8');
-    const uiAmountToAmountInstructionData = struct<UiAmountToAmountInstructionData>([
-        u8('instruction'),
-        blob(buf.length, 'amount'),
-    ]);
+    const uiAmountToAmountInstructionData =
+        struct<UiAmountToAmountInstructionData>([
+            u8('instruction'),
+            blob(buf.length, 'amount'),
+        ]);
 
     const data = Buffer.alloc(uiAmountToAmountInstructionData.span);
     uiAmountToAmountInstructionData.encode(
@@ -75,18 +76,22 @@ export function decodeUiAmountToAmountInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedUiAmountToAmountInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    const uiAmountToAmountInstructionData = struct<UiAmountToAmountInstructionData>([
-        u8('instruction'),
-        blob(instruction.data.length - 1, 'amount'),
-    ]);
-    if (instruction.data.length !== uiAmountToAmountInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    const uiAmountToAmountInstructionData =
+        struct<UiAmountToAmountInstructionData>([
+            u8('instruction'),
+            blob(instruction.data.length - 1, 'amount'),
+        ]);
+    if (instruction.data.length !== uiAmountToAmountInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { mint },
         data,
     } = decodeUiAmountToAmountInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.UiAmountToAmount) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.UiAmountToAmount)
+        throw new TokenInvalidInstructionTypeError();
     if (!mint) throw new TokenInvalidInstructionKeysError();
 
     return {
@@ -122,10 +127,11 @@ export function decodeUiAmountToAmountInstructionUnchecked({
     keys: [mint],
     data,
 }: TransactionInstruction): DecodedUiAmountToAmountInstructionUnchecked {
-    const uiAmountToAmountInstructionData = struct<UiAmountToAmountInstructionData>([
-        u8('instruction'),
-        blob(data.length - 1, 'amount'),
-    ]);
+    const uiAmountToAmountInstructionData =
+        struct<UiAmountToAmountInstructionData>([
+            u8('instruction'),
+            blob(data.length - 1, 'amount'),
+        ]);
     return {
         programId,
         keys: {

@@ -116,7 +116,11 @@ export function createRecoverNestedInstruction(
     const keys = [
         { pubkey: nestedAssociatedToken, isSigner: false, isWritable: true },
         { pubkey: nestedMint, isSigner: false, isWritable: false },
-        { pubkey: destinationAssociatedToken, isSigner: false, isWritable: true },
+        {
+            pubkey: destinationAssociatedToken,
+            isSigner: false,
+            isWritable: true,
+        },
         { pubkey: ownerAssociatedToken, isSigner: false, isWritable: true },
         { pubkey: ownerMint, isSigner: false, isWritable: false },
         { pubkey: owner, isSigner: true, isWritable: true },

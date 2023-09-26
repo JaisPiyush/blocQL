@@ -10,12 +10,17 @@ export interface PermanentDelegate {
 }
 
 /** Buffer layout for de/serializing a mint */
-export const PermanentDelegateLayout = struct<PermanentDelegate>([publicKey('delegate')]);
+export const PermanentDelegateLayout = struct<PermanentDelegate>([
+    publicKey('delegate'),
+]);
 
 export const PERMANENT_DELEGATE_SIZE = PermanentDelegateLayout.span;
 
 export function getPermanentDelegate(mint: Mint): PermanentDelegate | null {
-    const extensionData = getExtensionData(ExtensionType.PermanentDelegate, mint.tlvData);
+    const extensionData = getExtensionData(
+        ExtensionType.PermanentDelegate,
+        mint.tlvData
+    );
     if (extensionData !== null) {
         return PermanentDelegateLayout.decode(extensionData);
     } else {

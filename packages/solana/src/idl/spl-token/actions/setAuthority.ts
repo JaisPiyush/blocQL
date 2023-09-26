@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import type { AuthorityType } from '../instructions/setAuthority.js';
@@ -31,7 +37,10 @@ export async function setAuthority(
     confirmOptions?: ConfirmOptions,
     programId = TOKEN_PROGRAM_ID
 ): Promise<TransactionSignature> {
-    const [currentAuthorityPublicKey, signers] = getSigners(currentAuthority, multiSigners);
+    const [currentAuthorityPublicKey, signers] = getSigners(
+        currentAuthority,
+        multiSigners
+    );
 
     const transaction = new Transaction().add(
         createSetAuthorityInstruction(
@@ -44,5 +53,10 @@ export async function setAuthority(
         )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

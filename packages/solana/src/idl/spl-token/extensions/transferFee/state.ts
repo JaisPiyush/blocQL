@@ -38,18 +38,26 @@ export interface TransferFeeConfig {
 
 /** Buffer layout for de/serializing a transfer fee */
 export function transferFeeLayout(property?: string): Layout<TransferFee> {
-    return struct<TransferFee>([u64('epoch'), u64('maximumFee'), u16('transferFeeBasisPoints')], property);
+    return struct<TransferFee>(
+        [u64('epoch'), u64('maximumFee'), u16('transferFeeBasisPoints')],
+        property
+    );
 }
 
 /** Calculate the transfer fee */
-export function calculateFee(transferFee: TransferFee, preFeeAmount: bigint): bigint {
+export function calculateFee(
+    transferFee: TransferFee,
+    preFeeAmount: bigint
+): bigint {
     const transferFeeBasisPoints = transferFee.transferFeeBasisPoints;
     if (transferFeeBasisPoints === 0 || preFeeAmount === BigInt(0)) {
         return BigInt(0);
     } else {
         const numerator = preFeeAmount * BigInt(transferFeeBasisPoints);
-        const rawFee = (numerator + ONE_IN_BASIS_POINTS - BigInt(1)) / ONE_IN_BASIS_POINTS;
-        const fee = rawFee > transferFee.maximumFee ? transferFee.maximumFee : rawFee;
+        const rawFee =
+            (numerator + ONE_IN_BASIS_POINTS - BigInt(1)) / ONE_IN_BASIS_POINTS;
+        const fee =
+            rawFee > transferFee.maximumFee ? transferFee.maximumFee : rawFee;
         return BigInt(fee);
     }
 }
@@ -66,7 +74,10 @@ export const TransferFeeConfigLayout = struct<TransferFeeConfig>([
 export const TRANSFER_FEE_CONFIG_SIZE = TransferFeeConfigLayout.span;
 
 /** Get the fee for given epoch */
-export function getEpochFee(transferFeeConfig: TransferFeeConfig, epoch: bigint): TransferFee {
+export function getEpochFee(
+    transferFeeConfig: TransferFeeConfig,
+    epoch: bigint
+): TransferFee {
     if (epoch >= transferFeeConfig.newerTransferFee.epoch) {
         return transferFeeConfig.newerTransferFee;
     } else {
@@ -75,7 +86,11 @@ export function getEpochFee(transferFeeConfig: TransferFeeConfig, epoch: bigint)
 }
 
 /** Calculate the fee for the given epoch and input amount */
-export function calculateEpochFee(transferFeeConfig: TransferFeeConfig, epoch: bigint, preFeeAmount: bigint): bigint {
+export function calculateEpochFee(
+    transferFeeConfig: TransferFeeConfig,
+    epoch: bigint,
+    preFeeAmount: bigint
+): bigint {
     const transferFee = getEpochFee(transferFeeConfig, epoch);
     return calculateFee(transferFee, preFeeAmount);
 }
@@ -86,11 +101,16 @@ export interface TransferFeeAmount {
     withheldAmount: bigint;
 }
 /** Buffer layout for de/serializing */
-export const TransferFeeAmountLayout = struct<TransferFeeAmount>([u64('withheldAmount')]);
+export const TransferFeeAmountLayout = struct<TransferFeeAmount>([
+    u64('withheldAmount'),
+]);
 export const TRANSFER_FEE_AMOUNT_SIZE = TransferFeeAmountLayout.span;
 
 export function getTransferFeeConfig(mint: Mint): TransferFeeConfig | null {
-    const extensionData = getExtensionData(ExtensionType.TransferFeeConfig, mint.tlvData);
+    const extensionData = getExtensionData(
+        ExtensionType.TransferFeeConfig,
+        mint.tlvData
+    );
     if (extensionData !== null) {
         return TransferFeeConfigLayout.decode(extensionData);
     } else {
@@ -98,8 +118,13 @@ export function getTransferFeeConfig(mint: Mint): TransferFeeConfig | null {
     }
 }
 
-export function getTransferFeeAmount(account: Account): TransferFeeAmount | null {
-    const extensionData = getExtensionData(ExtensionType.TransferFeeAmount, account.tlvData);
+export function getTransferFeeAmount(
+    account: Account
+): TransferFeeAmount | null {
+    const extensionData = getExtensionData(
+        ExtensionType.TransferFeeAmount,
+        account.tlvData
+    );
     if (extensionData !== null) {
         return TransferFeeAmountLayout.decode(extensionData);
     } else {

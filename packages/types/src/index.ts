@@ -9,7 +9,7 @@ export * from './event-bus';
 export * from './providers';
 export * from './settings_service';
 export * from './ticket_throttler';
-
+export * from './processor';
 export interface Providers<
     T extends ServiceProvider = ServiceProvider,
     C = any,

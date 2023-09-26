@@ -17,12 +17,18 @@ export interface TransferHook {
 }
 
 /** Buffer layout for de/serializing a transfer hook extension */
-export const TransferHookLayout = struct<TransferHook>([publicKey('authority'), publicKey('programId')]);
+export const TransferHookLayout = struct<TransferHook>([
+    publicKey('authority'),
+    publicKey('programId'),
+]);
 
 export const TRANSFER_HOOK_SIZE = TransferHookLayout.span;
 
 export function getTransferHook(mint: Mint): TransferHook | null {
-    const extensionData = getExtensionData(ExtensionType.TransferHook, mint.tlvData);
+    const extensionData = getExtensionData(
+        ExtensionType.TransferHook,
+        mint.tlvData
+    );
     if (extensionData !== null) {
         return TransferHookLayout.decode(extensionData);
     } else {
@@ -40,12 +46,19 @@ export interface TransferHookAccount {
 }
 
 /** Buffer layout for de/serializing a transfer hook account extension */
-export const TransferHookAccountLayout = struct<TransferHookAccount>([bool('transferring')]);
+export const TransferHookAccountLayout = struct<TransferHookAccount>([
+    bool('transferring'),
+]);
 
 export const TRANSFER_HOOK_ACCOUNT_SIZE = TransferHookAccountLayout.span;
 
-export function getTransferHookAccount(account: Account): TransferHookAccount | null {
-    const extensionData = getExtensionData(ExtensionType.TransferHookAccount, account.tlvData);
+export function getTransferHookAccount(
+    account: Account
+): TransferHookAccount | null {
+    const extensionData = getExtensionData(
+        ExtensionType.TransferHookAccount,
+        account.tlvData
+    );
     if (extensionData !== null) {
         return TransferHookAccountLayout.decode(extensionData);
     } else {
@@ -53,7 +66,10 @@ export function getTransferHookAccount(account: Account): TransferHookAccount | 
     }
 }
 
-export function getExtraAccountMetaAddress(mint: PublicKey, programId: PublicKey): PublicKey {
+export function getExtraAccountMetaAddress(
+    mint: PublicKey,
+    programId: PublicKey
+): PublicKey {
     const seeds = [Buffer.from('extra-account-metas'), mint.toBuffer()];
     return PublicKey.findProgramAddressSync(seeds, programId)[0];
 }
@@ -82,7 +98,11 @@ export interface ExtraAccountMetaList {
 /** Buffer layout for de/serializing a list of ExtraAccountMeta prefixed by a u32 length */
 export const ExtraAccountMetaListLayout = struct<ExtraAccountMetaList>([
     u32('count'),
-    seq<ExtraAccountMeta>(ExtraAccountMetaLayout, greedy(ExtraAccountMetaLayout.span), 'extraAccounts'),
+    seq<ExtraAccountMeta>(
+        ExtraAccountMetaLayout,
+        greedy(ExtraAccountMetaLayout.span),
+        'extraAccounts'
+    ),
 ]);
 
 /** Buffer layout for de/serializing a list of ExtraAccountMetaAccountData prefixed by a u32 length */
@@ -93,15 +113,20 @@ export interface ExtraAccountMetaAccountData {
 }
 
 /** Buffer layout for de/serializing an ExtraAccountMetaAccountData */
-export const ExtraAccountMetaAccountDataLayout = struct<ExtraAccountMetaAccountData>([
-    u64('instructionDiscriminator'),
-    u32('length'),
-    ExtraAccountMetaListLayout.replicate('extraAccountsList'),
-]);
+export const ExtraAccountMetaAccountDataLayout =
+    struct<ExtraAccountMetaAccountData>([
+        u64('instructionDiscriminator'),
+        u32('length'),
+        ExtraAccountMetaListLayout.replicate('extraAccountsList'),
+    ]);
 
 /** Unpack an extra account metas account and parse the data into a list of ExtraAccountMetas */
-export function getExtraAccountMetas(account: AccountInfo<Buffer>): ExtraAccountMeta[] {
-    const extraAccountsList = ExtraAccountMetaAccountDataLayout.decode(account.data).extraAccountsList;
+export function getExtraAccountMetas(
+    account: AccountInfo<Buffer>
+): ExtraAccountMeta[] {
+    const extraAccountsList = ExtraAccountMetaAccountDataLayout.decode(
+        account.data
+    ).extraAccountsList;
     return extraAccountsList.extraAccounts.slice(0, extraAccountsList.count);
 }
 
@@ -132,8 +157,16 @@ export function resolveExtraAccountMeta(
         programId = previousMetas[accountIndex].pubkey;
     }
 
-    const seeds = unpackSeeds(extraMeta.addressConfig, previousMetas, instructionData);
+    const seeds = unpackSeeds(
+        extraMeta.addressConfig,
+        previousMetas,
+        instructionData
+    );
     const pubkey = PublicKey.findProgramAddressSync(seeds, programId)[0];
 
-    return { pubkey, isSigner: extraMeta.isSigner, isWritable: extraMeta.isWritable };
+    return {
+        pubkey,
+        isSigner: extraMeta.isSigner,
+        isWritable: extraMeta.isWritable,
+    };
 }

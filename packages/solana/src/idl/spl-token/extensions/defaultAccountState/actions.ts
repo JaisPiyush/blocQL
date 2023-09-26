@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { getSigners } from '../../actions/internal.js';
 import { TOKEN_2022_PROGRAM_ID } from '../../constants.js';
@@ -28,9 +34,16 @@ export async function initializeDefaultAccountState(
     confirmOptions?: ConfirmOptions,
     programId = TOKEN_2022_PROGRAM_ID
 ): Promise<TransactionSignature> {
-    const transaction = new Transaction().add(createInitializeDefaultAccountStateInstruction(mint, state, programId));
+    const transaction = new Transaction().add(
+        createInitializeDefaultAccountStateInstruction(mint, state, programId)
+    );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer],
+        confirmOptions
+    );
 }
 
 /**
@@ -57,11 +70,25 @@ export async function updateDefaultAccountState(
     confirmOptions?: ConfirmOptions,
     programId = TOKEN_2022_PROGRAM_ID
 ): Promise<TransactionSignature> {
-    const [freezeAuthorityPublicKey, signers] = getSigners(freezeAuthority, multiSigners);
-
-    const transaction = new Transaction().add(
-        createUpdateDefaultAccountStateInstruction(mint, state, freezeAuthorityPublicKey, signers, programId)
+    const [freezeAuthorityPublicKey, signers] = getSigners(
+        freezeAuthority,
+        multiSigners
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    const transaction = new Transaction().add(
+        createUpdateDefaultAccountStateInstruction(
+            mint,
+            state,
+            freezeAuthorityPublicKey,
+            signers,
+            programId
+        )
+    );
+
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

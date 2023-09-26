@@ -10,12 +10,17 @@ export interface MemoTransfer {
 }
 
 /** Buffer layout for de/serializing a memo transfer extension */
-export const MemoTransferLayout = struct<MemoTransfer>([bool('requireIncomingTransferMemos')]);
+export const MemoTransferLayout = struct<MemoTransfer>([
+    bool('requireIncomingTransferMemos'),
+]);
 
 export const MEMO_TRANSFER_SIZE = MemoTransferLayout.span;
 
 export function getMemoTransfer(account: Account): MemoTransfer | null {
-    const extensionData = getExtensionData(ExtensionType.MemoTransfer, account.tlvData);
+    const extensionData = getExtensionData(
+        ExtensionType.MemoTransfer,
+        account.tlvData
+    );
     if (extensionData !== null) {
         return MemoTransferLayout.decode(extensionData);
     } else {

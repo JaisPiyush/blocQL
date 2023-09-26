@@ -8,59 +8,59 @@
 
 import { PublicKey } from '@metaplex-foundation/umi';
 import {
-  GetDataEnumKind,
-  GetDataEnumKindContent,
-  Serializer,
-  dataEnum,
-  publicKey as publicKeySerializer,
-  struct,
-  tuple,
-  unit,
+    GetDataEnumKind,
+    GetDataEnumKindContent,
+    Serializer,
+    dataEnum,
+    publicKey as publicKeySerializer,
+    struct,
+    tuple,
+    unit,
 } from '@metaplex-foundation/umi/serializers';
 
 export type EscrowAuthority =
-  | { __kind: 'TokenOwner' }
-  | { __kind: 'Creator'; fields: [PublicKey] };
+    | { __kind: 'TokenOwner' }
+    | { __kind: 'Creator'; fields: [PublicKey] };
 
 export type EscrowAuthorityArgs = EscrowAuthority;
 
 export function getEscrowAuthoritySerializer(): Serializer<
-  EscrowAuthorityArgs,
-  EscrowAuthority
+    EscrowAuthorityArgs,
+    EscrowAuthority
 > {
-  return dataEnum<EscrowAuthority>(
-    [
-      ['TokenOwner', unit()],
-      [
-        'Creator',
-        struct<GetDataEnumKindContent<EscrowAuthority, 'Creator'>>([
-          ['fields', tuple([publicKeySerializer()])],
-        ]),
-      ],
-    ],
-    { description: 'EscrowAuthority' }
-  ) as Serializer<EscrowAuthorityArgs, EscrowAuthority>;
+    return dataEnum<EscrowAuthority>(
+        [
+            ['TokenOwner', unit()],
+            [
+                'Creator',
+                struct<GetDataEnumKindContent<EscrowAuthority, 'Creator'>>([
+                    ['fields', tuple([publicKeySerializer()])],
+                ]),
+            ],
+        ],
+        { description: 'EscrowAuthority' }
+    ) as Serializer<EscrowAuthorityArgs, EscrowAuthority>;
 }
 
 // Data Enum Helpers.
 export function escrowAuthority(
-  kind: 'TokenOwner'
+    kind: 'TokenOwner'
 ): GetDataEnumKind<EscrowAuthorityArgs, 'TokenOwner'>;
 export function escrowAuthority(
-  kind: 'Creator',
-  data: GetDataEnumKindContent<EscrowAuthorityArgs, 'Creator'>['fields']
+    kind: 'Creator',
+    data: GetDataEnumKindContent<EscrowAuthorityArgs, 'Creator'>['fields']
 ): GetDataEnumKind<EscrowAuthorityArgs, 'Creator'>;
 export function escrowAuthority<K extends EscrowAuthorityArgs['__kind']>(
-  kind: K,
-  data?: any
+    kind: K,
+    data?: any
 ): Extract<EscrowAuthorityArgs, { __kind: K }> {
-  return Array.isArray(data)
-    ? { __kind: kind, fields: data }
-    : { __kind: kind, ...(data ?? {}) };
+    return Array.isArray(data)
+        ? { __kind: kind, fields: data }
+        : { __kind: kind, ...(data ?? {}) };
 }
 export function isEscrowAuthority<K extends EscrowAuthority['__kind']>(
-  kind: K,
-  value: EscrowAuthority
+    kind: K,
+    value: EscrowAuthority
 ): value is EscrowAuthority & { __kind: K } {
-  return value.__kind === kind;
+    return value.__kind === kind;
 }

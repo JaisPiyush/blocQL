@@ -9,23 +9,23 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum MetadataDelegateRole {
-  AuthorityItem,
-  Collection,
-  Use,
-  Data,
-  ProgrammableConfig,
-  DataItem,
-  CollectionItem,
-  ProgrammableConfigItem,
+    AuthorityItem,
+    Collection,
+    Use,
+    Data,
+    ProgrammableConfig,
+    DataItem,
+    CollectionItem,
+    ProgrammableConfigItem,
 }
 
 export type MetadataDelegateRoleArgs = MetadataDelegateRole;
 
 export function getMetadataDelegateRoleSerializer(): Serializer<
-  MetadataDelegateRoleArgs,
-  MetadataDelegateRole
+    MetadataDelegateRoleArgs,
+    MetadataDelegateRole
 > {
-  return scalarEnum<MetadataDelegateRole>(MetadataDelegateRole, {
-    description: 'MetadataDelegateRole',
-  }) as Serializer<MetadataDelegateRoleArgs, MetadataDelegateRole>;
+    return scalarEnum<MetadataDelegateRole>(MetadataDelegateRole, {
+        description: 'MetadataDelegateRole',
+    }) as Serializer<MetadataDelegateRoleArgs, MetadataDelegateRole>;
 }

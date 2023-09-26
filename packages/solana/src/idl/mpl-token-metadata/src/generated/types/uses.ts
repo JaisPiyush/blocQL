@@ -12,18 +12,18 @@ import { UseMethod, UseMethodArgs, getUseMethodSerializer } from '.';
 export type Uses = { useMethod: UseMethod; remaining: bigint; total: bigint };
 
 export type UsesArgs = {
-  useMethod: UseMethodArgs;
-  remaining: number | bigint;
-  total: number | bigint;
+    useMethod: UseMethodArgs;
+    remaining: number | bigint;
+    total: number | bigint;
 };
 
 export function getUsesSerializer(): Serializer<UsesArgs, Uses> {
-  return struct<Uses>(
-    [
-      ['useMethod', getUseMethodSerializer()],
-      ['remaining', u64()],
-      ['total', u64()],
-    ],
-    { description: 'Uses' }
-  ) as Serializer<UsesArgs, Uses>;
+    return struct<Uses>(
+        [
+            ['useMethod', getUseMethodSerializer()],
+            ['remaining', u64()],
+            ['total', u64()],
+        ],
+        { description: 'Uses' }
+    ) as Serializer<UsesArgs, Uses>;
 }

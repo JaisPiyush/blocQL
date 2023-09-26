@@ -1,4 +1,9 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '../constants.js';
 import { createAssociatedTokenAccountIdempotentInstruction } from '../instructions/associatedTokenAccount.js';
@@ -27,7 +32,13 @@ export async function createAssociatedTokenAccountIdempotent(
     programId = TOKEN_PROGRAM_ID,
     associatedTokenProgramId = ASSOCIATED_TOKEN_PROGRAM_ID
 ): Promise<PublicKey> {
-    const associatedToken = getAssociatedTokenAddressSync(mint, owner, false, programId, associatedTokenProgramId);
+    const associatedToken = getAssociatedTokenAddressSync(
+        mint,
+        owner,
+        false,
+        programId,
+        associatedTokenProgramId
+    );
 
     const transaction = new Transaction().add(
         createAssociatedTokenAccountIdempotentInstruction(
@@ -40,7 +51,12 @@ export async function createAssociatedTokenAccountIdempotent(
         )
     );
 
-    await sendAndConfirmTransaction(connection, transaction, [payer], confirmOptions);
+    await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer],
+        confirmOptions
+    );
 
     return associatedToken;
 }

@@ -11,9 +11,8 @@ export interface InitializeNonTransferableMintInstructionData {
 }
 
 /** The struct that represents the instruction data as it is read by the program */
-export const initializeNonTransferableMintInstructionData = struct<InitializeNonTransferableMintInstructionData>([
-    u8('instruction'),
-]);
+export const initializeNonTransferableMintInstructionData =
+    struct<InitializeNonTransferableMintInstructionData>([u8('instruction')]);
 
 /**
  * Construct an InitializeNonTransferableMint instruction
@@ -32,7 +31,9 @@ export function createInitializeNonTransferableMintInstruction(
     }
     const keys = [{ pubkey: mint, isSigner: false, isWritable: true }];
 
-    const data = Buffer.alloc(initializeNonTransferableMintInstructionData.span);
+    const data = Buffer.alloc(
+        initializeNonTransferableMintInstructionData.span
+    );
     initializeNonTransferableMintInstructionData.encode(
         {
             instruction: TokenInstruction.InitializeNonTransferableMint,

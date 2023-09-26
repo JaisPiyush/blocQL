@@ -19,7 +19,10 @@ export interface BurnInstructionData {
 }
 
 /** TODO: docs */
-export const burnInstructionData = struct<BurnInstructionData>([u8('instruction'), u64('amount')]);
+export const burnInstructionData = struct<BurnInstructionData>([
+    u8('instruction'),
+    u64('amount'),
+]);
 
 /**
  * Construct a Burn instruction
@@ -89,15 +92,19 @@ export function decodeBurnInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedBurnInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== burnInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== burnInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account, mint, owner, multiSigners },
         data,
     } = decodeBurnInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.Burn) throw new TokenInvalidInstructionTypeError();
-    if (!account || !mint || !owner) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.Burn)
+        throw new TokenInvalidInstructionTypeError();
+    if (!account || !mint || !owner)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

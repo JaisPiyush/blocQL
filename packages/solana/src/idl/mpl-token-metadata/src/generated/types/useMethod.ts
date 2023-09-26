@@ -9,15 +9,15 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum UseMethod {
-  Burn,
-  Multiple,
-  Single,
+    Burn,
+    Multiple,
+    Single,
 }
 
 export type UseMethodArgs = UseMethod;
 
 export function getUseMethodSerializer(): Serializer<UseMethodArgs, UseMethod> {
-  return scalarEnum<UseMethod>(UseMethod, {
-    description: 'UseMethod',
-  }) as Serializer<UseMethodArgs, UseMethod>;
+    return scalarEnum<UseMethod>(UseMethod, {
+        description: 'UseMethod',
+    }) as Serializer<UseMethodArgs, UseMethod>;
 }

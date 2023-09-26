@@ -14,10 +14,10 @@ export type AuthorizationData = { payload: Payload };
 export type AuthorizationDataArgs = { payload: PayloadArgs };
 
 export function getAuthorizationDataSerializer(): Serializer<
-  AuthorizationDataArgs,
-  AuthorizationData
+    AuthorizationDataArgs,
+    AuthorizationData
 > {
-  return struct<AuthorizationData>([['payload', getPayloadSerializer()]], {
-    description: 'AuthorizationData',
-  }) as Serializer<AuthorizationDataArgs, AuthorizationData>;
+    return struct<AuthorizationData>([['payload', getPayloadSerializer()]], {
+        description: 'AuthorizationData',
+    }) as Serializer<AuthorizationDataArgs, AuthorizationData>;
 }

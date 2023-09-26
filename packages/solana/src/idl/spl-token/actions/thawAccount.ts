@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createThawAccountInstruction } from '../instructions/thawAccount.js';
@@ -31,8 +37,19 @@ export async function thawAccount(
     const [authorityPublicKey, signers] = getSigners(authority, multiSigners);
 
     const transaction = new Transaction().add(
-        createThawAccountInstruction(account, mint, authorityPublicKey, multiSigners, programId)
+        createThawAccountInstruction(
+            account,
+            mint,
+            authorityPublicKey,
+            multiSigners,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }

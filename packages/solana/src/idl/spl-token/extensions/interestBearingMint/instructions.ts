@@ -24,19 +24,21 @@ export interface InterestBearingMintUpdateRateInstructionData {
     rate: number;
 }
 
-export const interestBearingMintInitializeInstructionData = struct<InterestBearingMintInitializeInstructionData>([
-    u8('instruction'),
-    u8('interestBearingMintInstruction'),
-    // TODO: Make this an optional public key
-    publicKey('rateAuthority'),
-    s16('rate'),
-]);
+export const interestBearingMintInitializeInstructionData =
+    struct<InterestBearingMintInitializeInstructionData>([
+        u8('instruction'),
+        u8('interestBearingMintInstruction'),
+        // TODO: Make this an optional public key
+        publicKey('rateAuthority'),
+        s16('rate'),
+    ]);
 
-export const interestBearingMintUpdateRateInstructionData = struct<InterestBearingMintUpdateRateInstructionData>([
-    u8('instruction'),
-    u8('interestBearingMintInstruction'),
-    s16('rate'),
-]);
+export const interestBearingMintUpdateRateInstructionData =
+    struct<InterestBearingMintUpdateRateInstructionData>([
+        u8('instruction'),
+        u8('interestBearingMintInstruction'),
+        s16('rate'),
+    ]);
 
 /**
  * Construct an InitializeInterestBearingMint instruction
@@ -55,11 +57,14 @@ export function createInitializeInterestBearingMintInstruction(
     programId = TOKEN_2022_PROGRAM_ID
 ) {
     const keys = [{ pubkey: mint, isSigner: false, isWritable: true }];
-    const data = Buffer.alloc(interestBearingMintInitializeInstructionData.span);
+    const data = Buffer.alloc(
+        interestBearingMintInitializeInstructionData.span
+    );
     interestBearingMintInitializeInstructionData.encode(
         {
             instruction: TokenInstruction.InterestBearingMintExtension,
-            interestBearingMintInstruction: InterestBearingMintInstruction.Initialize,
+            interestBearingMintInstruction:
+                InterestBearingMintInstruction.Initialize,
             rateAuthority,
             rate,
         },
@@ -89,16 +94,23 @@ export function createUpdateRateInterestBearingMintInstruction(
     const keys = addSigners(
         [
             { pubkey: mint, isSigner: false, isWritable: true },
-            { pubkey: rateAuthority, isSigner: !multiSigners.length, isWritable: false },
+            {
+                pubkey: rateAuthority,
+                isSigner: !multiSigners.length,
+                isWritable: false,
+            },
         ],
         rateAuthority,
         multiSigners
     );
-    const data = Buffer.alloc(interestBearingMintUpdateRateInstructionData.span);
+    const data = Buffer.alloc(
+        interestBearingMintUpdateRateInstructionData.span
+    );
     interestBearingMintUpdateRateInstructionData.encode(
         {
             instruction: TokenInstruction.InterestBearingMintExtension,
-            interestBearingMintInstruction: InterestBearingMintInstruction.UpdateRate,
+            interestBearingMintInstruction:
+                InterestBearingMintInstruction.UpdateRate,
             rate,
         },
         data

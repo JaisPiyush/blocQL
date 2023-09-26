@@ -1,4 +1,10 @@
-import type { ConfirmOptions, Connection, PublicKey, Signer, TransactionSignature } from '@solana/web3.js';
+import type {
+    ConfirmOptions,
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionSignature,
+} from '@solana/web3.js';
 import { sendAndConfirmTransaction, Transaction } from '@solana/web3.js';
 import { getSigners } from '../../actions/internal.js';
 import { TOKEN_2022_PROGRAM_ID } from '../../constants.js';
@@ -56,7 +62,12 @@ export async function transferCheckedWithFee(
         )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }
 
 /**
@@ -86,10 +97,21 @@ export async function withdrawWithheldTokensFromMint(
     const [authorityPublicKey, signers] = getSigners(authority, multiSigners);
 
     const transaction = new Transaction().add(
-        createWithdrawWithheldTokensFromMintInstruction(mint, destination, authorityPublicKey, signers, programId)
+        createWithdrawWithheldTokensFromMintInstruction(
+            mint,
+            destination,
+            authorityPublicKey,
+            signers,
+            programId
+        )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }
 
 /**
@@ -131,7 +153,12 @@ export async function withdrawWithheldTokensFromAccounts(
         )
     );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer, ...signers], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, ...signers],
+        confirmOptions
+    );
 }
 
 /**
@@ -154,7 +181,14 @@ export async function harvestWithheldTokensToMint(
     confirmOptions?: ConfirmOptions,
     programId = TOKEN_2022_PROGRAM_ID
 ): Promise<TransactionSignature> {
-    const transaction = new Transaction().add(createHarvestWithheldTokensToMintInstruction(mint, sources, programId));
+    const transaction = new Transaction().add(
+        createHarvestWithheldTokensToMintInstruction(mint, sources, programId)
+    );
 
-    return await sendAndConfirmTransaction(connection, transaction, [payer], confirmOptions);
+    return await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer],
+        confirmOptions
+    );
 }

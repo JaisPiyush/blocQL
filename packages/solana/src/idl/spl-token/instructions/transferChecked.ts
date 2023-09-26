@@ -20,11 +20,12 @@ export interface TransferCheckedInstructionData {
 }
 
 /** TODO: docs */
-export const transferCheckedInstructionData = struct<TransferCheckedInstructionData>([
-    u8('instruction'),
-    u64('amount'),
-    u8('decimals'),
-]);
+export const transferCheckedInstructionData =
+    struct<TransferCheckedInstructionData>([
+        u8('instruction'),
+        u64('amount'),
+        u8('decimals'),
+    ]);
 
 /**
  * Construct a TransferChecked instruction
@@ -102,15 +103,19 @@ export function decodeTransferCheckedInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedTransferCheckedInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== transferCheckedInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== transferCheckedInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { source, mint, destination, owner, multiSigners },
         data,
     } = decodeTransferCheckedInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.TransferChecked) throw new TokenInvalidInstructionTypeError();
-    if (!source || !mint || !destination || !owner) throw new TokenInvalidInstructionKeysError();
+    if (data.instruction !== TokenInstruction.TransferChecked)
+        throw new TokenInvalidInstructionTypeError();
+    if (!source || !mint || !destination || !owner)
+        throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
 

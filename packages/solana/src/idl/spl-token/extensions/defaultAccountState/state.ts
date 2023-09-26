@@ -10,12 +10,17 @@ export interface DefaultAccountState {
 }
 
 /** Buffer layout for de/serializing a transfer fee config extension */
-export const DefaultAccountStateLayout = struct<DefaultAccountState>([u8('state')]);
+export const DefaultAccountStateLayout = struct<DefaultAccountState>([
+    u8('state'),
+]);
 
 export const DEFAULT_ACCOUNT_STATE_SIZE = DefaultAccountStateLayout.span;
 
 export function getDefaultAccountState(mint: Mint): DefaultAccountState | null {
-    const extensionData = getExtensionData(ExtensionType.DefaultAccountState, mint.tlvData);
+    const extensionData = getExtensionData(
+        ExtensionType.DefaultAccountState,
+        mint.tlvData
+    );
     if (extensionData !== null) {
         return DefaultAccountStateLayout.decode(extensionData);
     } else {

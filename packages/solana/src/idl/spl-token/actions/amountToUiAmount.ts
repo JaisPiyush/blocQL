@@ -1,4 +1,9 @@
-import type { Connection, PublicKey, Signer, TransactionError } from '@solana/web3.js';
+import type {
+    Connection,
+    PublicKey,
+    Signer,
+    TransactionError,
+} from '@solana/web3.js';
 import { Transaction } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import { createAmountToUiAmountInstruction } from '../instructions/amountToUiAmount.js';
@@ -21,10 +26,16 @@ export async function amountToUiAmount(
     amount: number | bigint,
     programId = TOKEN_PROGRAM_ID
 ): Promise<string | TransactionError | null> {
-    const transaction = new Transaction().add(createAmountToUiAmountInstruction(mint, amount, programId));
-    const { returnData, err } = (await connection.simulateTransaction(transaction, [payer], false)).value;
+    const transaction = new Transaction().add(
+        createAmountToUiAmountInstruction(mint, amount, programId)
+    );
+    const { returnData, err } = (
+        await connection.simulateTransaction(transaction, [payer], false)
+    ).value;
     if (returnData?.data) {
-        return Buffer.from(returnData.data[0], returnData.data[1]).toString('utf-8');
+        return Buffer.from(returnData.data[0], returnData.data[1]).toString(
+            'utf-8'
+        );
     }
     return err;
 }

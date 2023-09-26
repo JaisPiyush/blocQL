@@ -1,6 +1,11 @@
 import { struct, u32, u8 } from '@solana/buffer-layout';
 import { publicKey, u64 } from '@solana/buffer-layout-utils';
-import type { AccountInfo, Commitment, Connection, PublicKey } from '@solana/web3.js';
+import type {
+    AccountInfo,
+    Commitment,
+    Connection,
+    PublicKey,
+} from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '../constants.js';
 import {
     TokenAccountNotFoundError,
@@ -119,8 +124,13 @@ export async function getMultipleAccounts(
     commitment?: Commitment,
     programId = TOKEN_PROGRAM_ID
 ): Promise<Account[]> {
-    const infos = await connection.getMultipleAccountsInfo(addresses, commitment);
-    return addresses.map((address, i) => unpackAccount(address, infos[i], programId));
+    const infos = await connection.getMultipleAccountsInfo(
+        addresses,
+        commitment
+    );
+    return addresses.map((address, i) =>
+        unpackAccount(address, infos[i], programId)
+    );
 }
 
 /** Get the minimum lamport balance for a base token account to be rent exempt
@@ -134,7 +144,11 @@ export async function getMinimumBalanceForRentExemptAccount(
     connection: Connection,
     commitment?: Commitment
 ): Promise<number> {
-    return await getMinimumBalanceForRentExemptAccountWithExtensions(connection, [], commitment);
+    return await getMinimumBalanceForRentExemptAccountWithExtensions(
+        connection,
+        [],
+        commitment
+    );
 }
 
 /** Get the minimum lamport balance for a rent-exempt token account with extensions
@@ -150,7 +164,10 @@ export async function getMinimumBalanceForRentExemptAccountWithExtensions(
     commitment?: Commitment
 ): Promise<number> {
     const accountLen = getAccountLen(extensions);
-    return await connection.getMinimumBalanceForRentExemption(accountLen, commitment);
+    return await connection.getMinimumBalanceForRentExemption(
+        accountLen,
+        commitment
+    );
 }
 
 /**
@@ -168,14 +185,18 @@ export function unpackAccount(
     programId = TOKEN_PROGRAM_ID
 ): Account {
     if (!info) throw new TokenAccountNotFoundError();
-    if (!info.owner.equals(programId)) throw new TokenInvalidAccountOwnerError();
-    if (info.data.length < ACCOUNT_SIZE) throw new TokenInvalidAccountSizeError();
+    if (!info.owner.equals(programId))
+        throw new TokenInvalidAccountOwnerError();
+    if (info.data.length < ACCOUNT_SIZE)
+        throw new TokenInvalidAccountSizeError();
 
     const rawAccount = AccountLayout.decode(info.data.slice(0, ACCOUNT_SIZE));
     let tlvData = Buffer.alloc(0);
     if (info.data.length > ACCOUNT_SIZE) {
-        if (info.data.length === MULTISIG_SIZE) throw new TokenInvalidAccountSizeError();
-        if (info.data[ACCOUNT_SIZE] != AccountType.Account) throw new TokenInvalidAccountError();
+        if (info.data.length === MULTISIG_SIZE)
+            throw new TokenInvalidAccountSizeError();
+        if (info.data[ACCOUNT_SIZE] != AccountType.Account)
+            throw new TokenInvalidAccountError();
         tlvData = info.data.slice(ACCOUNT_SIZE + ACCOUNT_TYPE_SIZE);
     }
 
@@ -189,8 +210,12 @@ export function unpackAccount(
         isInitialized: rawAccount.state !== AccountState.Uninitialized,
         isFrozen: rawAccount.state === AccountState.Frozen,
         isNative: !!rawAccount.isNativeOption,
-        rentExemptReserve: rawAccount.isNativeOption ? rawAccount.isNative : null,
-        closeAuthority: rawAccount.closeAuthorityOption ? rawAccount.closeAuthority : null,
+        rentExemptReserve: rawAccount.isNativeOption
+            ? rawAccount.isNative
+            : null,
+        closeAuthority: rawAccount.closeAuthorityOption
+            ? rawAccount.closeAuthority
+            : null,
         tlvData,
     };
 }

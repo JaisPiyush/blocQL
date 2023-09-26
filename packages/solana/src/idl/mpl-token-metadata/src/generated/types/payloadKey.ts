@@ -9,25 +9,25 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum PayloadKey {
-  Amount,
-  Authority,
-  AuthoritySeeds,
-  Delegate,
-  DelegateSeeds,
-  Destination,
-  DestinationSeeds,
-  Holder,
-  Source,
-  SourceSeeds,
+    Amount,
+    Authority,
+    AuthoritySeeds,
+    Delegate,
+    DelegateSeeds,
+    Destination,
+    DestinationSeeds,
+    Holder,
+    Source,
+    SourceSeeds,
 }
 
 export type PayloadKeyArgs = PayloadKey;
 
 export function getPayloadKeySerializer(): Serializer<
-  PayloadKeyArgs,
-  PayloadKey
+    PayloadKeyArgs,
+    PayloadKey
 > {
-  return scalarEnum<PayloadKey>(PayloadKey, {
-    description: 'PayloadKey',
-  }) as Serializer<PayloadKeyArgs, PayloadKey>;
+    return scalarEnum<PayloadKey>(PayloadKey, {
+        description: 'PayloadKey',
+    }) as Serializer<PayloadKeyArgs, PayloadKey>;
 }

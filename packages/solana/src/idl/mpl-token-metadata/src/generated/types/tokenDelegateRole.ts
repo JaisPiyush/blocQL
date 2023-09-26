@@ -9,22 +9,22 @@
 import { Serializer, scalarEnum } from '@metaplex-foundation/umi/serializers';
 
 export enum TokenDelegateRole {
-  Sale,
-  Transfer,
-  Utility,
-  Staking,
-  Standard,
-  LockedTransfer,
-  Migration,
+    Sale,
+    Transfer,
+    Utility,
+    Staking,
+    Standard,
+    LockedTransfer,
+    Migration,
 }
 
 export type TokenDelegateRoleArgs = TokenDelegateRole;
 
 export function getTokenDelegateRoleSerializer(): Serializer<
-  TokenDelegateRoleArgs,
-  TokenDelegateRole
+    TokenDelegateRoleArgs,
+    TokenDelegateRole
 > {
-  return scalarEnum<TokenDelegateRole>(TokenDelegateRole, {
-    description: 'TokenDelegateRole',
-  }) as Serializer<TokenDelegateRoleArgs, TokenDelegateRole>;
+    return scalarEnum<TokenDelegateRole>(TokenDelegateRole, {
+        description: 'TokenDelegateRole',
+    }) as Serializer<TokenDelegateRoleArgs, TokenDelegateRole>;
 }

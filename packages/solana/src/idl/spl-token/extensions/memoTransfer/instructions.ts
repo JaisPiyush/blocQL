@@ -1,7 +1,10 @@
 import { struct, u8 } from '@solana/buffer-layout';
 import type { PublicKey, Signer } from '@solana/web3.js';
 import { TransactionInstruction } from '@solana/web3.js';
-import { programSupportsExtensions, TOKEN_2022_PROGRAM_ID } from '../../constants.js';
+import {
+    programSupportsExtensions,
+    TOKEN_2022_PROGRAM_ID,
+} from '../../constants.js';
 import { TokenUnsupportedInstructionError } from '../../errors.js';
 import { addSigners } from '../../instructions/internal.js';
 import { TokenInstruction } from '../../instructions/types.js';
@@ -39,7 +42,13 @@ export function createEnableRequiredMemoTransfersInstruction(
     multiSigners: (Signer | PublicKey)[] = [],
     programId = TOKEN_2022_PROGRAM_ID
 ): TransactionInstruction {
-    return createMemoTransferInstruction(MemoTransferInstruction.Enable, account, authority, multiSigners, programId);
+    return createMemoTransferInstruction(
+        MemoTransferInstruction.Enable,
+        account,
+        authority,
+        multiSigners,
+        programId
+    );
 }
 
 /**
@@ -58,7 +67,13 @@ export function createDisableRequiredMemoTransfersInstruction(
     multiSigners: (Signer | PublicKey)[] = [],
     programId = TOKEN_2022_PROGRAM_ID
 ): TransactionInstruction {
-    return createMemoTransferInstruction(MemoTransferInstruction.Disable, account, authority, multiSigners, programId);
+    return createMemoTransferInstruction(
+        MemoTransferInstruction.Disable,
+        account,
+        authority,
+        multiSigners,
+        programId
+    );
 }
 
 function createMemoTransferInstruction(
@@ -72,7 +87,11 @@ function createMemoTransferInstruction(
         throw new TokenUnsupportedInstructionError();
     }
 
-    const keys = addSigners([{ pubkey: account, isSigner: false, isWritable: true }], authority, multiSigners);
+    const keys = addSigners(
+        [{ pubkey: account, isSigner: false, isWritable: true }],
+        authority,
+        multiSigners
+    );
     const data = Buffer.alloc(memoTransferInstructionData.span);
     memoTransferInstructionData.encode(
         {

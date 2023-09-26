@@ -1,6 +1,10 @@
-import { ParsedAccountsModeBlockResponse, ParsedTransactionWithMeta } from '@solana/web3.js';
+import {
+    ParsedAccountsModeBlockResponse,
+    ParsedTransactionWithMeta,
+} from '@solana/web3.js';
 import { SolanaInstructionProcessorDecodedData } from 'types';
 import { SolanaBlockModel } from 'types/src/models/solana/block';
+import { SolanaTransactionModel } from 'types/src/models/solana/transaction';
 
 export enum SolanaDatBroadcastType {
     BlockBroadcast = 'blockBroadCast',
@@ -31,8 +35,9 @@ export type SolanaTransactionMessage = {
 export type SolanaInstructionsMessage = {
     txnIndex: number;
     block: SolanaBlockModel;
-    txn: ParsedTransactionWithMeta;
-}
+    rawTxn: ParsedTransactionWithMeta;
+    txn: SolanaTransactionModel;
+};
 
 export type BroadcastData<T> = {
     target: SolanaDatBroadcastType;
@@ -40,5 +45,5 @@ export type BroadcastData<T> = {
 };
 
 export interface SolanaInstructionDecoderFn {
-    (data: string, arg?: any): SolanaInstructionProcessorDecodedData | null
+    (data: string, arg?: any): SolanaInstructionProcessorDecodedData | null;
 }

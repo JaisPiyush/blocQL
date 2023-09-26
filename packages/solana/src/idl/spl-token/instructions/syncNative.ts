@@ -16,7 +16,9 @@ export interface SyncNativeInstructionData {
 }
 
 /** TODO: docs */
-export const syncNativeInstructionData = struct<SyncNativeInstructionData>([u8('instruction')]);
+export const syncNativeInstructionData = struct<SyncNativeInstructionData>([
+    u8('instruction'),
+]);
 
 /**
  * Construct a SyncNative instruction
@@ -26,11 +28,17 @@ export const syncNativeInstructionData = struct<SyncNativeInstructionData>([u8('
  *
  * @return Instruction to add to a transaction
  */
-export function createSyncNativeInstruction(account: PublicKey, programId = TOKEN_PROGRAM_ID): TransactionInstruction {
+export function createSyncNativeInstruction(
+    account: PublicKey,
+    programId = TOKEN_PROGRAM_ID
+): TransactionInstruction {
     const keys = [{ pubkey: account, isSigner: false, isWritable: true }];
 
     const data = Buffer.alloc(syncNativeInstructionData.span);
-    syncNativeInstructionData.encode({ instruction: TokenInstruction.SyncNative }, data);
+    syncNativeInstructionData.encode(
+        { instruction: TokenInstruction.SyncNative },
+        data
+    );
 
     return new TransactionInstruction({ keys, programId, data });
 }
@@ -58,14 +66,17 @@ export function decodeSyncNativeInstruction(
     instruction: TransactionInstruction,
     programId = TOKEN_PROGRAM_ID
 ): DecodedSyncNativeInstruction {
-    if (!instruction.programId.equals(programId)) throw new TokenInvalidInstructionProgramError();
-    if (instruction.data.length !== syncNativeInstructionData.span) throw new TokenInvalidInstructionDataError();
+    if (!instruction.programId.equals(programId))
+        throw new TokenInvalidInstructionProgramError();
+    if (instruction.data.length !== syncNativeInstructionData.span)
+        throw new TokenInvalidInstructionDataError();
 
     const {
         keys: { account },
         data,
     } = decodeSyncNativeInstructionUnchecked(instruction);
-    if (data.instruction !== TokenInstruction.SyncNative) throw new TokenInvalidInstructionTypeError();
+    if (data.instruction !== TokenInstruction.SyncNative)
+        throw new TokenInvalidInstructionTypeError();
     if (!account) throw new TokenInvalidInstructionKeysError();
 
     // TODO: key checks?
