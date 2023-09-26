@@ -11,14 +11,26 @@
     "lint": "echo 'Add lint script here'"
   },
   "devDependencies": {
+    "@metaplex-foundation/kinobi": "^0.15.1",
+    "borsh": "^1.0.0",
     "tsconfig": "workspace:*",
     "typescript": "^4.5.2"
   },
   "dependencies": {
     "@coral-xyz/anchor": "0.28.1-beta.2",
+    "@metaplex-foundation/beet": "^0.7.1",
+    "@metaplex-foundation/beet-solana": "^0.4.0",
+    "@metaplex-foundation/cusper": "^0.0.2",
     "@metaplex-foundation/js": "^0.19.4",
+    "@metaplex-foundation/mpl-toolbox": "^0.9.1",
+    "@metaplex-foundation/umi": "^0.8.9",
     "@project-serum/anchor": "^0.26.0",
+    "@solana/buffer-layout": "^4.0.1",
+    "@solana/buffer-layout-utils": "^0.2.0",
+    "@solana/spl-token": "^0.3.8",
     "@solana/web3.js": "^1.78.5",
+    "borsh": "^1.0.0",
+    "bs58": "^5.0.0",
     "consumer": "workspace:*",
     "scanner": "workspace:*",
     "types": "workspace:*"

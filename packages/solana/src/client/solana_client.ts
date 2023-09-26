@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 
 export class SolanaClient {
-    constructor(private readonly connection: Connection) {}
+    constructor(public readonly connection: Connection) {}
 
     /**
      * Although the name of this method is `getLatestBlockHeight`, it actually returns the latest slot.
