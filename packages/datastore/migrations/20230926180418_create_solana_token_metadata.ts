@@ -23,7 +23,6 @@ export async function up(knex: Knex): Promise<void> {
         table.jsonb('collection_details').defaultTo(null);
         table.jsonb('programmable_config').defaultTo(null);
         table.string('metadata_address').defaultTo(null);
-        table.string('mint_address').defaultTo(null);
         table.string('freeze_authority_address').defaultTo(null);
         table.integer('supply').defaultTo(0);
         table.bigint('supply_basis_points').defaultTo(0);
@@ -38,12 +37,41 @@ export async function up(knex: Knex): Promise<void> {
         table.string('uri');
         table.specificType('attributes', 'json[]').defaultTo(null);
         
+        table.index('model', 'idx_solana_tokens_metadata_model', {
+            storageEngineIndexType: 'hash'
+        });
+
+        table.index('is_mutable', 'idx_solana_tokens_metadata_is_mutable', {
+            storageEngineIndexType: 'btree'
+        });
+
+        table.index('json_loaded', 'idx_solana_tokens_metadata_json_loaded', {
+            storageEngineIndexType: 'btree'
+        });
+
+
 
 
     });
+
+    // Create GIN Indexes
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_creators ON ${TableNames.SolanaTokensMetadata} USING GIN (creators)`
+    );
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_attributes ON ${TableNames.SolanaTokensMetadata} USING GIN (attributes)`
+    );
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_json ON ${TableNames.SolanaTokensMetadata} USING GIN (json)`
+    );
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_edition ON ${TableNames.SolanaTokensMetadata} USING GIN (edition)`
+    );
+
 }
 
 
 export async function down(knex: Knex): Promise<void> {
+    await knex.schema.dropTable(TableNames.SolanaTokensMetadata);
 }
 

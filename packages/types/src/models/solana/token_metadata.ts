@@ -30,7 +30,6 @@ export interface SolanaTokenMetadataModel {
         metadata_address: string;
     } | null;
     metadata_address: string;
-    mint_address: string;
     freeze_authority_address: string;
     supply: number;
     supply_basis_points: number;
