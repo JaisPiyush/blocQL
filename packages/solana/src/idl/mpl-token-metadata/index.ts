@@ -22,33 +22,18 @@ import { getDelegateAuthorityItemV1InstructionDataSerializer } from './src/gener
 export class MplTokenMetadataIdlDecoder extends BaseIdlDecoder {
     // Analyze all the files in generated/instructions and fill this map with discriminator as key and serializer function as value
 
-    private readonly instructions = new Map<number, Record<number,Serializer<any, any>> | Serializer<any, any>>([
-        [
-            23,
-            getApproveCollectionAuthorityInstructionDataSerializer(),
-        ],
-        [49, getTransferV1InstructionDataSerializer()],
-        [20, getApproveUseAuthorityInstructionDataSerializer()],
-        [36, getBubblegumSetCollectionSizeInstructionDataSerializer()],
-        [37, getBurnEditionNftInstructionDataSerializer()],
-        [29, getBurnNftInstructionDataSerializer()],
-        [41, getBurnV1InstructionDataSerializer()],
-        [39, getCloseEscrowAccountInstructionDataSerializer()],
-        [54, getCollectInstructionDataSerializer()],
-        [12, getConvertMasterEditionV1ToV2InstructionDataSerializer()],
-        [38, getCreateEscrowAccountInstructionDataSerializer()],
-        [17, getCreateMasterEditionV3InstructionDataSerializer()],
-        [33, getCreateMetadataAccountV3InstructionDataSerializer()],
-        [42, getCreateV1InstructionDataSerializer()]
-        [44, getDelegateAuthorityItemV1InstructionDataSerializer()],
-        []
-    ]);
+    private readonly instructions: Record<number, Serializer<any, any> | Record<number, Serializer<any, any>>> = {
+        23: getApproveCollectionAuthorityInstructionDataSerializer(),
+        44: {
+            9: getDelegateAuthorityItemV1InstructionDataSerializer()
+        }
+    }
 
 
     decode(data: string, encoding: string | number = 0) {
         const buffer = this.bs58ToBuffer(data);
         const discriminator = buffer[0];
-        const serializer_or_map = this.instructions.get(discriminator);
+        const serializer_or_map = this.instructions[discriminator];
         if (!serializer_or_map) {
             throw new Error(
                 `Unknown instruction discriminator: ${discriminator}`
