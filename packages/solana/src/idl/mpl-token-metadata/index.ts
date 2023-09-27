@@ -5,27 +5,66 @@ import {
     getApproveCollectionAuthorityInstructionDataSerializer,
     getTransferV1InstructionDataSerializer,
 } from './src/generated';
+import { getApproveUseAuthorityInstructionDataSerializer } from './src/generated/instructions/approveUseAuthority';
+import { getBubblegumSetCollectionSizeInstructionDataSerializer } from './src/generated/instructions/bubblegumSetCollectionSize';
+import { getBurnEditionNftInstructionDataSerializer } from './src/generated/instructions/burnEditionNft';
+import { getBurnNftInstructionDataSerializer } from './src/generated/instructions/burnNft';
+import { getBurnV1InstructionDataSerializer } from './src/generated/instructions/burnV1';
+import { getCloseEscrowAccountInstructionDataSerializer } from './src/generated/instructions/closeEscrowAccount';
+import { getCollectInstructionDataSerializer } from './src/generated/instructions/collect';
+import { getConvertMasterEditionV1ToV2InstructionDataSerializer } from './src/generated/instructions/convertMasterEditionV1ToV2';
+import { getCreateEscrowAccountInstructionDataSerializer } from './src/generated/instructions/createEscrowAccount';
+import { getCreateMasterEditionV3InstructionDataSerializer } from './src/generated/instructions/createMasterEditionV3';
+import { getCreateMetadataAccountV3InstructionDataSerializer } from './src/generated/instructions/createMetadataAccountV3';
+import { getCreateV1InstructionDataSerializer } from './src/generated/instructions/createV1';
+import { getDelegateAuthorityItemV1InstructionDataSerializer } from './src/generated/instructions/delegateAuthorityItemV1';
 
 export class MplTokenMetadataIdlDecoder extends BaseIdlDecoder {
     // Analyze all the files in generated/instructions and fill this map with discriminator as key and serializer function as value
 
-    private readonly instructions = new Map<number, Serializer<any, any>>([
+    private readonly instructions = new Map<number, Record<number,Serializer<any, any>> | Serializer<any, any>>([
         [
             23,
             getApproveCollectionAuthorityInstructionDataSerializer(),
         ],
         [49, getTransferV1InstructionDataSerializer()],
+        [20, getApproveUseAuthorityInstructionDataSerializer()],
+        [36, getBubblegumSetCollectionSizeInstructionDataSerializer()],
+        [37, getBurnEditionNftInstructionDataSerializer()],
+        [29, getBurnNftInstructionDataSerializer()],
+        [41, getBurnV1InstructionDataSerializer()],
+        [39, getCloseEscrowAccountInstructionDataSerializer()],
+        [54, getCollectInstructionDataSerializer()],
+        [12, getConvertMasterEditionV1ToV2InstructionDataSerializer()],
+        [38, getCreateEscrowAccountInstructionDataSerializer()],
+        [17, getCreateMasterEditionV3InstructionDataSerializer()],
+        [33, getCreateMetadataAccountV3InstructionDataSerializer()],
+        [42, getCreateV1InstructionDataSerializer()]
+        [44, getDelegateAuthorityItemV1InstructionDataSerializer()],
+        []
     ]);
 
 
     decode(data: string, encoding: string | number = 0) {
         const buffer = this.bs58ToBuffer(data);
         const discriminator = buffer[0];
-        const serializer = this.instructions.get(discriminator);
-        if (!serializer) {
+        const serializer_or_map = this.instructions.get(discriminator);
+        if (!serializer_or_map) {
             throw new Error(
                 `Unknown instruction discriminator: ${discriminator}`
             );
+        }
+        let serializer: Serializer
+        if (serializer_or_map.deserialize === undefined) {
+            const deepDiscriminator = buffer[1];
+            if (!serializer_or_map[deepDiscriminator]) {
+                throw new Error(
+                    `Unknown instruction discriminator: ${discriminator} ${deepDiscriminator}`
+                );
+            }
+            serializer = serializer_or_map[deepDiscriminator]
+        } else {
+            serializer = serializer_or_map
         }
         const decoded = serializer.deserialize(buffer, 0)[0];
         return {
