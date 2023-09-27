@@ -14,7 +14,7 @@ export async function up(knex: Knex): Promise<void> {
     // Create ROLE
     await knex.raw(`create role read_access`);
     // Grant connect to ROLE
-    await knex.raw(`create connect on database ${POSTGRES_DB} to read_access`);
+    await knex.raw(`grant connect on database ${POSTGRES_DB} to read_access`);
     // Grant usage on schema to ROLE
     await knex.raw(`grant usage on schema public to read_access`);
     // Grant select on all tables to ROLE

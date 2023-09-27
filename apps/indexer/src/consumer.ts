@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import { runSolanaConsumers } from './chains/solana';
 
-const indexers: Record<string, Record<string, () => Promise<void>>> = {
+const consumers: Record<string, Record<string, () => Promise<void>>> = {
     solana: {
         test: runSolanaConsumers,
     },
@@ -26,19 +26,19 @@ if (!options.name || !options.branch) {
     process.exit(1);
 }
 
-if (indexers[options.name] === undefined) {
+if (consumers[options.name] === undefined) {
     console.error(`Unknown indexer '${options.name}'`);
     process.exit(1);
 }
 
-if (indexers[options.name][options.branch] === undefined) {
+if (consumers[options.name][options.branch] === undefined) {
     console.error(
         `Unknown branch '${options.branch}' for indexer '${options.name}'`
     );
     process.exit(1);
 }
 
-indexers[options.name][options.branch]().catch((e) => {
+consumers[options.name][options.branch]().catch((e) => {
     console.error(e);
     process.exit(1);
 });

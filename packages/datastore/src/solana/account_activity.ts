@@ -22,7 +22,7 @@ export class SolanaAccountActivityDatastore
         }
 
         async update<Q = Partial<SolanaAccountActivityModel>, T = Partial<SolanaAccountActivityModel>>(query: Q, data: T): Promise<void> {
-            await this.AccountActivity.where('slot', query as number).update(data);
+            await this.AccountActivity.where(query as any).update(data);
         }
 
         async find<T = SolanaAccountActivityModel, R = Partial<SolanaAccountActivityModel>>(query: R): Promise<T[]> {

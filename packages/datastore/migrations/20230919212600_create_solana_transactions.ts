@@ -12,11 +12,11 @@ export async function up(knex: Knex): Promise<void> {
         table.date('block_date').notNullable();
         table.bigint('fee').defaultTo(0);
         table.bigint('compute_unit_consumed').defaultTo(0);
-        table.specificType('post_balances', 'bigint[]').defaultTo([]);
-        table.specificType('pre_balances', 'bigint[]').defaultTo([]);
-        table.specificType('account_keys', 'text[]').defaultTo([]);
-        table.specificType('instructions', 'text[]').defaultTo([]);
-        table.specificType('signatures', 'text[]').defaultTo([]);
+        table.specificType('post_balances', 'bigint[]').defaultTo(null);
+        table.specificType('pre_balances', 'bigint[]').defaultTo(null);
+        table.specificType('account_keys', 'text[]').defaultTo(null);
+        table.specificType('instructions', 'text[]').defaultTo(null);
+        table.specificType('signatures', 'text[]').defaultTo(null);
         table.string('error_program_id').defaultTo(null);
         table.integer('error_instruction_index').defaultTo(null);
         table.integer('error_code').defaultTo(null);

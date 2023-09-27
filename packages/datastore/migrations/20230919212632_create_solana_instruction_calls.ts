@@ -34,7 +34,7 @@ export async function up(knex: Knex): Promise<void> {
                 storageEngineIndexType: 'hash',
             });
 
-            table.index('slot', 'idx_solana_instruction_call_slot', {
+            table.index('block_slot', 'idx_solana_instruction_call_slot', {
                 storageEngineIndexType: 'btree',
             });
 

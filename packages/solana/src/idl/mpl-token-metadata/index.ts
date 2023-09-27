@@ -3,6 +3,7 @@ import { BaseIdlDecoder } from '../base';
 
 import {
     getApproveCollectionAuthorityInstructionDataSerializer,
+    getCollectInstructionDataSerializer,
     getTransferV1InstructionDataSerializer,
 } from './src/generated';
 
@@ -15,6 +16,7 @@ export class MplTokenMetadataIdlDecoder extends BaseIdlDecoder {
             getApproveCollectionAuthorityInstructionDataSerializer(),
         ],
         [49, getTransferV1InstructionDataSerializer()],
+        [54, getCollectInstructionDataSerializer()]
     ]);
 
 

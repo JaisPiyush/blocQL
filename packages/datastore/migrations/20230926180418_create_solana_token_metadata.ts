@@ -16,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
         table.boolean('primary_sale_happened').defaultTo(false);
         table.integer('seller_fee_basis_points').defaultTo(0);
         table.integer('edition_nonce');
-        table.specificType('creators', 'jsonb[]').defaultTo([]);
+        table.specificType('creators', 'jsonb[]').defaultTo(null);
         table.integer('token_standard');
         table.jsonb('collection').defaultTo(null);
         table.jsonb('collection_details').defaultTo(null);
@@ -30,8 +30,7 @@ export async function up(knex: Knex): Promise<void> {
         table.jsonb('edition').defaultTo(null);
         table.string('image').defaultTo(null);
         table.string('description').defaultTo(null);
-        table.string('uri');
-        table.specificType('attributes', 'json[]').defaultTo(null);
+        table.specificType('attributes', 'jsonb[]').defaultTo(null);
 
         table.index('model', 'idx_solana_tokens_metadata_model', {
             storageEngineIndexType: 'hash',

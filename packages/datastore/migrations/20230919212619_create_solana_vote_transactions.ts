@@ -13,9 +13,9 @@ export async function up(knex: Knex): Promise<void> {
             table.timestamp('block_time').notNullable();
             table.date('block_date').notNullable();
             table.bigint('fee').defaultTo(0);
-            table.specificType('post_balances', 'bigint[]').defaultTo([]);
-            table.specificType('pre_balances', 'bigint[]').defaultTo([]);
-            table.specificType('signatures', 'text[]').defaultTo([]);
+            table.specificType('post_balances', 'bigint[]').defaultTo(null);
+            table.specificType('pre_balances', 'bigint[]').defaultTo(null);
+            table.specificType('signatures', 'text[]').defaultTo(null);
             table.string('error').defaultTo(null);
             table.string('block_hash').notNullable();
             table.integer('required_signatures').defaultTo(0);

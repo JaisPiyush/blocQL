@@ -16,7 +16,7 @@ import {SQS} from 'aws-sdk';
 import { SolanaDataBroadcastType, SolanaDatastoreName } from 'solana/src/types';
 import { SolanaProcessorProvider } from 'solana/src/processors/processor';
 import { DatastoreProvider } from 'types';
-import {getSolanaKnex, Knex, knex, SolanaAccountActivityDatastore, SolanaInstructionCallsDatastore, SolanaRewardsDatastore, SolanaTokenMetadatasDatastore, SolanaTransactionsDatastore, SolanaVoteTransactionsDatastore,} from 'datastore'
+import {getSolanaKnex, Knex,  SolanaAccountActivityDatastore, SolanaInstructionCallsDatastore, SolanaRewardsDatastore, SolanaTokenMetadatasDatastore, SolanaTransactionsDatastore, SolanaVoteTransactionsDatastore,} from 'datastore'
 
 const blockSQSConsumerQueueUrl = process.env.BLOCK_SQS_CONSUMER_QUEUE_URL;
 const txnSQSConsumerQueueUrl = process.env.TXN_SQS_CONSUMER_QUEUE_URL;

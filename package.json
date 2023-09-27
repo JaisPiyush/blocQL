@@ -7,10 +7,10 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "migrate:latest": "dotenv -- pnpm --filter datastore run migrate:latest",
-    "migrate:rollback": "dotenv -- pnpm --filter datastore run migrate:rollback",
+    "migrate:latest": "dotenv -- pnpm --filter datastore run migrate:latest --env production",
+    "migrate:rollback": "dotenv -- pnpm --filter datastore run migrate:rollback --env production",
     "indexer": "dotenv -- pnpm --filter indexer run indexer",
-    "consumer": "dotenv -- pnpm --filter consumer run consumer"
+    "consumer": "dotenv -- pnpm --filter indexer run consumer"
   },
   "devDependencies": {
     "@metaplex-foundation/js": "^0.19.4",

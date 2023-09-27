@@ -17,15 +17,15 @@ export class SolanaBlockDatastore
     }
 
     async get<R = SolanaBlockModel, T = number | bigint>(query: T): Promise<R | null> {
-        return await this.Block.where('slot', query as number).first();
+        return await this.Block.where('slot', query as any).first();
     }
 
     async update<Q = number | bigint, T = Partial<SolanaBlockModel>>(query: Q, data: T): Promise<void> {
-        await this.Block.where('slot', query as number).update(data);
+        await this.Block.where('slot', query as any).update(data);
     }
 
     async find<T = SolanaBlockModel, R = { slot: number | bigint }>(query: R): Promise<T[]> {
-        return await this.Block.where('slot', (query as { slot: number | bigint }).slot as number);
+        return await this.Block.where('slot', (query as any).slot as number);
     }
 
     async batchInsert<T = SolanaBlockModel>(data: T[]): Promise<void> {
@@ -33,7 +33,7 @@ export class SolanaBlockDatastore
     }
 
     async delete<R = { slot: number | bigint }>(query: R): Promise<void> {
-        await this.Block.where('slot', (query as { slot: number | bigint }).slot as number).delete();
+        await this.Block.where('slot', (query as any).slot as number).delete();
     }
 
 
