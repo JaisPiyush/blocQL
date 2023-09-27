@@ -16,7 +16,7 @@ import {SQS} from 'aws-sdk';
 import { SolanaDataBroadcastType, SolanaDatastoreName } from 'solana/src/types';
 import { SolanaProcessorProvider } from 'solana/src/processors/processor';
 import { DatastoreProvider } from 'types';
-import {getSolanaKnex, Knex,  SolanaAccountActivityDatastore, SolanaInstructionCallsDatastore, SolanaRewardsDatastore, SolanaTokenMetadatasDatastore, SolanaTransactionsDatastore, SolanaVoteTransactionsDatastore,} from 'datastore'
+import {getSolanaKnex, Knex,  SolanaAccountActivityDatastore, SolanaBlockDatastore, SolanaInstructionCallsDatastore, SolanaRewardsDatastore, SolanaTokenMetadatasDatastore, SolanaTransactionsDatastore, SolanaVoteTransactionsDatastore,} from 'datastore'
 
 const blockSQSConsumerQueueUrl = process.env.BLOCK_SQS_CONSUMER_QUEUE_URL;
 const txnSQSConsumerQueueUrl = process.env.TXN_SQS_CONSUMER_QUEUE_URL;
@@ -27,8 +27,8 @@ if (!txnSQSConsumerQueueUrl) throw new Error('TXN_SQS_CONSUMER_QUEUE_URL is requ
 const sqs = new SQS({apiVersion: '2012-11-05'})
 
 const solanaTestConfigProvider = () => ({
-    endpoint: web3.clusterApiUrl('mainnet-beta'),
-    maxRequestPerSecond: 10,
+    endpoint: 'https://special-convincing-friday.solana-mainnet.discover.quiknode.pro/5d55d7e7d2ffa6630b1e93623842bf9eae5a949f/',
+    maxRequestPerSecond: 5,
     defaultStartBlockHeight: 219962054,
 });
 
@@ -93,13 +93,30 @@ const datastoreProvider = (knex: Knex): DatastoreProvider => async (storeName: s
             return new SolanaTokenMetadatasDatastore(knex);
         case SolanaDatastoreName.AccountActivityDatastore:
             return new SolanaAccountActivityDatastore(knex);
+        case SolanaDatastoreName.BlockDatastore:
+            return new SolanaBlockDatastore(knex);
         default:
             throw new Error('Datastore not found');
     }
 }
 
 
-export const runSolanaConsumers = async () => {
+export const runSolanaConsumers = async (consumer?: string) => {
+
+    if (consumer === 'block') {
+        await runSolanaBlockConsumer();
+    } else if(consumer === 'txn') {
+        await runSolanaTxnConsumer();
+    } else {
+        await runSolanaBlockConsumer();
+        await runSolanaTxnConsumer();
+    }
+
+
+}
+
+
+export const runSolanaBlockConsumer = async () => {
 
     const knex = getSolanaKnex({});
 
@@ -110,18 +127,42 @@ export const runSolanaConsumers = async () => {
         datastoreProvider: datastoreProvider(knex),
     }
     const blockConsumer = blockSQSConsumer(providers, blockSQSConsumerQueueUrl);
-    const txnConsumer = txnSQSConsumer(providers, txnSQSConsumerQueueUrl);
 
     await runner(
         async () => {
             await blockConsumer.start();
-            await txnConsumer.start();
         },
         async () => {
             await blockConsumer.stop();
-            await txnConsumer.stop();
-        }
+        },
+        'solana-block-consumers'
     );
 
 
 }
+
+export const runSolanaTxnConsumer = async () => {
+
+    const knex = getSolanaKnex({});
+
+    const providers: SolanaProcessorProvider = {
+        serviceProvider: solanaTestScannerProviders.serviceProvider,
+        dataBroadcasterProvider: solanaTestScannerProviders.dataBroadcasterProvider,
+        logProvider: solanaTestScannerProviders.logProvider,
+        datastoreProvider: datastoreProvider(knex),
+    }
+    const txnConsumer = txnSQSConsumer(providers, txnSQSConsumerQueueUrl);
+
+    await runner(
+        async () => {
+            await txnConsumer.start();
+        },
+        async () => {
+            await txnConsumer.stop();
+        },
+        'solana-txn-consumers'
+    );
+
+
+}
+

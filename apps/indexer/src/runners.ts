@@ -2,11 +2,15 @@ import { logger } from './logger';
 
 export const runner = async (
     start: () => Promise<void>,
-    stop: () => Promise<void>
+    stop: () => Promise<void>,
+    name = 'scanner'
 ) => {
-    await start();
+
+    
 
     const _logger = logger();
+    _logger.info(`Starting ${name}...`);
+    await start();
 
     await new Promise<void>((resolve) => {
         process.on('SIGTERM', () => {
@@ -29,7 +33,7 @@ export const runner = async (
             resolve();
         });
     });
-    _logger.info('Stopping scanner');
+    _logger.info(`Stopping ${name}...`);
     await stop();
     process.exit(0);
 };

@@ -1,9 +1,9 @@
 import { Command } from 'commander';
 import { runSolanaConsumers } from './chains/solana';
 
-const consumers: Record<string, Record<string, () => Promise<void>>> = {
+const consumers: Record<string, Record<string, (consumer?: string) => Promise<void>>> = {
     solana: {
-        test: runSolanaConsumers,
+        test: runSolanaConsumers
     },
 };
 
@@ -16,7 +16,8 @@ program
     .requiredOption(
         '-b, --branch <branch>',
         "branch of the indexer ('main' | 'test')"
-    );
+    )
+    .option('-c, --consumer <consumer>', 'consumer to run', undefined);
 
 program.parse(process.argv);
 const options = program.opts();
@@ -38,7 +39,7 @@ if (consumers[options.name][options.branch] === undefined) {
     process.exit(1);
 }
 
-consumers[options.name][options.branch]().catch((e) => {
+consumers[options.name][options.branch](options.consumer).catch((e) => {
     console.error(e);
     process.exit(1);
 });
