@@ -3,7 +3,7 @@ import { SolanaDatastoreName, SolanaTransactionMessage } from '../../types';
 import { SolanaProcessor } from '../processor';
 import { ParsedTransactionWithMeta } from '@solana/web3.js';
 import { SolanaAccountActivityModel } from 'types/src/models/solana/account_activity';
-import { SolanaTransactionModel } from 'types/src/models/solana/transaction';
+import { SolanaTransactionModel, SolanaVoteTransactionModel } from 'types/src/models/solana/transaction';
 
 export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransactionMessage> {
     protected readonly VOTE_PROGRAM_ID =
@@ -27,10 +27,10 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
         const logger = this.providers.logProvider();
 
         await datastore.update<
-            { slot: number | bigint },
+            number | bigint ,
             Partial<SolanaBlockModel>
         >(
-            { slot: block.slot },
+            block.slot,
             {
                 tx_count: block.tx_count + 1,
                 tx_success_count:
@@ -97,12 +97,22 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
                     tx_index: txnIndex,
                     tx_success: txn.meta!.err === null,
                     writable: account.writable,
+                    slot: block.slot,
+                    id: `${accountKey.toString()}.${txn.transaction.signatures[0]}`
                 };
 
                 return activity;
             }
         );
-        await datastore.batchInsert(accountActivity);
+        if (accountActivity.length > 0) {
+            await Promise.all(
+                accountActivity.map(async (activity) => {
+                    await datastore.insert(activity);
+                })
+            );
+            
+        }
+        logger.info('Inserted account activity for transaction');
     }
 
     protected _getInstructionId(
@@ -162,6 +172,26 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
                           txnError.InstructionError[0]
                       ].programId.toString(),
             compute_unit_consumed: txn.meta!.computeUnitsConsumed,
+        };
+    }
+
+    protected __getVoteTxnModelFromTxnModel(txn: SolanaTransactionModel): SolanaVoteTransactionModel {
+        return {
+            signature: txn.signature,
+            slot: txn.slot,
+            tx_index: txn.tx_index,
+            signer: txn.signer,
+            success: txn.success,
+            block_time: txn.block_time,
+            block_date: txn.block_date,
+            fee: txn.fee,
+            post_balances: txn.post_balances,
+            pre_balances: txn.pre_balances,
+            signatures: txn.signatures,
+            error: txn.error,
+            block_hash: txn.block_hash,
+            required_signatures: txn.required_signatures,
+            recent_block_hash: txn.recent_block_hash,
         };
     }
 }

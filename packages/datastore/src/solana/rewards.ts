@@ -29,7 +29,7 @@ export class SolanaRewardsDatastore
         }
 
         async batchInsert<T = SolanaRewardModel>(data: T[]): Promise<void> {
-            return await  this.knex.batchInsert(TableNames.SolanaRewards, data.map(this.Rewards.insert), data.length);
+            await this.Rewards.insert(data);
         }
 
         async delete<R = { slot: number | bigint }>(query: R): Promise<void> {

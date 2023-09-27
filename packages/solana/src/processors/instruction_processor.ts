@@ -241,6 +241,7 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
                 index,
                 instruction,
             ] of data.payload.rawTxn.transaction.message.instructions.entries()) {
+                //TODO: Add filters to remove redundunt instructions like Compute budget
                 const [instructionModel, _tokens] = this.getInstructionModel({
                     instruction,
                     index,
@@ -277,7 +278,17 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
                 }
             }
 
-            await instructionDatastore.batchInsert(instructionCalls);
+            await Promise.all(
+                instructionCalls.map(async (ins) => {
+                    try {
+                        await instructionDatastore.insert(ins);
+                    } catch (err) {
+                        logger.error(`Error inserting instruction: ${err}`);
+                        logger.error(`data: ${JSON.stringify(ins)} err: ${(err as Error).stack}`);
+                    }
+                })
+            );
+
             logger.info(
                 `Inserted ${instructionCalls.length} instructions for transaction ${data.payload.txn.signature} into datastore`
             );
@@ -289,11 +300,9 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
                 payload: tokens,
             });
         } catch (err) {
-            logger.error(`SolanaInstructionsProcessor error: ${err}`);
+            logger.error(`SolanaInstructionsProcessor error: ${err} ${(err as any).stack}`);
         }
     }
 
-    private async __processTokenMetadata(tokens: string[]) {
-        //TODO: Fetch and store token metadata
-    }
+
 }

@@ -8,4 +8,5 @@ export interface SolanaRewardModel {
     block_hash: string;
     slot: number | bigint;
     block_time: Date;
+    block_date: Date;
 }

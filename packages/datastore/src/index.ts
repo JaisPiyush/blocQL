@@ -5,9 +5,12 @@ export * from './constants'
 export type {Knex};
 export {knex};
 
-
+let _knex: Knex | undefined;
 export const getSolanaKnex = (connection: Pick<Knex.Config, 'connection'>): Knex => {
-    return knex({
+    if (_knex) {
+        return _knex;
+    }
+    _knex =  knex({
         client: 'pg',
         connection: {
             host: process.env.SOLANA_POSTGRES_HOST,
@@ -21,5 +24,6 @@ export const getSolanaKnex = (connection: Pick<Knex.Config, 'connection'>): Knex
             min: 2,
             max: 10
         }
-    })
+    });
+    return _knex;
 }

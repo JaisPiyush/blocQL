@@ -29,7 +29,7 @@ export class SolanaTokenMetadatasDatastore
         }
 
         async batchInsert<T = SolanaTokenMetadataModel>(data: T[]): Promise<void> {
-            return await  this.knex.batchInsert(TableNames.SolanaTokensMetadata, data.map(this.TokenMetadatas.insert), data.length);
+            await this.TokenMetadatas.insert(data);
         }
 
 

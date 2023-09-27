@@ -29,7 +29,7 @@ export class SolanaInstructionCallsDatastore
         }
 
         async batchInsert<T = SolanaInstructionCallModel>(data: T[]): Promise<void> {
-            return await  this.knex.batchInsert(TableNames.SolanaInstructionCalls, data.map(this.InstructionCalls.insert), data.length);
+            await this.InstructionCalls.insert(data);
         }
 
 

@@ -21,10 +21,14 @@ export class SolanaProcessor<M> {
 
     public async process(message: SQSMessage) {
         const logger = this.providers.logProvider();
-        logger.info(`Processing message ${JSON.stringify(message)}`);
-        const body = JSON.parse(message.Body as string) as BroadcastData<M>;
+        logger.info(`Processing message ${message.Body}`);
+        const body = JSON.parse(message.Body as string) as {id: string, data: BroadcastData<M>};
         logger.info(`Processing finished.}`);
-        await this.__process(body);
+        try {
+            await this.__process(body.data);
+        } catch (err) {
+            logger.error(`Error processing message ${message.Body}: ${err}`);
+        }
     }
 
     // completion of this process without error will be considered a success and will remove the

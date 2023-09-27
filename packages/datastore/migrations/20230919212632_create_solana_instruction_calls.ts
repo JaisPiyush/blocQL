@@ -22,7 +22,7 @@ export async function up(knex: Knex): Promise<void> {
             table.string('main_program_id').notNullable();
             table.string('instruction_name').notNullable();
             table.jsonb('data').defaultTo(null);
-            table.string('raw_data').defaultTo(null);
+            table.text('raw_data').defaultTo(null);
             table.specificType('accounts', 'text[]').defaultTo(null);
             table.specificType('inner_instructions', 'text[]').defaultTo(null);
 

@@ -30,7 +30,7 @@ export class SolanaAccountActivityDatastore
         }
 
         async batchInsert<T = SolanaAccountActivityModel>(data: T[]): Promise<void> {
-            return await  this.knex.batchInsert(TableNames.SolanaAccountActivity, data.map(this.AccountActivity.insert), data.length);
+            await this.AccountActivity.insert(data);
         }
 
         async delete<R = { slot: number | bigint }>(query: R): Promise<void> {

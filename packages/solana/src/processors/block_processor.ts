@@ -3,6 +3,7 @@ import {
     SolanaBlockMessage,
     SolanaDataBroadcastType,
     SolanaDatastoreName,
+    SolanaTransactionMessage,
 } from '../types';
 import { SolanaProcessor } from './processor';
 import { SolanaBlockModel } from 'types/src/models/solana/block';
@@ -46,30 +47,62 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
                 await this.__processReward(data);
             }
 
-            for (
-                let txnIndex = 0;
-                txnIndex < block.transactions.length;
-                txnIndex++
-            ) {
-                const txn = block.transactions[txnIndex];
-                const signature = txn.transaction.signatures[0];
+            if (!block.transactions) {
+                return;
+            }
+
+            let txnIndex = 0;
+            let txnMessageTracker = 0
+            while (txnIndex < block.transactions.length) {
+                const endIndex = txnIndex + 100 < block.transactions.length ? txnIndex + 100 : (txnIndex + 50 < block.transactions.length ? txnIndex + 50 : block.transactions.length);
+                const txns = block.transactions.slice(txnIndex, endIndex);
+                
                 await dataBroadcasterProvider.broadcast({
-                    id: signature,
+                    id: `${data.payload.slot}_${txnIndex}_${endIndex}`,
                     data: {
                         target: SolanaDataBroadcastType.TransactionBroadcast,
-                        payload: {
-                            index: txnIndex,
-                            signature,
-                        },
-                    },
+                        payload: txns.map<SolanaTransactionMessage>((txn) => {
+                            const data: SolanaTransactionMessage = {
+                                index: txnMessageTracker,
+                                signature: txn.transaction.signatures[0],
+                            }
+                            txnMessageTracker++;
+                            return data;
+                        }),
+                    }
                 });
-                logger.info(
-                    `Broadcasted transaction ${signature} for block ${data.payload.slot}`
-                );
+                txnIndex = endIndex;
             }
+
+            // for (
+            //     let txnIndex = 0;
+            //     txnIndex < block.transactions.length;
+            //     txnIndex++
+            // ) {
+            //     const txn = block.transactions[txnIndex];
+            //     const signature = txn.transaction.signatures[0];
+            //     //TODO: Avoiding voting transactions for now
+            //     if (txn.transaction.accountKeys.map((ac) => ac.pubkey.toString()).includes('Vote111111111111111111111111111111111111111')) {
+            //         return;
+            //     }
+            //     await dataBroadcasterProvider.broadcast({
+            //         id: signature,
+            //         data: {
+            //             target: SolanaDataBroadcastType.TransactionBroadcast,
+            //             payload: {
+            //                 index: txnIndex,
+            //                 signature,
+            //             },
+            //         },
+            //     });
+                
+            // }
+            logger.info(
+                `Broadcasted transactions ${block.transactions.length} for block ${data.payload.slot}`
+            );
         } catch (err) {
             logger.error(
-                `SolanaBlockProcessor Error processing block ${data.payload.slot}: ${err}`
+                `SolanaBlockProcessor Error processing block ${data.payload.slot}: ${err} ${(err as Error).stack}`
             );
         }
     }
@@ -84,7 +117,7 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
             return;
         }
 
-        const rewards: SolanaRewardModel[] = data.payload.rewards.map(
+        const rewards = data.payload.rewards.map<SolanaRewardModel>(
             (reward) => {
                 const preBalance =
                     reward.postBalance === null
@@ -101,12 +134,19 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
                     pre_balance: preBalance,
                     block_hash: data.payload.blockhash,
                     slot: data.payload.slot,
-                    block_time: new Date(data.payload.blockTime as number),
+                    block_time:  new Date(data.payload.blockTime as number),
+                    block_date: new Date(data.payload.blockTime as number),
                 };
             }
         );
 
-        await datastore.batchInsert(rewards);
+        if (rewards.length > 0) {
+            await Promise.all(
+                rewards.map(async (reward) => {
+                    await datastore.insert(reward);
+                })
+            )
+        }
         logger.info(
             `Inserted ${rewards.length} rewards into datastore for block ${data.payload.slot}`
         );

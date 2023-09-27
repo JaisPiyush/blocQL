@@ -27,9 +27,9 @@ if (!txnSQSConsumerQueueUrl) throw new Error('TXN_SQS_CONSUMER_QUEUE_URL is requ
 const sqs = new SQS({apiVersion: '2012-11-05'})
 
 const solanaTestConfigProvider = () => ({
-    endpoint: 'https://special-convincing-friday.solana-mainnet.discover.quiknode.pro/5d55d7e7d2ffa6630b1e93623842bf9eae5a949f/',
+    endpoint: process.env.SOLANA_RPC_URL || web3.clusterApiUrl('mainnet-beta'),
     maxRequestPerSecond: 5,
-    defaultStartBlockHeight: 219962054,
+    defaultStartBlockHeight: 210882787,
 });
 
 const solanaTestScannerProviders: ProvidersOptions<

@@ -30,7 +30,8 @@ export class SolanaTransactionsDatastore
         }
 
         async batchInsert<T = SolanaTransactionModel>(data: T[]): Promise<void> {
-            return await  this.knex.batchInsert(TableNames.SolanaTransactions, data.map(this.Transactions.insert), data.length);
+            await this.Transactions.insert(data);
+            
         }
 
     }
@@ -61,7 +62,7 @@ export class SolanaTransactionsDatastore
             }
 
             async batchInsert<T = SolanaTransactionModel>(data: T[]): Promise<void> {
-                return await  this.knex.batchInsert(TableNames.SolanaVoteTransactions, data.map(this.VoteTransactions.insert), data.length);
+                await this.VoteTransactions.insert(data);
             }
 
             

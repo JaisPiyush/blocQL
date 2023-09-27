@@ -3,6 +3,7 @@ import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
     await knex.schema.createTable(TableNames.SolanaAccountActivity, (table) => {
+        table.string('id').primary();
         table.string('address').notNullable();
         table.bigint('balance_change').notNullable().defaultTo(0);
         table.date('block_date').notNullable();
@@ -16,8 +17,6 @@ export async function up(knex: Knex): Promise<void> {
         table.integer('tx_index').notNullable();
         table.boolean('tx_success').defaultTo(true);
         table.boolean('writable').defaultTo(false);
-
-        table.primary(['address', 'tx_id']);
 
         table.index('address', 'idx_solana_account_activity_address', {
             storageEngineIndexType: 'hash',

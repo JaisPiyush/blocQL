@@ -22,8 +22,22 @@ export interface SolanaTransactionModel {
     recent_block_hash: string;
 }
 
-export interface SolanaVoteTransactionModel
-    extends Omit<SolanaTransactionModel, 'instructions'> {
+export interface SolanaVoteTransactionModel {
+    signature: string;
+    slot: bigint | number;
+    tx_index: number;
+    signer: string;
+    success: boolean;
+    block_time: Date;
+    block_date: Date;
+    fee: bigint | number;
+    post_balances: (bigint | number)[];
+    pre_balances: (bigint | number)[];
+    signatures?: string[] | null,
+    error?: string | null;
+    block_hash: string;
+    required_signatures: number;
+    recent_block_hash: string;
     vote_account?: string;
     vote_authority?: string;
     root_slot?: bigint | number;

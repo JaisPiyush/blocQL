@@ -52,13 +52,29 @@ export class SolanaTokenMetadataProcessor extends SolanaProcessor<string[]> {
             const tokens = (await Promise.all(tokenPromises)).filter(
                 (token) => token !== null
             ) as SolanaTokenMetadataModel[];
+            logger.info(
+                `Inserting token metadatas and stored ${tokens.length} in database`
+            );
+            if (tokens.length > 0) {
+                await Promise.all(
+                    tokens.map(async (token) => {
+                        try {
+                            await datastore.insert(token);
+                        } catch (err) {
+                            logger.error(
+                                `Error inserting token metadata ${token.address}: ${err}`
+                            );
+                            logger.error(`data: ${JSON.stringify(token)} err: ${(err as any).stack}`);
+                        }
+                    })
+                );
+            }
 
-            await datastore.batchInsert(tokens);
             logger.info(
                 `Finished fetching token metadatas and stored ${tokens.length} in database`
             );
         } catch (err) {
-            logger.error(`SolanaTokenMetadataProcessor error: ${err}`);
+            logger.error(`SolanaTokenMetadataProcessor error: ${err} ${(err as Error).stack}`);
         }
     }
 

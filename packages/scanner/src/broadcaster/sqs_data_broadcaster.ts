@@ -30,8 +30,6 @@ export class SQSDataBroadcaster implements DataBroadcasterInterface {
                 MessageDeduplicationId: data.id,
             };
 
-            logger.info(`Sending message to SQS: ${JSON.stringify(params)}`);
-
             this.sqs.sendMessage(params, (err, data) => {
                 if (err) {
                     logger.error(`Error sending message to SQS: ${err}`);
@@ -43,6 +41,6 @@ export class SQSDataBroadcaster implements DataBroadcasterInterface {
             logger.error(`Error sending message to SQS: ${err}`);
             await delay(Math.floor(4 * 500 + Math.random() * 500));
         }
-        logger.debug(`Sent ${data} events in SQS messages`);
+
     };
 }

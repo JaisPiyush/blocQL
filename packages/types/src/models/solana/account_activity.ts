@@ -11,4 +11,6 @@ export interface SolanaAccountActivityModel {
     tx_index: number;
     tx_success: boolean;
     writable: boolean;
+    slot: number | bigint;
+    id: string;
 }
