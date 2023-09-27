@@ -1,9 +1,12 @@
 import { Command } from 'commander';
 import { runSolanaConsumers } from './chains/solana';
 
-const consumers: Record<string, Record<string, (consumer?: string) => Promise<void>>> = {
+const consumers: Record<
+    string,
+    Record<string, (consumer?: string) => Promise<void>>
+> = {
     solana: {
-        test: runSolanaConsumers
+        test: runSolanaConsumers,
     },
 };
 

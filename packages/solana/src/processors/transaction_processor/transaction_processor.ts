@@ -21,20 +21,29 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
     public async process(message: SQSMessage): Promise<void> {
         const logger = this.providers.logProvider();
         logger.info(`Processing message`);
-        const body = JSON.parse(message.Body as string) as {id: string, data: BroadcastData<SolanaTransactionMessage[]>};
-        logger.info(`Processing finished.}`);
+        const body = JSON.parse(message.Body as string) as {
+            id: string;
+            data: BroadcastData<SolanaTransactionMessage[]>;
+        };
+
         try {
-            await Promise.all(body.data.payload.map(async (data) => {
-                try {
-                    await this.__process({
-                        target: SolanaDataBroadcastType.TransactionBroadcast,
-                        payload: data,
-                    } as BroadcastData<SolanaTransactionMessage>);
-                } catch (err) {
-                    logger.error(`Error processing txn message ${message.Body}: ${err}`);
-                    logger.error(`data: ${JSON.stringify(data)} err: ${(err as any).stack}`)
-                }
-            }));
+            await Promise.all(
+                body.data.payload.map(async (data) => {
+                    try {
+                        await this.__process({
+                            target: SolanaDataBroadcastType.TransactionBroadcast,
+                            payload: data,
+                        } as BroadcastData<SolanaTransactionMessage>);
+                    } catch (err) {
+                        logger.error(
+                            `Error processing txn message ${
+                                message.Body
+                            } err: ${(err as any).stack}`
+                        );
+                    }
+                })
+            );
+            logger.info(`Processing finished.}`);
         } catch (err) {
             logger.error(`Error processing message ${message.Body}: ${err}`);
         }
@@ -53,7 +62,7 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
             const txn = await serviceProvider.getTransaction(signature);
 
             if (!txn) {
-                logger.warn(`Transaction not found: ${signature}`);
+                logger.error(`Transaction not found: ${signature}`);
                 return;
             }
             const blocks = await blockDatastore.find<
@@ -66,24 +75,24 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
             const block = blocks[0];
             const instructions = txn.transaction.message.instructions;
             if (instructions.length === 0) {
-                logger.warn(`Transaction has no instructions: ${signature}`);
+                logger.error(`Transaction has no instructions: ${signature}`);
                 return;
             }
             const firstInstruction = instructions[0];
             if (
                 firstInstruction.programId.toString() === this.VOTE_PROGRAM_ID
             ) {
-                return;
-                //TODO: uncomment this when we have a way to get vote transactions
-                // await this._processVoteTransaction(txnIndex, block, txn);
+                await this._processVoteTransaction(txnIndex, block, txn);
             } else {
                 await this._processNonVoteTransaction(txnIndex, block, txn);
             }
-            // await this._processBalanceChangeInTransaction(txnIndex, block, txn);
+            await this._processBalanceChangeInTransaction(txnIndex, block, txn);
             logger.info(`Transaction processed: ${signature}`);
         } catch (err) {
             logger.error(
-                `SolanaTransactionProcessor Error processing transaction ${data.payload.signature}: ${err}\n ${(err as Error).stack}`
+                `SolanaTransactionProcessor Error processing transaction ${
+                    data.payload.signature
+                }: ${err}\n ${(err as Error).stack}`
             );
         }
     }
@@ -105,14 +114,16 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
             ...this.__getVoteTxnModelFromTxnModel(txnModel),
             vote_account: voteInstruction!.parsed!.info!.voteAccount,
             vote_authority: voteInstruction!.parsed!.info!.voteAuthority,
-            root_slot: voteInstruction!.parsed!.info!.voteStateUpdate!.root,
+            root_slot: voteInstruction!.parsed!.info!.voteStateUpdate
+                ? voteInstruction!.parsed!.info!.voteStateUpdate.root
+                : null,
             root_timestamp: voteInstruction!.parsed!.info!.voteStateUpdate
                 ? new Date(
                       voteInstruction!.parsed!.info!.voteStateUpdate!.timestamp
                   )
                 : null,
         };
-        logger.info(`Inserting vote transaction ${JSON.stringify(voteTxn)} into datastore`)
+
         await voteTxnDatastore.insert(voteTxn);
         logger.info(
             `Inserted vote transaction ${voteTxn.signature} into datastore`

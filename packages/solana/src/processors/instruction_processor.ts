@@ -20,6 +20,10 @@ import { MplTokenMetadataIdlDecoder } from '../idl/mpl-token-metadata';
 import { SolanaTokenMetadataProcessor } from './token_processor';
 
 export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructionsMessage> {
+    private readonly IGNORE_INSTRUCTION_PROGRAMS = [
+        'ComputeBudget111111111111111111111111111111',
+    ];
+
     private __offlineIdlDecoders = new Map<string, typeof BaseIdlDecoder>([
         [
             'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
@@ -224,9 +228,6 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
             const instructionDatastore = await this.providers.datastoreProvider(
                 SolanaDatastoreName.InstructionDatastore
             );
-            const tokenDatastore = await this.providers.datastoreProvider(
-                SolanaDatastoreName.TokenDatastore
-            );
 
             const programIds =
                 data.payload.rawTxn.transaction.message.instructions.map(
@@ -241,7 +242,6 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
                 index,
                 instruction,
             ] of data.payload.rawTxn.transaction.message.instructions.entries()) {
-                //TODO: Add filters to remove redundunt instructions like Compute budget
                 const [instructionModel, _tokens] = this.getInstructionModel({
                     instruction,
                     index,
@@ -281,10 +281,15 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
             await Promise.all(
                 instructionCalls.map(async (ins) => {
                     try {
-                        await instructionDatastore.insert(ins);
+                        if (
+                            !this.IGNORE_INSTRUCTION_PROGRAMS.includes(
+                                ins.program_id
+                            )
+                        ) {
+                            await instructionDatastore.insert(ins);
+                        }
                     } catch (err) {
                         logger.error(`Error inserting instruction: ${err}`);
-                        logger.error(`data: ${JSON.stringify(ins)} err: ${(err as Error).stack}`);
                     }
                 })
             );
@@ -294,15 +299,18 @@ export class SolanaInstructionsProcessor extends SolanaProcessor<SolanaInstructi
             );
             // Clear the decoders
             this.idlDecoders.clear();
-
-            await this.tokenMetadataProcessor.__process({
-                target: SolanaDataBroadcastType.TokenBroadcast,
-                payload: tokens,
-            });
+            if (tokens.length > 0) {
+                await this.tokenMetadataProcessor.__process({
+                    target: SolanaDataBroadcastType.TokenBroadcast,
+                    payload: tokens,
+                });
+            }
         } catch (err) {
-            logger.error(`SolanaInstructionsProcessor error: ${err} ${(err as any).stack}`);
+            logger.error(
+                `SolanaInstructionsProcessor error: ${err} ${
+                    (err as any).stack
+                }`
+            );
         }
     }
-
-
 }

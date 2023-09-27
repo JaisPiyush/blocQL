@@ -162,6 +162,9 @@ importers:
       '@types/knex':
         specifier: ^0.16.1
         version: 0.16.1(pg@8.11.3)
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@20.6.3)(typescript@4.9.5)
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig

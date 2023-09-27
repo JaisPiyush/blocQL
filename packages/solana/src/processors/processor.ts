@@ -22,7 +22,10 @@ export class SolanaProcessor<M> {
     public async process(message: SQSMessage) {
         const logger = this.providers.logProvider();
         logger.info(`Processing message ${message.Body}`);
-        const body = JSON.parse(message.Body as string) as {id: string, data: BroadcastData<M>};
+        const body = JSON.parse(message.Body as string) as {
+            id: string;
+            data: BroadcastData<M>;
+        };
         logger.info(`Processing finished.}`);
         try {
             await this.__process(body.data);

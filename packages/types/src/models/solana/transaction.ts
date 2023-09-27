@@ -33,7 +33,7 @@ export interface SolanaVoteTransactionModel {
     fee: bigint | number;
     post_balances: (bigint | number)[];
     pre_balances: (bigint | number)[];
-    signatures?: string[] | null,
+    signatures?: string[] | null;
     error?: string | null;
     block_hash: string;
     required_signatures: number;

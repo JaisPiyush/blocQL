@@ -41,6 +41,5 @@ export class SQSDataBroadcaster implements DataBroadcasterInterface {
             logger.error(`Error sending message to SQS: ${err}`);
             await delay(Math.floor(4 * 500 + Math.random() * 500));
         }
-
     };
 }

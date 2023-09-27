@@ -8,14 +8,14 @@
     "migrate:rollback": "knex migrate:rollback"
   },
   "devDependencies": {
-    "tsconfig": "workspace:*",
     "@types/knex": "^0.16.1",
+    "ts-node": "^10.9.1",
+    "tsconfig": "workspace:*",
     "typescript": "^4.5.2"
   },
   "dependencies": {
     "knex": "^2.5.1",
     "pg": "^8.11.3",
     "types": "workspace:*"
- 
   }
 }

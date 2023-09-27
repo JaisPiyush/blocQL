@@ -12,19 +12,31 @@ import {
 import { MemorySettingsService } from 'scanner/src/settings/memory_settings_service';
 import { logger } from '../logger';
 import { runScanner, runner } from '../runners';
-import {SQS} from 'aws-sdk';
+import { SQS } from 'aws-sdk';
 import { SolanaDataBroadcastType, SolanaDatastoreName } from 'solana/src/types';
 import { SolanaProcessorProvider } from 'solana/src/processors/processor';
 import { DatastoreProvider } from 'types';
-import {getSolanaKnex, Knex,  SolanaAccountActivityDatastore, SolanaBlockDatastore, SolanaInstructionCallsDatastore, SolanaRewardsDatastore, SolanaTokenMetadatasDatastore, SolanaTransactionsDatastore, SolanaVoteTransactionsDatastore,} from 'datastore'
+import {
+    getSolanaKnex,
+    Knex,
+    SolanaAccountActivityDatastore,
+    SolanaBlockDatastore,
+    SolanaInstructionCallsDatastore,
+    SolanaRewardsDatastore,
+    SolanaTokenMetadatasDatastore,
+    SolanaTransactionsDatastore,
+    SolanaVoteTransactionsDatastore,
+} from 'datastore';
 
 const blockSQSConsumerQueueUrl = process.env.BLOCK_SQS_CONSUMER_QUEUE_URL;
 const txnSQSConsumerQueueUrl = process.env.TXN_SQS_CONSUMER_QUEUE_URL;
 
-if (!blockSQSConsumerQueueUrl) throw new Error('BLOCK_SQS_CONSUMER_QUEUE_URL is required');
-if (!txnSQSConsumerQueueUrl) throw new Error('TXN_SQS_CONSUMER_QUEUE_URL is required');
+if (!blockSQSConsumerQueueUrl)
+    throw new Error('BLOCK_SQS_CONSUMER_QUEUE_URL is required');
+if (!txnSQSConsumerQueueUrl)
+    throw new Error('TXN_SQS_CONSUMER_QUEUE_URL is required');
 
-const sqs = new SQS({apiVersion: '2012-11-05'})
+const sqs = new SQS({ apiVersion: '2012-11-05' });
 
 const solanaTestConfigProvider = () => ({
     endpoint: process.env.SOLANA_RPC_URL || web3.clusterApiUrl('mainnet-beta'),
@@ -45,14 +57,14 @@ const solanaTestScannerProviders: ProvidersOptions<
                 txnSQSConsumerQueueUrl,
                 'solana-txn',
                 logger,
-                sqs,
+                sqs
             );
         }
         return new SQSDataBroadcaster(
             blockSQSConsumerQueueUrl,
             'solana-block',
             logger,
-            sqs,
+            sqs
         );
     },
     serviceProvider: solanaServiceProvider(solanaTestConfigProvider),
@@ -79,53 +91,50 @@ export const runSolanaTestScanner = async () => {
     );
 };
 
-const datastoreProvider = (knex: Knex): DatastoreProvider => async (storeName: string) => {
-    switch (storeName) {
-        case SolanaDatastoreName.TransactionDatastore:
-            return new SolanaTransactionsDatastore(knex);
-        case SolanaDatastoreName.RewardDatastore:
-            return new SolanaRewardsDatastore(knex);
-        case SolanaDatastoreName.VoteTransactionDatastore:
-            return new SolanaVoteTransactionsDatastore(knex);
-        case SolanaDatastoreName.InstructionDatastore:
-            return new SolanaInstructionCallsDatastore(knex);
-        case SolanaDatastoreName.TokenDatastore:
-            return new SolanaTokenMetadatasDatastore(knex);
-        case SolanaDatastoreName.AccountActivityDatastore:
-            return new SolanaAccountActivityDatastore(knex);
-        case SolanaDatastoreName.BlockDatastore:
-            return new SolanaBlockDatastore(knex);
-        default:
-            throw new Error('Datastore not found');
-    }
-}
-
+const datastoreProvider =
+    (knex: Knex): DatastoreProvider =>
+    async (storeName: string) => {
+        switch (storeName) {
+            case SolanaDatastoreName.TransactionDatastore:
+                return new SolanaTransactionsDatastore(knex);
+            case SolanaDatastoreName.RewardDatastore:
+                return new SolanaRewardsDatastore(knex);
+            case SolanaDatastoreName.VoteTransactionDatastore:
+                return new SolanaVoteTransactionsDatastore(knex);
+            case SolanaDatastoreName.InstructionDatastore:
+                return new SolanaInstructionCallsDatastore(knex);
+            case SolanaDatastoreName.TokenDatastore:
+                return new SolanaTokenMetadatasDatastore(knex);
+            case SolanaDatastoreName.AccountActivityDatastore:
+                return new SolanaAccountActivityDatastore(knex);
+            case SolanaDatastoreName.BlockDatastore:
+                return new SolanaBlockDatastore(knex);
+            default:
+                throw new Error('Datastore not found');
+        }
+    };
 
 export const runSolanaConsumers = async (consumer?: string) => {
-
     if (consumer === 'block') {
         await runSolanaBlockConsumer();
-    } else if(consumer === 'txn') {
+    } else if (consumer === 'txn') {
         await runSolanaTxnConsumer();
     } else {
         await runSolanaBlockConsumer();
         await runSolanaTxnConsumer();
     }
-
-
-}
-
+};
 
 export const runSolanaBlockConsumer = async () => {
-
     const knex = getSolanaKnex({});
 
     const providers: SolanaProcessorProvider = {
         serviceProvider: solanaTestScannerProviders.serviceProvider,
-        dataBroadcasterProvider: solanaTestScannerProviders.dataBroadcasterProvider,
+        dataBroadcasterProvider:
+            solanaTestScannerProviders.dataBroadcasterProvider,
         logProvider: solanaTestScannerProviders.logProvider,
         datastoreProvider: datastoreProvider(knex),
-    }
+    };
     const blockConsumer = blockSQSConsumer(providers, blockSQSConsumerQueueUrl);
 
     await runner(
@@ -137,20 +146,18 @@ export const runSolanaBlockConsumer = async () => {
         },
         'solana-block-consumers'
     );
-
-
-}
+};
 
 export const runSolanaTxnConsumer = async () => {
-
     const knex = getSolanaKnex({});
 
     const providers: SolanaProcessorProvider = {
         serviceProvider: solanaTestScannerProviders.serviceProvider,
-        dataBroadcasterProvider: solanaTestScannerProviders.dataBroadcasterProvider,
+        dataBroadcasterProvider:
+            solanaTestScannerProviders.dataBroadcasterProvider,
         logProvider: solanaTestScannerProviders.logProvider,
         datastoreProvider: datastoreProvider(knex),
-    }
+    };
     const txnConsumer = txnSQSConsumer(providers, txnSQSConsumerQueueUrl);
 
     await runner(
@@ -162,7 +169,4 @@ export const runSolanaTxnConsumer = async () => {
         },
         'solana-txn-consumers'
     );
-
-
-}
-
+};

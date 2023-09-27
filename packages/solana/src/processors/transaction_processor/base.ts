@@ -3,11 +3,26 @@ import { SolanaDatastoreName, SolanaTransactionMessage } from '../../types';
 import { SolanaProcessor } from '../processor';
 import { ParsedTransactionWithMeta } from '@solana/web3.js';
 import { SolanaAccountActivityModel } from 'types/src/models/solana/account_activity';
-import { SolanaTransactionModel, SolanaVoteTransactionModel } from 'types/src/models/solana/transaction';
+import {
+    SolanaTransactionModel,
+    SolanaVoteTransactionModel,
+} from 'types/src/models/solana/transaction';
 
 export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransactionMessage> {
     protected readonly VOTE_PROGRAM_ID =
         'Vote111111111111111111111111111111111111111';
+
+    protected readonly ACCOUNT_ACTIVITY_IGNORE_LIST = [
+        'Vote111111111111111111111111111111111111111',
+        '11111111111111111111111111111111',
+        'Config1111111111111111111111111111111111111',
+        'Stake11111111111111111111111111111111111111',
+        'Vote111111111111111111111111111111111111111',
+        'BPFLoaderUpgradeab1e11111111111111111111111',
+        'Ed25519SigVerify111111111111111111111111111',
+        'KeccakSecp256k11111111111111111111111111111',
+        'ComputeBudget111111111111111111111111111111',
+    ];
 
     /**
      *
@@ -26,10 +41,7 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
         );
         const logger = this.providers.logProvider();
 
-        await datastore.update<
-            number | bigint ,
-            Partial<SolanaBlockModel>
-        >(
+        await datastore.update<number | bigint, Partial<SolanaBlockModel>>(
             block.slot,
             {
                 tx_count: block.tx_count + 1,
@@ -85,7 +97,7 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
                 const account = txn.transaction.message.accountKeys![index];
 
                 const activity: SolanaAccountActivityModel = {
-                    address: accountKey.toString(),
+                    address: accountKey.pubkey.toString(),
                     balance_change: postBalance - preBalance,
                     block_date: block.block_date,
                     block_hash: block.block_hash,
@@ -98,7 +110,9 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
                     tx_success: txn.meta!.err === null,
                     writable: account.writable,
                     slot: block.slot,
-                    id: `${accountKey.toString()}.${txn.transaction.signatures[0]}`
+                    id: `${accountKey.pubkey.toString()}.${
+                        txn.transaction.signatures[0]
+                    }`,
                 };
 
                 return activity;
@@ -107,10 +121,21 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
         if (accountActivity.length > 0) {
             await Promise.all(
                 accountActivity.map(async (activity) => {
-                    await datastore.insert(activity);
+                    try {
+                        if (
+                            !this.ACCOUNT_ACTIVITY_IGNORE_LIST.includes(
+                                activity.address
+                            )
+                        ) {
+                            await datastore.insert(activity);
+                        }
+                    } catch (err) {
+                        logger.error(
+                            `Error inserting account activity ${activity.id}: ${err}`
+                        );
+                    }
                 })
             );
-            
         }
         logger.info('Inserted account activity for transaction');
     }
@@ -175,7 +200,9 @@ export class BaseSolanaTransactionProcessor extends SolanaProcessor<SolanaTransa
         };
     }
 
-    protected __getVoteTxnModelFromTxnModel(txn: SolanaTransactionModel): SolanaVoteTransactionModel {
+    protected __getVoteTxnModelFromTxnModel(
+        txn: SolanaTransactionModel
+    ): SolanaVoteTransactionModel {
         return {
             signature: txn.signature,
             slot: txn.slot,

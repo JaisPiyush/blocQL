@@ -5,9 +5,6 @@ export const runner = async (
     stop: () => Promise<void>,
     name = 'scanner'
 ) => {
-
-    
-
     const _logger = logger();
     _logger.info(`Starting ${name}...`);
     await start();
@@ -39,7 +36,3 @@ export const runner = async (
 };
 
 export const runScanner = runner;
-
-
-
-

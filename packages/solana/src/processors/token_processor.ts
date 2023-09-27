@@ -48,7 +48,6 @@ export class SolanaTokenMetadataProcessor extends SolanaProcessor<string[]> {
                 return null;
             });
 
-            logger.info('Started fetching token metadatas');
             const tokens = (await Promise.all(tokenPromises)).filter(
                 (token) => token !== null
             ) as SolanaTokenMetadataModel[];
@@ -64,7 +63,6 @@ export class SolanaTokenMetadataProcessor extends SolanaProcessor<string[]> {
                             logger.error(
                                 `Error inserting token metadata ${token.address}: ${err}`
                             );
-                            logger.error(`data: ${JSON.stringify(token)} err: ${(err as any).stack}`);
                         }
                     })
                 );
@@ -74,7 +72,11 @@ export class SolanaTokenMetadataProcessor extends SolanaProcessor<string[]> {
                 `Finished fetching token metadatas and stored ${tokens.length} in database`
             );
         } catch (err) {
-            logger.error(`SolanaTokenMetadataProcessor error: ${err} ${(err as Error).stack}`);
+            logger.error(
+                `SolanaTokenMetadataProcessor error: ${err} ${
+                    (err as Error).stack
+                }`
+            );
         }
     }
 
