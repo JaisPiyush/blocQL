@@ -1,6 +1,17 @@
-export * from './actions/index.js';
-export * from './constants.js';
-export * from './errors.js';
-export * from './extensions/index.js';
-export * from './instructions/index.js';
-export * from './state/index.js';
+import { BaseIdlDecoder } from "../base";
+import { TokenInstruction, initializeMintInstructionData } from "./src/index";
+import { struct} from '@solana/buffer-layout';
+
+export class SplTokenIdlDecoder
+    extends BaseIdlDecoder {
+        private readonly instructions: Record<number, {name: string, decoder: Function}> = {
+            0: {
+                name: 'initializeMint',
+                decoder: initializeMintInstructionData
+            },
+        }
+
+        decode(data: string, encoding?: string | number) {
+            
+        }
+    }
