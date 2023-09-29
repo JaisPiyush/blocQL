@@ -3,5 +3,17 @@
     "sqltools.format": {},
     "cSpell.words": [
         "Solana"
+    ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "database-21.czu70eiie2eg.ap-south-1.rds.amazonaws.com",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "excluence-rds",
+            "database": "postgres",
+            "username": "kush_the_COO"
+        }
     ]
 }
