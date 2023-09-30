@@ -9,4 +9,9 @@ export enum TableNames {
     SolanaInstructionCalls = 'solana_instruction_calls',
 }
 
+
+export enum Schemas {
+    Solana = 'solana'
+}
+
 export const PROCESSED_BLOCK_KEY_NAME = 'processed_block_key';

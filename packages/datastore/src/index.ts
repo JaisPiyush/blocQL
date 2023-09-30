@@ -25,7 +25,7 @@ export const getSolanaKnex = (
         pool: {
             min: 2,
             max: 10,
-        },
+        }
     });
     return _knex;
 };

@@ -1,14 +1,14 @@
 import { Knex } from 'knex';
 import { BaseDatastore } from '../base';
 import { SolanaBlockModel } from 'types/src/models/solana/block';
-import { TableNames } from '../constants';
+import { Schemas, TableNames } from '../constants';
 
 export class SolanaBlockDatastore extends BaseDatastore {
     private readonly Block: Knex.QueryBuilder;
 
     constructor(knex: Knex) {
         super(knex);
-        this.Block = knex(TableNames.SolanaBlocks);
+        this.Block = knex.withSchema(Schemas.Solana).table(TableNames.SolanaBlocks);
     }
 
     async exists(id: number | bigint) {

@@ -2,20 +2,15 @@ import { SettingsServiceInterface } from 'types';
 import knex, { Knex } from 'knex';
 
 export class DbSettingsService implements SettingsServiceInterface {
-    private db: Knex | undefined = undefined;
 
     constructor(
-        private readonly config: Knex.Config,
+        private readonly db: Knex,
         private readonly tableName: string,
         private readonly keyName: string = 'processed-block-height',
         private readonly destroyDb: boolean = false
     ) {}
 
     private getDb = async (): Promise<Knex> => {
-        if (!this.db) {
-            this.db = knex(this.config);
-        }
-
         return this.db;
     };
 
@@ -43,7 +38,6 @@ export class DbSettingsService implements SettingsServiceInterface {
     destroy = async () => {
         if (this.db && this.destroyDb) {
             await this.db.destroy();
-            this.db = undefined;
         }
     };
 }

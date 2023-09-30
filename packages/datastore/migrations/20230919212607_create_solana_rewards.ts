@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.createTable(TableNames.SolanaRewards, (table) => {
+    await knex.schema.withSchema('solana').createTable(TableNames.SolanaRewards, (table) => {
         table.bigint('slot').notNullable();
         table.timestamp('block_time').notNullable();
         table.bigint('commission');

@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { BaseDatastore } from '../base';
-import { TableNames } from '../constants';
+import { Schemas, TableNames } from '../constants';
 import { SolanaAccountActivityModel } from 'types/src/models/solana/account_activity';
 
 export class SolanaAccountActivityDatastore extends BaseDatastore {
@@ -8,7 +8,7 @@ export class SolanaAccountActivityDatastore extends BaseDatastore {
 
     constructor(knex: Knex) {
         super(knex);
-        this.AccountActivity = knex(TableNames.SolanaAccountActivity);
+        this.AccountActivity = knex.withSchema(Schemas.Solana).table(TableNames.SolanaAccountActivity);
     }
 
     async exists(id: string) {

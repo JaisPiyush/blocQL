@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.createTable(TableNames.SolanaTransactions, (table) => {
+    await knex.schema.withSchema('solana').createTable(TableNames.SolanaTransactions, (table) => {
         table.string('signature').primary();
         table.bigint('slot').notNullable();
         table.integer('tx_index').notNullable();

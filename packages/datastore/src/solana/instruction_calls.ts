@@ -1,14 +1,14 @@
 import { Knex } from 'knex';
 import { BaseDatastore } from '../base';
 import { SolanaInstructionCallModel } from 'types/src/models/solana/instruction_call';
-import { TableNames } from '../constants';
+import { Schemas, TableNames } from '../constants';
 
 export class SolanaInstructionCallsDatastore extends BaseDatastore {
     private readonly InstructionCalls: Knex.QueryBuilder;
 
     constructor(knex: Knex) {
         super(knex);
-        this.InstructionCalls = knex(TableNames.SolanaInstructionCalls);
+        this.InstructionCalls = knex.withSchema(Schemas.Solana).table(TableNames.SolanaInstructionCalls);
     }
 
     async exists(id: string) {

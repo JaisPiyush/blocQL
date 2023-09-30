@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { BaseDatastore } from '../base';
-import { TableNames } from '../constants';
+import { Schemas, TableNames } from '../constants';
 import {
     SolanaTransactionModel,
     SolanaVoteTransactionModel,
@@ -11,7 +11,7 @@ export class SolanaTransactionsDatastore extends BaseDatastore {
 
     constructor(knex: Knex) {
         super(knex);
-        this.Transactions = knex(TableNames.SolanaTransactions);
+        this.Transactions = knex.withSchema(Schemas.Solana).table(TableNames.SolanaTransactions);
     }
 
     async exists(id: string) {
@@ -60,7 +60,7 @@ export class SolanaVoteTransactionsDatastore extends BaseDatastore {
 
     constructor(knex: Knex) {
         super(knex);
-        this.VoteTransactions = knex(TableNames.SolanaVoteTransactions);
+        this.VoteTransactions = knex.withSchema(Schemas.Solana).table(TableNames.SolanaVoteTransactions);
     }
 
     async exists(id: string) {

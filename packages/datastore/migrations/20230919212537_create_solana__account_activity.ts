@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.createTable(TableNames.SolanaAccountActivity, (table) => {
+    await knex.schema.withSchema('solana').createTable(TableNames.SolanaAccountActivity, (table) => {
         table.string('id').primary();
         table.string('address').notNullable();
         table.bigint('balance_change').notNullable().defaultTo(0);

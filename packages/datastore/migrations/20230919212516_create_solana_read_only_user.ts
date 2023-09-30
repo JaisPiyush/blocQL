@@ -4,6 +4,8 @@ const PG_READ_ONLY_USER = process.env['SOLANA_POSTGRES_READ_USER'];
 const PG_READ_ONLY_PASSWORD = process.env['SOLANA_POSTGRES_READ_PASSWORD'];
 const POSTGRES_DB = process.env['SOLANA_POSTGRES_DATABASE'];
 
+//TODO: Add schema and change user to schema only
+
 export async function up(knex: Knex): Promise<void> {
     if (!PG_READ_ONLY_USER && !PG_READ_ONLY_PASSWORD && !POSTGRES_DB) {
         throw new Error(

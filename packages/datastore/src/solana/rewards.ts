@@ -1,14 +1,14 @@
 import { Knex } from 'knex';
 import { BaseDatastore } from '../base';
 import { SolanaRewardModel } from 'types/src/models/solana/reward';
-import { TableNames } from '../constants';
+import { Schemas, TableNames } from '../constants';
 
 export class SolanaRewardsDatastore extends BaseDatastore {
     private readonly Rewards: Knex.QueryBuilder;
 
     constructor(knex: Knex) {
         super(knex);
-        this.Rewards = knex(TableNames.SolanaRewards);
+        this.Rewards = knex.withSchema(Schemas.Solana).table(TableNames.SolanaRewards);
     }
 
     async exists(slot: number | bigint, recipient: string) {

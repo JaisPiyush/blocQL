@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.createTable(TableNames.SolanaBlocks, (table) => {
+    await knex.schema.withSchema('solana').createTable(TableNames.SolanaBlocks, (table) => {
         table.bigint('slot').primary();
         table.bigint('block_height');
         table.bigint('parent_slot');

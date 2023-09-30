@@ -10,6 +10,7 @@ import {
     web3,
 } from 'solana';
 import { MemorySettingsService } from 'scanner/src/settings/memory_settings_service';
+import  {DbSettingsService} from 'scanner/src/settings/db_settings_service';
 import { logger } from '../logger';
 import { runScanner, runner } from '../runners';
 import { SQS } from 'aws-sdk';
@@ -41,15 +42,15 @@ const sqs = new SQS({ apiVersion: '2012-11-05' });
 const solanaTestConfigProvider = () => ({
     endpoint: process.env.SOLANA_RPC_URL || web3.clusterApiUrl('mainnet-beta'),
     maxRequestPerSecond: 5,
-    defaultStartBlockHeight: 210882787,
+    defaultStartBlockHeight: 220575944,
 });
+const knex = getSolanaKnex({});
 
 const solanaTestScannerProviders: ProvidersOptions<
     SolanaServiceProvider,
     SolanaConfig
 > = {
-    settingsServiceProvider: async () => new MemorySettingsService(),
-    logProvider: logger,
+    settingsServiceProvider: async () => new DbSettingsService(knex, 'settings', 'solana-processed-block-height'),
     configProvider: solanaTestConfigProvider,
     dataBroadcasterProvider: async (t?: string) => {
         if (t === SolanaDataBroadcastType.TransactionBroadcast) {
@@ -68,6 +69,7 @@ const solanaTestScannerProviders: ProvidersOptions<
         );
     },
     serviceProvider: solanaServiceProvider(solanaTestConfigProvider),
+    logProvider: logger
 };
 
 const solanaBlockchainScanner = new SolanaBlockchainScanner(
@@ -126,7 +128,7 @@ export const runSolanaConsumers = async (consumer?: string) => {
 };
 
 export const runSolanaBlockConsumer = async () => {
-    const knex = getSolanaKnex({});
+    
 
     const providers: SolanaProcessorProvider = {
         serviceProvider: solanaTestScannerProviders.serviceProvider,
@@ -149,7 +151,6 @@ export const runSolanaBlockConsumer = async () => {
 };
 
 export const runSolanaTxnConsumer = async () => {
-    const knex = getSolanaKnex({});
 
     const providers: SolanaProcessorProvider = {
         serviceProvider: solanaTestScannerProviders.serviceProvider,

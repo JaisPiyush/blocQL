@@ -1,14 +1,14 @@
 import { Knex } from 'knex';
 import { BaseDatastore } from '../base';
 import { SolanaTokenMetadataModel } from 'types/src/models/solana/token_metadata';
-import { TableNames } from '../constants';
+import { Schemas, TableNames } from '../constants';
 
 export class SolanaTokenMetadatasDatastore extends BaseDatastore {
     private readonly TokenMetadatas: Knex.QueryBuilder;
 
     constructor(knex: Knex) {
         super(knex);
-        this.TokenMetadatas = knex(TableNames.SolanaTokensMetadata);
+        this.TokenMetadatas = knex.withSchema(Schemas.Solana).table(TableNames.SolanaTokensMetadata);
     }
 
     async exists(id: string) {

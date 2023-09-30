@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 import { TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.createTable(TableNames.SolanaTokensMetadata, (table) => {
+    await knex.schema.withSchema('solana').createTable(TableNames.SolanaTokensMetadata, (table) => {
         table.string('address').primary();
         table.string('model');
         table.string('update_authority_address');
