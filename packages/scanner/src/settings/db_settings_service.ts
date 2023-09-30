@@ -11,6 +11,12 @@ export class DbSettingsService implements SettingsServiceInterface {
     ) {}
 
     private getDb = async (): Promise<Knex> => {
+        if (! await this.db.schema.hasTable(this.tableName)) {
+            await this.db.schema.createTable(this.tableName, (table) => {
+                table.string('key').primary();
+                table.string('value');
+            });
+        }
         return this.db;
     };
 

@@ -29,31 +29,42 @@ export class SolanaBlockchainScanner extends BlockchainScanner<SolanaServiceProv
             this.processTimeout = undefined;
         }
 
-        try {
-            if (this.latestBlockHeight !== undefined) {
-                let startSlot =
+        
+
+        if (this.latestBlockHeight !== undefined) {
+            let startSlot =
                     (this.fetchedBlockHeight ?? this.processedBlockHeight) + 1; // find out where we should start this fetch
-                let endSlot = this.latestBlockHeight;
-                if (startSlot <= endSlot) {
-                    const service = await this.providers.serviceProvider();
-                    const eventBus = await this.providers.eventBusProvider();
+                    let endSlot = this.latestBlockHeight;
+            try {
+                
+                    
+                    if (startSlot <= endSlot) {
+                        const service = await this.providers.serviceProvider();
+                        const eventBus = await this.providers.eventBusProvider();
 
-                    logger.debug(`Fetching block: ${startSlot}`);
+                        logger.debug(`Fetching block: ${startSlot}`);
 
-                    const block = await service.getBlock(startSlot);
-                    eventBus.emit<SolanaEventPayload.SolanaBlockFetched>(
-                        SolanaEventType.SolanaBlockFetched,
-                        {
-                            blockSlot: startSlot,
-                            data: block,
-                        }
-                    );
+                        const block = await service.getBlock(startSlot);
+                        eventBus.emit<SolanaEventPayload.SolanaBlockFetched>(
+                            SolanaEventType.SolanaBlockFetched,
+                            {
+                                blockSlot: startSlot,
+                                data: block,
+                            }
+                        );
+                        this.fetchedBlockHeight = startSlot;
+                    }
+                
+            } catch (err) {
+                if ((err as any).code === -32007) {
                     this.fetchedBlockHeight = startSlot;
+                } else  {
+                    logger.error(`Error fetching block: ${(err as any).code}`);
+                    logger.error(`Error fetching block: ${err}`);
+                    await delay(250 + Math.floor(Math.random() * 1000));
                 }
+                
             }
-        } catch (err) {
-            logger.error(`Error fetching block: ${err}`);
-            await delay(250 + Math.floor(Math.random() * 1000));
-        }
+        }   
     }
 }

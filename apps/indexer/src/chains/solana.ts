@@ -42,7 +42,7 @@ const sqs = new SQS({ apiVersion: '2012-11-05' });
 const solanaTestConfigProvider = () => ({
     endpoint: process.env.SOLANA_RPC_URL || web3.clusterApiUrl('mainnet-beta'),
     maxRequestPerSecond: 5,
-    defaultStartBlockHeight: 220575944,
+    defaultStartBlockHeight: Number(process.env.SOLANA_START_BLOCK || 0),
 });
 const knex = getSolanaKnex({});
 
@@ -50,7 +50,7 @@ const solanaTestScannerProviders: ProvidersOptions<
     SolanaServiceProvider,
     SolanaConfig
 > = {
-    settingsServiceProvider: async () => new DbSettingsService(knex, 'settings', 'solana-processed-block-height'),
+    settingsServiceProvider: async () => new DbSettingsService(knex, 'indexer-settings', 'solana-processed-block-height'),
     configProvider: solanaTestConfigProvider,
     dataBroadcasterProvider: async (t?: string) => {
         if (t === SolanaDataBroadcastType.TransactionBroadcast) {
