@@ -119,7 +119,7 @@ export class SolanaTransactionProcessor extends BaseSolanaTransactionProcessor {
                 : null,
             root_timestamp: voteInstruction!.parsed!.info!.voteStateUpdate
                 ? new Date(
-                      voteInstruction!.parsed!.info!.voteStateUpdate!.timestamp
+                      voteInstruction!.parsed!.info!.voteStateUpdate!.timestamp * 1000
                   )
                 : null,
         };

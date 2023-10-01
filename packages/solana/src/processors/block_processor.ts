@@ -28,9 +28,9 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
                 slot: data.payload.slot,
                 parent_slot: data.payload.parentSlot,
                 block_hash: data.payload.blockhash,
-                block_time: new Date(data.payload.blockTime as number),
+                block_time: new Date(data.payload.blockTime as number * 1000),
                 block_height: data.payload.blockHeight,
-                block_date: new Date(data.payload.blockTime as number),
+                block_date: new Date(data.payload.blockTime as number * 1000),
                 tx_count: block.transactions.length,
                 tx_success_count: 0,
                 tx_error_count: 0,
@@ -120,8 +120,8 @@ export class SolanaBlockProcessor extends SolanaProcessor<SolanaBlockMessage> {
                     pre_balance: preBalance,
                     block_hash: data.payload.blockhash,
                     slot: data.payload.slot,
-                    block_time: new Date(data.payload.blockTime as number),
-                    block_date: new Date(data.payload.blockTime as number),
+                    block_time: new Date(data.payload.blockTime as number * 1000),
+                    block_date: new Date(data.payload.blockTime as number * 1000),
                 };
             }
         );
