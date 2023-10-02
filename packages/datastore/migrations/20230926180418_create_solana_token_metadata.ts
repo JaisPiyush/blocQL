@@ -46,17 +46,17 @@ export async function up(knex: Knex): Promise<void> {
     });
 
     // Create GIN Indexes
-    await knex.schema.withSchema(Schemas.Solana).raw(
-        `CREATE INDEX idx_solana_tokens_creators ON ${TableNames.SolanaTokensMetadata} USING GIN (creators)`
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_creators ON ${Schemas.Solana}.${TableNames.SolanaTokensMetadata} USING GIN (creators)`
     );
-    await knex.schema.withSchema(Schemas.Solana).raw(
-        `CREATE INDEX idx_solana_tokens_attributes ON ${TableNames.SolanaTokensMetadata} USING GIN (attributes)`
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_attributes ON ${Schemas.Solana}.${TableNames.SolanaTokensMetadata} USING GIN (attributes)`
     );
-    await knex.schema.withSchema(Schemas.Solana).raw(
-        `CREATE INDEX idx_solana_tokens_json ON ${TableNames.SolanaTokensMetadata} USING GIN (json)`
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_json ON ${Schemas.Solana}.${TableNames.SolanaTokensMetadata} USING GIN (json)`
     );
-    await knex.schema.withSchema(Schemas.Solana).raw(
-        `CREATE INDEX idx_solana_tokens_edition ON ${TableNames.SolanaTokensMetadata} USING GIN (edition)`
+    await knex.raw(
+        `CREATE INDEX idx_solana_tokens_edition ON ${Schemas.Solana}.${TableNames.SolanaTokensMetadata} USING GIN (edition)`
     );
 }
 

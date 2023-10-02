@@ -42,8 +42,8 @@ export async function up(knex: Knex): Promise<void> {
         });
     });
     // Create GIN Indexes
-    await knex.schema.withSchema(Schemas.Solana).raw(
-        `CREATE INDEX idx_solana_txn_account_keys ON ${TableNames.SolanaTransactions} USING GIN (account_keys)`
+    await knex.raw(
+        `CREATE INDEX idx_solana_txn_account_keys ON ${Schemas.Solana}.${TableNames.SolanaTransactions} USING GIN (account_keys)`
     );
 }
 

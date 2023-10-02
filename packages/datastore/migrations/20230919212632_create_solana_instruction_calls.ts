@@ -65,11 +65,11 @@ export async function up(knex: Knex): Promise<void> {
     );
 
     // Create GIN Indexes
-    await knex.schema.withSchema(Schemas.Solana).raw(
-        `CREATE INDEX idx_solana_instruction_call_data ON ${TableNames.SolanaInstructionCalls} USING GIN (data)`
+    await knex.raw(
+        `CREATE INDEX idx_solana_instruction_call_data ON ${Schemas.Solana}.${TableNames.SolanaInstructionCalls} USING GIN (data)`
     );
-    await knex.schema.withSchema(Schemas.Solana).raw(
-        `CREATE INDEX idx_solana_instruction_call_accounts ON ${TableNames.SolanaInstructionCalls} USING GIN (accounts)`
+    await knex.raw(
+        `CREATE INDEX idx_solana_instruction_call_accounts ON ${Schemas.Solana}.${TableNames.SolanaInstructionCalls} USING GIN (accounts)`
     );
 }
 

@@ -48,11 +48,12 @@ export async function up(knex: Knex): Promise<void> {
     });
 
     await knex.raw(
-        `CREATE INDEX idx_flow_txn_authorizers ON ${TableNames.FlowTransactions} USING GIN (authorizers)`
+        `CREATE INDEX idx_flow_txn_authorizers ON ${Schemas.Flow}.${TableNames.FlowTransactions} USING GIN (authorizers)`
     );
 }
 
 
 export async function down(knex: Knex): Promise<void> {
+    await knex.schema.withSchema(Schemas.Flow).dropTableIfExists(TableNames.FlowTransactions);
 }
 
