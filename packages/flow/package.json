@@ -1,0 +1,25 @@
+{
+  "name": "flow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "@onflow/fcl": "^1.6.0",
+    "@onflow/sdk": "^1.2.2",
+    "@onflow/types": "^1.1.0",
+    "consumer": "workspace:*",
+    "lodash": "^4.17.21",
+    "scanner": "workspace:*",
+    "types": "workspace:*"
+  }
+}

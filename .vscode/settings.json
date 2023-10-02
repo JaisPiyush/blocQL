@@ -2,6 +2,7 @@
     "prettier.withNodeModules": true,
     "sqltools.format": {},
     "cSpell.words": [
+        "onflow",
         "Solana"
     ],
     "sqltools.connections": [
