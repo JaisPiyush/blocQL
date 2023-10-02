@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
-import { TableNames } from '../src/constants';
+import { Schemas, TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.withSchema('solana').createTable(TableNames.SolanaAccountActivity, (table) => {
+    await knex.schema.withSchema(Schemas.Solana).createTable(TableNames.SolanaAccountActivity, (table) => {
         table.string('id').primary();
         table.string('address').notNullable();
         table.bigint('balance_change').notNullable().defaultTo(0);
@@ -45,5 +45,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-    await knex.schema.dropTable(TableNames.SolanaAccountActivity);
+    await knex.schema.withSchema(Schemas.Solana).dropTable(TableNames.SolanaAccountActivity);
 }

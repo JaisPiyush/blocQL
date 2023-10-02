@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
-import { TableNames } from '../src/constants';
+import { Schemas, TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.withSchema('solana').createTable(TableNames.SolanaTokensMetadata, (table) => {
+    await knex.schema.withSchema(Schemas.Solana).createTable(TableNames.SolanaTokensMetadata, (table) => {
         table.string('address').primary();
         table.string('model');
         table.string('update_authority_address');
@@ -46,20 +46,20 @@ export async function up(knex: Knex): Promise<void> {
     });
 
     // Create GIN Indexes
-    await knex.raw(
+    await knex.schema.withSchema(Schemas.Solana).raw(
         `CREATE INDEX idx_solana_tokens_creators ON ${TableNames.SolanaTokensMetadata} USING GIN (creators)`
     );
-    await knex.raw(
+    await knex.schema.withSchema(Schemas.Solana).raw(
         `CREATE INDEX idx_solana_tokens_attributes ON ${TableNames.SolanaTokensMetadata} USING GIN (attributes)`
     );
-    await knex.raw(
+    await knex.schema.withSchema(Schemas.Solana).raw(
         `CREATE INDEX idx_solana_tokens_json ON ${TableNames.SolanaTokensMetadata} USING GIN (json)`
     );
-    await knex.raw(
+    await knex.schema.withSchema(Schemas.Solana).raw(
         `CREATE INDEX idx_solana_tokens_edition ON ${TableNames.SolanaTokensMetadata} USING GIN (edition)`
     );
 }
 
 export async function down(knex: Knex): Promise<void> {
-    await knex.schema.dropTable(TableNames.SolanaTokensMetadata);
+    await knex.schema.withSchema(Schemas.Solana).dropTable(TableNames.SolanaTokensMetadata);
 }

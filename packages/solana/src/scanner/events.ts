@@ -1,6 +1,5 @@
 import {
     ParsedAccountsModeBlockResponse,
-    ParsedBlockResponse,
 } from '@solana/web3.js';
 
 export enum SolanaEventType {

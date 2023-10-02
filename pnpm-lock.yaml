@@ -190,6 +190,9 @@ importers:
         specifier: workspace:*
         version: link:../types
     devDependencies:
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.1(@types/node@20.6.3)(typescript@4.9.5)
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig

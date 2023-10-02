@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
-import { TableNames } from '../src/constants';
+import { Schemas, TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.withSchema('solana').createTable(
+    await knex.schema.withSchema(Schemas.Solana).createTable(
         TableNames.SolanaVoteTransactions,
         (table) => {
             table.string('signature').primary();
@@ -45,5 +45,5 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
-    await knex.schema.dropTable(TableNames.SolanaVoteTransactions);
+    await knex.schema.withSchema(Schemas.Solana).dropTable(TableNames.SolanaVoteTransactions);
 }

@@ -1,8 +1,8 @@
 import { Knex } from 'knex';
-import { TableNames } from '../src/constants';
+import { Schemas, TableNames } from '../src/constants';
 
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.withSchema('solana').createTable(
+    await knex.schema.withSchema(Schemas.Solana).createTable(
         TableNames.SolanaInstructionCalls,
         (table) => {
             table.string('id').primary();
@@ -65,12 +65,14 @@ export async function up(knex: Knex): Promise<void> {
     );
 
     // Create GIN Indexes
-    await knex.raw(
+    await knex.schema.withSchema(Schemas.Solana).raw(
         `CREATE INDEX idx_solana_instruction_call_data ON ${TableNames.SolanaInstructionCalls} USING GIN (data)`
     );
-    await knex.raw(
+    await knex.schema.withSchema(Schemas.Solana).raw(
         `CREATE INDEX idx_solana_instruction_call_accounts ON ${TableNames.SolanaInstructionCalls} USING GIN (accounts)`
     );
 }
 
-export async function down(knex: Knex): Promise<void> {}
+export async function down(knex: Knex): Promise<void> {
+    await knex.schema.withSchema(Schemas.Solana).dropTable(TableNames.SolanaInstructionCalls);
+}
