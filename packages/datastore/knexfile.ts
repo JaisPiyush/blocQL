@@ -17,7 +17,7 @@ const config: { [key: string]: Knex.Config } = {
             max: 10,
         },
         migrations: {
-            schemaName: 'public',
+            schemaName: 'internal',
             tableName: 'knex_migrations_blocQL',
         },
     },
